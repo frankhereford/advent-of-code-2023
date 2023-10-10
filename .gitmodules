@@ -1,0 +1,3 @@
+[submodule "video-stream/youtube-dl"]
+	path = video-stream/youtube-dl
+	url = git@github.com:frankhereford/docker-youtube-dl.git
