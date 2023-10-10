@@ -8,12 +8,23 @@ const openai = new OpenAI({
 });
 
 export const openaiRouter = createTRPCRouter({
+  
+
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(async ({ input }) => {
+
+      const prompt = `
+      I want you to provide me the name of a natural disaster or war that occurred after 1960. 
+      Please provide the name only and no date information. I want only the name in the response.
+      I want you to not pick the first thing that comes to mind, but rather a lesser known event. 
+      I would like you to pick randomly from your ideas, because I am going to ask you this many, many times and I want as many different answers as possible.
+      `
+
       const params: OpenAI.Chat.ChatCompletionCreateParams = {
-        messages: [{ role: 'user', content: 'Please provide a single notable war or natural disaster that happened since 1960. please try to pick important but not "top-tier" choices. I will be asking you this question many times, and I want to minimize the amount of repetition I get from you. Please answer in the form of "Name of Event (year or years active)."' }],
-        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt}],
+        model: 'gpt-4',
+        // model: 'gpt-3.5-turbo',
       };
       const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
       if (chatCompletion?.choices[0]?.message?.content) {
