@@ -2,9 +2,21 @@ version: '3'
 
 services:
   youtube-dl:
+    depends_on:
+      - media
     build: 
       context: ./youtube-dl
     #volumes:
       #- ./workdir:/workdir:rw
     env_file: env
     #entrypoint: ["/bin/bash"]
+  media:
+    image: bluenviron/mediamtx:latest
+    ports:
+      - "8554:8554"
+      - "1935:1935"
+      - "8888:8888"
+      - "8889:8889"
+      - "8890:8890/udp"
+    environment:
+      - MTX_PROTOCOLS=tcp
