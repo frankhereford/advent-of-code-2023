@@ -3,7 +3,7 @@ version: '3'
 services:
   youtube-dl:
     depends_on:
-      - media
+      - media 
     build: 
       context: ./youtube-dl
     #volumes:
@@ -20,3 +20,11 @@ services:
       - "8890:8890/udp"
     environment:
       - MTX_PROTOCOLS=tcp
+  #media:
+    #image: datarhei/restreamer
+    #ports:
+      #- "8080:8080"
+      #- "8181:8181"
+      #- "1935:1935"
+      #- "1936:1936"
+      #- "6000:6000/udp"
