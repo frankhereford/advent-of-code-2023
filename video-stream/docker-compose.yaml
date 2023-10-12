@@ -10,6 +10,8 @@ services:
       #- ./workdir:/workdir:rw
     env_file: env
     #entrypoint: ["/bin/bash"]
+    devices:
+      - /dev/dri:/dev/dri
   media:
     image: bluenviron/mediamtx:latest
     ports:
