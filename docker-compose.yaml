@@ -19,5 +19,21 @@ services:
     volumes:
       - /home/frank/development/advent-of-code-2023:/application
       - /var/run/docker.sock:/var/run/docker.sock
+  serve:
+    build: ./serve/
+    ports:
+      - "80:80"  
+    volumes:
+      - /home/frank/development/advent-of-code-2023:/application
+
+  nginx:
+    build: ./nginx/
+    volumes:
+      - ./workdir:/usr/share/nginx/html:ro
+    ports:
+      - "10.10.10.1:80:80"
+    environment:
+      - NGINX_HOST=nginx-directory-listing
+    #command: /bin/sh -c "echo 'autoindex on;' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
   hello-world:
     image: hello-world
