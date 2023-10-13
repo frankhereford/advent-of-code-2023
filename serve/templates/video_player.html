@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>HLS Streaming</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    #container {
+      position: relative;
+      width: 1024px;
+      /* or whatever width you want */
+      height: 1024px;
+      /* or whatever height you want */
+    }
+  
+    #video {
+      position: absolute;
+      top: 400px;
+      left: 95px;
+      width: 504px;
+      height: 403.2px;
+    }
+  
+    #mask {
+      position: absolute;
+      opacity: 1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      /* so that the video remains interactive */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="container">
+    <video id="video" autoplay></video>
+    <img id="mask" src="/images/tv_mask.png">
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var video = document.getElementById("video");
+      var hlsUrl = "{{ key }}/playlist.m3u8";
+
+      if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource(hlsUrl);
+        hls.attachMedia(video);
+      }
+      // For browsers that can directly play HLS
+      else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = hlsUrl;
+      }
+    });
+  </script>
+</body>
+
+</html>
