@@ -24,7 +24,7 @@
   
     #mask {
       position: absolute;
-      opacity: 1;
+      opacity: .5;
       top: 0;
       left: 0;
       width: 100%;
@@ -45,7 +45,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var video = document.getElementById("video");
-      var hlsUrl = "{{ key }}/playlist.m3u8";
+      var hlsUrl = "/{{ key }}/playlist.m3u8";
 
       if (Hls.isSupported()) {
         var hls = new Hls();
