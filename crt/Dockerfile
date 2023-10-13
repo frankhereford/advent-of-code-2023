@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM linuxserver/ffmpeg
 
 # Update Ubuntu packages
 RUN apt-get update && \
@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get clean
 
 # normal stuffs
-RUN apt-get install -y vim aptitude python3-pip magic-wormhole file
+RUN apt-get install -y vim aptitude python3-pip magic-wormhole file fonts-freefont-ttf
 
 # Install docker
 RUN apt-get install -y ca-certificates curl gnupg 
@@ -19,6 +19,8 @@ RUN echo \
   tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+WORKDIR /application/workdir
 
 ENTRYPOINT ["/application/crt/run_ffmpeg.py"]
 
