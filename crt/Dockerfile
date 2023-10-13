@@ -20,10 +20,5 @@ RUN echo \
 RUN apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-# install youtube downloader
-RUN python3 -m pip install -U yt-dlp
-
-WORKDIR /application/workdir
-
-ENTRYPOINT ["/application/download/download_video.py"]
+ENTRYPOINT ["/application/crt/run_ffmpeg.py"]
 

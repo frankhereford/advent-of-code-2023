@@ -3,10 +3,19 @@ services:
   download:
     build: ./download/
     container_name: youtube-dl
-    command: /bin/bash
-    stdin_open: true
-    tty: true
+    #command: /bin/bash
+    #stdin_open: true
+    #tty: true
     volumes:
+      - /home/frank/development/advent-of-code-2023:/application
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./download/download_video.py:/download_video.py
-      - ./workdir:/workdir
+  crt:
+    build: ./crt/
+    container_name: crt
+    #stdin_open: true
+    #tty: true
+    volumes:
+      - /home/frank/development/advent-of-code-2023:/application
+      - /var/run/docker.sock:/var/run/docker.sock
+  hello-world:
+    image: hello-world
