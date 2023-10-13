@@ -142,8 +142,8 @@ def run_ffmpeg(video_id):
             #'-hwaccel', 'qsv',
             '-i', f'{video_id}.mp4',
             '-an', # mute
-            #'-c:v', 'libx264', # encode in h264, required by HLS
-            '-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
+            '-c:v', 'libx264', # encode in h264, required by HLS
+            #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', # apply following filtergraphs
             f'''{shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
                 {screenGauss} {reflections}
