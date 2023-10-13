@@ -6,13 +6,13 @@ app = Flask(__name__)
 static_folder_path = "/application/workdir"
 images_folder_path = "/application/serve/images"
 
-@app.route('/files/')
+@app.route('/')
 def list_files():
     all_files = os.listdir(static_folder_path)
     directories = [f for f in all_files if os.path.isdir(os.path.join(static_folder_path, f))]
     return render_template("list_files.html", files=directories)
 
-@app.route('/files/<path:filename>')
+@app.route('/<path:filename>')
 def serve_file(filename):
     full_path = os.path.join(static_folder_path, filename)
     
