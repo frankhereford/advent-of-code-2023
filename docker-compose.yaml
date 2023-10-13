@@ -21,6 +21,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   serve:
     build: ./serve/
+    environment:
+      - FLASK_ENV=development
     ports:
       - "80:80"  
     volumes:

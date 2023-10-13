@@ -4,6 +4,7 @@ import time
 
 app = Flask(__name__)
 static_folder_path = "/application/workdir"
+images_folder_path = "/application/serve/images"
 
 @app.route('/files/')
 def list_files():
@@ -26,5 +27,10 @@ def serve_file(filename):
     else:
         return send_from_directory(static_folder_path, filename)
 
+@app.route('/images/<img_name>')
+def serve_image(img_name):
+    return send_from_directory(images_folder_path, img_name)
+
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=80, debug=True)
