@@ -131,12 +131,12 @@ def run_ffmpeg(video_id):
             #'-hwaccel', 'qsv',
             '-i', f'{video_id}.mp4',
             '-an', # mute
-            '-c:v', 'libx264', # encode in h264, required by HLS
+            #'-c:v', 'libx264', # encode in h264, required by HLS
+            '-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', # apply following filtergraphs
             f'''{shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
                 {screenGauss} {reflections}
                 {highlight}, {curveImage}, {bloomEffect}''',
-            '-c:v', 'h264_qsv',
             #f'{video_id}-output.mp4'
             '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '5',
             '-segment_list', f'{video_id}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_id}/stream%03d.ts'
