@@ -1,0 +1,12 @@
+version: '3'
+services:
+  download:
+    build: ./download/
+    container_name: youtube-dl
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./download/download_video.py:/download_video.py
+      - ./workdir:/workdir
