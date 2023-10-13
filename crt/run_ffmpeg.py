@@ -4,8 +4,18 @@
 
 import subprocess
 import sys
+import re
+
+def validate_string(s):
+    if len(s) != 11:
+        return False
+    pattern = re.compile("^[a-zA-Z0-9-_]+$")
+    return bool(pattern.match(s))
 
 def run_ffmpeg(video_id):
+    if not validate_string(video_id):
+        print("Invalid video ID")
+        return
     try:
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
@@ -122,6 +132,7 @@ def run_ffmpeg(video_id):
                     [b][a] blend=all_mode=screen:shortest=1"""
 
         skipFrames="select=mod(n\,2)"
+
 
         subprocess.run(f'rm -frv {video_id}', shell=True)
         subprocess.run(f'mkdir {video_id}', shell=True)
