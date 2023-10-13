@@ -21,6 +21,6 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         video_id = sys.argv[1]
         download_youtube_video(video_id)
-        run_docker_compose(video_id)
+        # run_docker_compose(video_id) # this is a hack
     else:
         print("Please provide a YouTube video ID as an argument.")
