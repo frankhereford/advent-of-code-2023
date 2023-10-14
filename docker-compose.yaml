@@ -1,13 +1,13 @@
 version: '3'
 services:
   download:
-    build: ./download/
+    build: download
     container_name: youtube-dl
     volumes:
       - /home/frank/development/advent-of-code-2023:/application
       - /var/run/docker.sock:/var/run/docker.sock
   crt:
-    build: ./crt/
+    build: crt
     container_name: crt
     devices:
       - /dev/dri:/dev/dri
@@ -15,7 +15,7 @@ services:
       - /home/frank/development/advent-of-code-2023:/application
       - /var/run/docker.sock:/var/run/docker.sock
   serve:
-    build: ./serve/
+    build: serve
     environment:
       - FLASK_ENV=development
     ports:
