@@ -3,17 +3,12 @@ services:
   download:
     build: ./download/
     container_name: youtube-dl
-    #command: /bin/bash
-    #stdin_open: true
-    #tty: true
     volumes:
       - /home/frank/development/advent-of-code-2023:/application
       - /var/run/docker.sock:/var/run/docker.sock
   crt:
     build: ./crt/
     container_name: crt
-    #stdin_open: true
-    #tty: true
     devices:
       - /dev/dri:/dev/dri
     volumes:
