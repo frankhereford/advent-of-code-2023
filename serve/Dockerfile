@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /application/serve
 
 # Run app.py when the container launches
-CMD ["flask", "run"]
+CMD ["flask", "run", "--reload"]

@@ -14,12 +14,20 @@
       /* or whatever height you want */
     }
   
-    #video {
+    #top_television {
       position: absolute;
-      top: 400px;
-      left: 95px;
-      width: 504px;
-      height: 403.2px;
+      top: 180px;
+      left: 530px;
+      width: 360px;
+      height: 288px;
+    }
+  
+    #bottom_television {
+      position: absolute;
+      top: 550px;
+      left: 480px;
+      width: 360px;
+      height: 288px;
     }
   
     #mask {
@@ -38,23 +46,37 @@
 <body>
 
   <div id="container">
-    <video id="video" autoplay></video>
-    <img id="mask" src="/images/tv_mask.png">
+    <video id="top_television" autoplay></video>
+    <video id="bottom_television" autoplay></video>
+    <img id="mask" src="/images/televisions_mask.png">
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      var video = document.getElementById("video");
-      var hlsUrl = "{{ key }}/playlist.m3u8";
+      var top_video = document.getElementById("top_television");
+      var top_hlsUrl = "{{ top_television }}/playlist.m3u8";
 
       if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(hlsUrl);
-        hls.attachMedia(video);
+        var top_hls = new Hls();
+        top_hls.loadSource(top_hlsUrl);
+        top_hls.attachMedia(top_video);
       }
       // For browsers that can directly play HLS
-      else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = hlsUrl;
+      else if (top_video.canPlayType("application/vnd.apple.mpegurl")) {
+        top_video.src = top_hlsUrl;
+      }
+
+      var bottom_video = document.getElementById("bottom_television");
+      var bottom_hlsUrl = "{{ bottom_television }}/playlist.m3u8";
+
+      if (Hls.isSupported()) {
+        var bottom_hls = new Hls();
+        bottom_hls.loadSource(bottom_hlsUrl);
+        bottom_hls.attachMedia(bottom_video);
+      }
+      // For browsers that can directly play HLS
+      else if (bottom_video.canPlayType("application/vnd.apple.mpegurl")) {
+        bottom_video.src = bottom_hlsUrl;
       }
     });
   </script>
