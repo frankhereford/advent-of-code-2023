@@ -4,6 +4,7 @@
 
 import subprocess
 import sys
+import os
 import re
 
 def validate_string(s):
@@ -17,7 +18,9 @@ def run_ffmpeg(video_id):
         print("Invalid video ID")
         return
     try:
-        subtitles=f"subtitles={video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
+        subtitles = None
+        if os.path.exists(f'{video_id}.en.srt'):
+            subtitles=f"subtitles={video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
 
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
@@ -139,21 +142,29 @@ def run_ffmpeg(video_id):
         subprocess.run(f'rm -frv {video_id}', shell=True)
         subprocess.run(f'mkdir {video_id}', shell=True)
 
-        subprocess.run([
+        filters = ''
+        if subtitles:
+            filters = f'''{subtitles}, {shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
+                {screenGauss} {reflections}
+                {highlight}, {curveImage}, {bloomEffect}'''
+        else:
+            filters = f'''{shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
+                {screenGauss} {reflections}
+                {highlight}, {curveImage}, {bloomEffect}'''
+
+        command = [
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
             '-i', f'{video_id}.mp4',
             '-an', # mute
             #'-c:v', 'libx264', # encode in h264, required by HLS
             '-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
-            '-vf', # apply following filtergraphs
-            f'''{subtitles}, {shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
-                {screenGauss} {reflections}
-                {highlight}, {curveImage}, {bloomEffect}''',
-            #f'{video_id}-output.mp4'
+            '-vf', filters, # apply filtergraphs
             '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '5',
             '-segment_list', f'{video_id}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_id}/stream%03d.ts'
-        ])
+        ]
+        subprocess.run(command)
+
     except Exception as e:
         print(f"Something went wrong: {e}")
 
