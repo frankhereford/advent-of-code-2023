@@ -21,7 +21,7 @@ RUN apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # install youtube downloader
-RUN python3 -m pip install -U yt-dlp
+RUN python3 -m pip install -U yt-dlp vtt_to_srt3
 
 WORKDIR /application/workdir
 
