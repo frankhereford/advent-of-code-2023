@@ -31,13 +31,13 @@ def get_random_video_id():
     app.logger.info(message)
     return pick
 
-@app.route('/')
+@app.route('/video_processor/')
 def list_files():
     all_files = os.listdir(static_folder_path)
     directories = [f for f in all_files if os.path.isdir(os.path.join(static_folder_path, f))]
     return render_template("list_files.html", files=directories)
 
-@app.route('/<path:filename>')
+@app.route('/video_processor/<path:filename>')
 def serve_file(filename):
     full_path = os.path.join(static_folder_path, filename)
 
@@ -63,7 +63,7 @@ def serve_file(filename):
     else:
         return send_from_directory(static_folder_path, filename)
 
-@app.route('/images/<img_name>')
+@app.route('/video_processor/images/<img_name>')
 def serve_image(img_name):
     return send_from_directory(images_folder_path, img_name)
 
