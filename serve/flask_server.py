@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, render_template
 import os
 import time
+import redis
 import random
 import logging
 import sys
@@ -11,6 +12,15 @@ images_folder_path = "/application/serve/images"
 
 # Set up logging to stdout
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
+
+def append_to_redis_list(redis_host='redis', redis_port=6379, key_to_append='start_queue', value_to_append=''):
+    # Initialize the Redis client
+    r = redis.Redis(host=redis_host, port=redis_port)
+
+    # Append the value to the list
+    r.rpush(key_to_append, value_to_append)
+    print(f"Appended '{value_to_append}' to the list stored at key {key_to_append}")
 
 
 def get_random_video_id():
@@ -30,6 +40,15 @@ def list_files():
 @app.route('/<path:filename>')
 def serve_file(filename):
     full_path = os.path.join(static_folder_path, filename)
+
+    if not os.path.exists(full_path):
+        # Your Redis operations here
+        append_to_redis_list(value_to_append=filename)
+        # log or return something to indicate Redis operation happened
+        app.logger.info("Static folder does not exist. Performed Redis operation.")
+        return "Static folder does not exist. Performed Redis operation.", 404
+    #while not os.path.isdir(full_path):
+        #time.sleep(1) 
     
     if os.path.isdir(full_path):
 
