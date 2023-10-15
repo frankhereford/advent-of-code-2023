@@ -14,9 +14,15 @@ services:
       - .:/application
   serve:
     build: serve
+    depends_on:
+      - redis
     environment:
       - FLASK_ENV=development
     ports:
       - "80:80"  
     volumes:
       - .:/application
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
