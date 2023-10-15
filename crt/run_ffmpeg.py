@@ -17,6 +17,8 @@ def run_ffmpeg(video_id):
         print("Invalid video ID")
         return
     try:
+        subtitles=f"subtitles={video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
+
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
 
@@ -145,7 +147,7 @@ def run_ffmpeg(video_id):
             #'-c:v', 'libx264', # encode in h264, required by HLS
             '-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', # apply following filtergraphs
-            f'''{shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
+            f'''{subtitles}, {shrink144}, {crop43}, {rgbFX}, {yuvFX}, {noiseFX}, {interlaceFX}, {scale2PAL}
                 {screenGauss} {reflections}
                 {highlight}, {curveImage}, {bloomEffect}''',
             #f'{video_id}-output.mp4'
