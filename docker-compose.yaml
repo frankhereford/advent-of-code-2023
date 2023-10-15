@@ -26,3 +26,10 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+  web:
+    build: web
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/application
+    entrypoint: ["npx", "next", "dev"]
