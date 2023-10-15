@@ -4,16 +4,14 @@ services:
     build: download
     container_name: youtube-dl
     volumes:
-      - /home/frank/development/advent-of-code-2023:/application
-      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/application
   crt:
     build: crt
     container_name: crt
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - /home/frank/development/advent-of-code-2023:/application
-      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/application
   serve:
     build: serve
     environment:
@@ -21,4 +19,4 @@ services:
     ports:
       - "80:80"  
     volumes:
-      - /home/frank/development/advent-of-code-2023:/application
+      - .:/application
