@@ -1,36 +1,16 @@
-import axios from 'axios';
 import { env } from "../../../env.mjs";
-
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+const youtubesearchapi = require("youtube-search-api");
 
-async function fetchYouTubeVideoId(searchQuery: string): Promise<string | null> {
-  console.log('hi')
-  try {
-    const apiKey = env.YOUTUBE_API_KEY
-    const url = 'https://www.googleapis.com/youtube/v3/search';
-    const params = {
-      part: 'snippet',
-      maxResults: 1,
-      q: searchQuery,
-      key: apiKey,
-    };
+import { createClient } from "redis";
 
-    const response = await axios.get(url, { params });
 
-    console.log(response)
-
-    if (response.data.items && response.data.items.length > 0) {
-      return response.data.items[0].id.videoId;
-    }
-
-    return null;
-  } catch (error) {
-    //console.error('Something went wrong:', error);
-    return null;
-  }
+function getRandomElements(arr: string[], n: number): string[] {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
 }
+
 
 export const youtubeRouter = createTRPCRouter({
 
@@ -38,12 +18,21 @@ export const youtubeRouter = createTRPCRouter({
     .input(z.object({ topic: z.string() }))
     .query(async ({input}) => {
 
-      const video_id = await fetchYouTubeVideoId(input.topic)
+      const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10)
+      const videoIds = results.items
+        .filter((item: { type: string; }) => item.type === 'video')
+        .map((item: { id: any; }) => item.id);
+      const picks = getRandomElements(videoIds, 2)
+      console.log(picks)
 
-      //console.log(video_id)
+      let redisClient = await createClient({
+        url: 'redis://redis'
+      }).connect();
+
+      await redisClient.rPush('start_queue', picks);
 
       return {
-      video_id: video_id
+        videos: picks
     }
 
     }),
