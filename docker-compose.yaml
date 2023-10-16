@@ -12,6 +12,8 @@ services:
     container_name: crt
     depends_on:
       - redis
+    cap_add:
+      - SYS_ADMIN
     #devices:
       #- /dev/dri:/dev/dri
     volumes:
