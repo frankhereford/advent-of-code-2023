@@ -15,7 +15,7 @@ const getDirectories = (source: string): string[] => {
 
 export const videoRouter = createTRPCRouter({
   top_television: publicProcedure
-    //.input(z.object({ text: z.string() }))
+    .input(z.object({ topic: z.string() }))
     .query(() => {
       const directories: string[] = getDirectories(dirPath);
       const randomIndex: number = Math.floor(Math.random() * directories.length);
@@ -25,7 +25,7 @@ export const videoRouter = createTRPCRouter({
       };
     }),
   bottom_television: publicProcedure
-    //.input(z.object({ text: z.string() }))
+    .input(z.object({ topic: z.string() }))
     .query(() => {
       const directories: string[] = getDirectories(dirPath);
       const randomIndex: number = Math.floor(Math.random() * directories.length);

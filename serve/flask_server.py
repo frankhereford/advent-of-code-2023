@@ -47,6 +47,7 @@ def serve_file(filename):
         # log or return something to indicate Redis operation happened
         app.logger.info("Static folder does not exist. Performed Redis operation.")
         return "Static folder does not exist. Performed Redis operation.", 404
+
     #while not os.path.isdir(full_path):
         #time.sleep(1) 
     

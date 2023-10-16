@@ -1,12 +1,52 @@
+import { useEffect, useState } from 'react';
 import Head from "next/head";
 
 import VideoComponent from './VideoComponent'; 
 
 import { api } from "~/utils/api";
-
 export default function Home() {
-  const top_video = api.video.top_television.useQuery();
-  const bottom_video = api.video.bottom_television.useQuery();
+  
+  //const [videoReady, setVideoReady] = useState({});
+  const [videoReady, setVideoReady] = useState<Record<string, boolean>>({});
+
+  //const [videoIDs, setVideoIDs] = useState([]);
+  const [videoIDs, setVideoIDs] = useState<string[]>([]);
+
+
+  const topic = api.openai.get_topic.useQuery();
+  const videos = api.youtube.get_video.useQuery({ topic: topic.data!?.topic }, { enabled: !!topic.data });
+
+  useEffect(() => {
+    if (!videos.data) return;
+
+    let isCancelled = false;
+
+    const newVideoIDs = videos.data.videos;
+    setVideoIDs(newVideoIDs);
+
+    const checkVideos = async () => {
+      for (const videoID of newVideoIDs) {
+        // Skip if this video is already ready
+        if (videoReady[videoID]) continue;
+
+        const url = `/video_processor/${videoID}/playlist.m3u8`;
+        const res = await fetch(url);
+        if (res.status !== 404 && !isCancelled) {
+          setVideoReady(prev => ({ ...prev, [videoID]: true }));
+        }
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      checkVideos();
+    }, 1000);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [videos.data, videoReady]);
+
   return (
     <>
       <Head>
@@ -16,13 +56,12 @@ export default function Home() {
       </Head>
       <main>
         <div id="container">
-          <VideoComponent video_id={top_video.data ? top_video.data.video_id : null } />
-          <VideoComponent video_id={bottom_video.data ? bottom_video.data.video_id : null } />
+          {videoIDs.map((id, index) => (
+            <VideoComponent key={index} video_id={videoReady[id] ? id : null} />
+          ))}
           <img id="mask" src="/web/televisions_mask.png"></img>
         </div>
       </main>
     </>
   );
 }
-
-          //<Image src="/web/televisions_mask.png" width={1024} height={1024} layout="responsive" alt="a tv repair shop" />

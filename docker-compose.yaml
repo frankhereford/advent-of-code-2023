@@ -4,7 +4,7 @@ services:
     depends_on:
       - redis
     build: download
-    container_name: youtube-dl
+    container_name: download
     volumes:
       - .:/application
   crt:
@@ -16,21 +16,22 @@ services:
       #- /dev/dri:/dev/dri
     volumes:
       - .:/application
-  serve:
-    build: serve
-    depends_on:
-      - redis
-    environment:
-      - FLASK_ENV=development
-    #ports:
-      #- "80:80"  
-    volumes:
-      - .:/application
+  #serve:
+    #container_name: serve
+    #build: serve
+    #depends_on:
+      #- redis
+    #environment:
+      #- FLASK_ENV=development
+    #volumes:
+      #- .:/application
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
   web:
+    container_name: web
     build: web
     ports:
       - "3001:3000"
@@ -40,10 +41,17 @@ services:
   haproxy:
     depends_on:
       - web
-      - serve
+      - apache 
     image: haproxy:latest
     container_name: haproxy
     ports:
       - "80:80"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+  apache:
+    image: httpd:2.4
+    container_name: apache
+    volumes:
+      - ./workdir/:/usr/local/apache2/htdocs/video_processor/
+    environment:
+      - TZ=UTC
