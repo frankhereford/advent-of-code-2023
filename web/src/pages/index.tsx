@@ -24,7 +24,7 @@ export default function Home() {
     if (!videoID) return;
 
     const checkVideo = async () => {
-      const url = `/video_processor/${videoID}/playlist.m3u8`; // Replace with actual URL
+      const url = `/video_processor/${videoID}/playlist.m3u8`;
       const res = await fetch(url);
       if (res.status !== 404) {
         if (!isCancelled) {
@@ -44,12 +44,6 @@ export default function Home() {
       clearInterval(intervalId);
     };
   }, [videos.data]);
-
-
-
-  //const bottom_video = api.video.bottom_television.useQuery({ topic: 'fish' }, { enabled: !!videos.data});
-          //<VideoComponent video_id={top_video.data ? top_video.data.video_id : null } />
-          //<VideoComponent video_id={bottom_video.data ? bottom_video.data.video_id : null } />
 
   return (
     <>
