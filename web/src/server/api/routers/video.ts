@@ -1,0 +1,37 @@
+import { z } from "zod";
+
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+
+import fs from 'fs';
+import path from 'path';
+
+const dirPath: string = '/application/workdir/';
+
+const getDirectories = (source: string): string[] => {
+  return fs.readdirSync(source, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+}
+
+export const videoRouter = createTRPCRouter({
+  top_television: publicProcedure
+    //.input(z.object({ text: z.string() }))
+    .query(() => {
+      const directories: string[] = getDirectories(dirPath);
+      const randomIndex: number = Math.floor(Math.random() * directories.length);
+      const randomDir: string = directories[randomIndex]!;
+      return {
+        video_id: randomDir,
+      };
+    }),
+  bottom_television: publicProcedure
+    //.input(z.object({ text: z.string() }))
+    .query(() => {
+      const directories: string[] = getDirectories(dirPath);
+      const randomIndex: number = Math.floor(Math.random() * directories.length);
+      const randomDir: string = directories[randomIndex]!;
+      return {
+        video_id: randomDir,
+      };
+    }),
+});

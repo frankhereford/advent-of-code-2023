@@ -10,8 +10,8 @@ services:
   crt:
     build: crt
     container_name: crt
-    devices:
-      - /dev/dri:/dev/dri
+    #devices:
+      #- /dev/dri:/dev/dri
     volumes:
       - .:/application
   serve:
@@ -20,11 +20,25 @@ services:
       - redis
     environment:
       - FLASK_ENV=development
-    ports:
-      - "80:80"  
+    #ports:
+      #- "80:80"  
     volumes:
       - .:/application
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
+  web:
+    build: web
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/application
+    entrypoint: ["npx", "next", "dev"]
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
