@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from 'next/image'
 
 import VideoComponent from './VideoComponent'; 
 
@@ -18,6 +19,7 @@ export default function Home() {
         <div id="container">
           <VideoComponent />
           <img id="mask" src="/web/televisions_mask.png"></img>
+          <Image src="/web/televisions_mask.png" width={1024} height={1024} layout="responsive" alt="a tv repair shop" />
         </div>
       </main>
     </>
