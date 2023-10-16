@@ -10,6 +10,8 @@ services:
   crt:
     build: crt
     container_name: crt
+    depends_on:
+      - redis
     #devices:
       #- /dev/dri:/dev/dri
     volumes:
@@ -36,6 +38,9 @@ services:
       - .:/application
     entrypoint: ["npx", "next", "dev"]
   haproxy:
+    depends_on:
+      - web
+      - serve
     image: haproxy:latest
     container_name: haproxy
     ports:
