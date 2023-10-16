@@ -1,6 +1,8 @@
 version: '3'
 services:
   download:
+    depends_on:
+      - redis
     build: download
     container_name: youtube-dl
     volumes:
