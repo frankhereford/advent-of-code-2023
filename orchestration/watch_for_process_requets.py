@@ -63,10 +63,6 @@ def poll_redis_for_key(redis_host='localhost', redis_port=6379, start_queue='sta
         else:
             print(f"Key {encode_queue} not found or list is empty. Polling again in {poll_interval} seconds.")
         
-
-
-
-        
         time.sleep(poll_interval)
 
 if __name__ == '__main__':
