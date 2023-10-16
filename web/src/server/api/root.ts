@@ -1,5 +1,7 @@
 //import { exampleRouter } from "~/server/api/routers/example";
 import { videoRouter } from "~/server/api/routers/video";
+import { openaiRouter } from "~/server/api/routers/openai";
+import { youtubeRouter } from "~/server/api/routers/youtube";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -9,6 +11,8 @@ import { createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   video: videoRouter,
+  openai: openaiRouter,
+  youtube: youtubeRouter,
 });
 
 // export type definition of API

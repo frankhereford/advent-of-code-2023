@@ -5,8 +5,11 @@ import VideoComponent from './VideoComponent';
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const top_video = api.video.top_television.useQuery();
-  const bottom_video = api.video.bottom_television.useQuery();
+  const topic = api.openai.get_topic.useQuery();
+  const videos = api.youtube.get_video.useQuery({topic: 'parks'}, { enabled: !!topic.data });
+  const top_video = api.video.top_television.useQuery({topic: 'tuba'}, {enabled: !!videos.data});
+  const bottom_video = api.video.bottom_television.useQuery({ topic: 'fish' }, { enabled: !!videos.data});
+
   return (
     <>
       <Head>
@@ -24,5 +27,3 @@ export default function Home() {
     </>
   );
 }
-
-          //<Image src="/web/televisions_mask.png" width={1024} height={1024} layout="responsive" alt="a tv repair shop" />
