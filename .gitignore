@@ -1,3 +1,4 @@
 workdir/*
 __pycache__
 env
+build_images.sh
