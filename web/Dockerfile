@@ -8,6 +8,7 @@ RUN apt-get update && \
 # normal stuff
 RUN apt-get install -y vim aptitude python3-pip magic-wormhole file
 
+RUN mkdir /application
 COPY . /application/web
 WORKDIR /application/web
 RUN npm install
