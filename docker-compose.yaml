@@ -21,8 +21,6 @@ services:
   redis:
     container_name: redis
     image: redis:latest
-    ports:
-      - "6379:6379"
   web:
     container_name: web
     build: web
@@ -37,6 +35,7 @@ services:
     container_name: haproxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
   apache:
