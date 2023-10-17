@@ -44,6 +44,6 @@ services:
     image: httpd:2.4
     container_name: apache
     volumes:
-      - ./workdir/:/usr/local/apache2/htdocs/video_processor/
+      - ./workdir/hls:/usr/local/apache2/htdocs/
     environment:
       - TZ=UTC
