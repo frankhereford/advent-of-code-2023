@@ -198,7 +198,7 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
     while True:
         _, video_id = r.blpop(queue_to_poll)
         video_id = video_id.decode('utf-8')
-        store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat() })
+        store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
         print(f"Got video ID {video_id} from {queue_to_poll}")
         run_ffmpeg(video_id)
         store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
