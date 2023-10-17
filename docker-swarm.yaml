@@ -1,0 +1,49 @@
+version: '3'
+services:
+  download:
+    depends_on:
+      - redis
+    build: download
+    container_name: download
+    volumes:
+      - .:/application
+  crt:
+    build: crt
+    container_name: crt
+    depends_on:
+      - redis
+    #devices:
+      #- /dev/dri:/dev/dri
+    volumes:
+      - .:/application
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  web:
+    container_name: web
+    build: web
+    depends_on:
+      - redis
+    volumes:
+      - .:/application
+    entrypoint: ["npx", "next", "dev"]
+  haproxy:
+    depends_on:
+      - web
+      - apache 
+    build: haproxy
+    container_name: haproxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+  apache:
+    image: httpd:2.4
+    container_name: apache
+    volumes:
+      - ./workdir/:/usr/local/apache2/htdocs/video_processor/
+    environment:
+      - TZ=UTC
