@@ -35,8 +35,6 @@ services:
   web:
     container_name: web
     build: web
-    ports:
-      - "3001:3000"
     volumes:
       - .:/application
     entrypoint: ["npx", "next", "dev"]
