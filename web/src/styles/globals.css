@@ -36,3 +36,13 @@
   height: 100%;
   pointer-events: none;
 }
+
+#black {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 99%;
+  background-color: black;
+  pointer-events: none;
+}
