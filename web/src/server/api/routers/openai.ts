@@ -64,7 +64,7 @@ export const openaiRouter = createTRPCRouter({
       Tell me the name of a saturday morning cartoon. Just that. Just the name.
       `]
 
-      prompts = prompts.filter(item => item.includes('city'));
+      //prompts = prompts.filter(item => item.includes('city'));
 
 
       const prompt = getRandomElement(prompts)
