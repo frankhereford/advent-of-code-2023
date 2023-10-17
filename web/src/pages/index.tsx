@@ -6,7 +6,12 @@ import VideoComponent from './VideoComponent';
 import { api } from "~/utils/api";
 
 function getStatic(): string | null {
-  const myArray: string[] = ["CKsLgdbzlfk", "OUoA-dKQhtc", "S7askw5Z084", "yCPtemRqJks", "bVy32Lx41-o"];
+  // "yCPtemRqJks" vernoi noise, yech
+  // "ORhPhhcdtkA" had a message in it, yech
+  const myArray: string[] = [
+    "CKsLgdbzlfk", "OUoA-dKQhtc", "S7askw5Z084", "bVy32Lx41-o",
+    "N0OPOsN3kA8", "htdAiUyoFDU", "nqtwZXp88w0", "vcZv6yfBcLk",
+    "mCcNtjVBL3w", "IeRJnQBySCg"];
 
   if (myArray.length === 0) {
     return null;
