@@ -18,15 +18,6 @@ services:
       #- /dev/dri:/dev/dri
     volumes:
       - .:/application
-  #serve:
-    #container_name: serve
-    #build: serve
-    #depends_on:
-      #- redis
-    #environment:
-      #- FLASK_ENV=development
-    #volumes:
-      #- .:/application
   redis:
     container_name: redis
     image: redis:latest
