@@ -5,5 +5,5 @@ container_ids=$(docker ps --filter "name=advent-of-code-2023-crt-run-*" --format
 
 # Stop each matching container
 for id in $container_ids; do
-  docker stop $id
+  docker stop $id &
 done

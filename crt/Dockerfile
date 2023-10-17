@@ -15,6 +15,11 @@ WORKDIR /root/efs-utils
 RUN ./build-deb.sh
 RUN apt-get -y install ./build/amazon-efs-utils-*.deb
 
+RUN mkdir /application
+RUN mkdir /application/workdir
+COPY . /application/crt
+
+
 WORKDIR /application/workdir
 
 ENTRYPOINT ["/application/crt/run_ffmpeg.py"]
