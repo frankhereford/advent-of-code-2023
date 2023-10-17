@@ -8,6 +8,8 @@ RUN apt-get update && \
 # normal stuffs
 RUN apt-get install -y vim aptitude python3-pip magic-wormhole file fonts-freefont-ttf git binutils
 
+RUN pip install redis
+
 # install amazon's efs-utils
 WORKDIR /root
 RUN git clone https://github.com/aws/efs-utils
