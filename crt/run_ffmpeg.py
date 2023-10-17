@@ -8,6 +8,7 @@ import sys
 import os
 import re
 import shutil
+import datetime
 
 def validate_string(s):
     if len(s) != 11:
@@ -16,8 +17,21 @@ def validate_string(s):
     return bool(pattern.match(s))
 
 def store_metadata_in_redis(video_id, metadata):
-    # Create a Redis hash for this video_id
-    r.hset(f"video:{video_id}", mapping=metadata)
+    # Create a Redis hash key for this video_id
+    r = redis.Redis(host='redis', port=6379, db=0)
+
+    redis_key = f"video:{video_id}"
+    
+    # Fetch existing data if any
+    existing_data_raw = r.hgetall(redis_key)
+    existing_data = {k.decode(): v.decode() for k, v in existing_data_raw.items()}
+    
+    if existing_data:
+        # Merge existing and new metadata (new values overwrite existing ones)
+        existing_data.update(metadata)
+        r.hmset(redis_key, existing_data)
+    else:
+        r.hmset(redis_key, metadata)
 
 def run_ffmpeg(video_id):
     if not validate_string(video_id):
@@ -184,12 +198,10 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
     while True:
         _, video_id = r.blpop(queue_to_poll)
         video_id = video_id.decode('utf-8')
+        store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat() })
         print(f"Got video ID {video_id} from {queue_to_poll}")
         run_ffmpeg(video_id)
-        metdata = {
-            completed_at: datetime.datetime.now().isoformat()
-        }
-        store_metadata_in_redis(video_id, metadata)
+        store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
 
 
 if __name__ == "__main__":
