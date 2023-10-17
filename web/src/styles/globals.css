@@ -17,6 +17,7 @@
   width: 433px;
   height: 300px;
   transform: rotateY(9deg) rotateZ(2deg);
+  background-color: black;
 }
 
 #container video:nth-child(2) {
@@ -25,6 +26,7 @@
   left: 470px;
   width: 370px;
   height: 298px;
+  background-color: black;
 }
 
 #mask {
@@ -35,4 +37,14 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+#black {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 99%;
+  background-color: black;
+  z-index: -9999999;
 }

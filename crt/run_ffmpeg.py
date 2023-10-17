@@ -156,12 +156,12 @@ def run_ffmpeg(video_id):
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
             '-i', f'{video_id}.mp4',
-            '-vframes', '3000',
+            '-vframes', '4000',
             '-an', # mute
             '-c:v', 'libx264', # encode in h264, required by HLS
             #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', filters, # apply filtergraphs
-            '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '5',
+            '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '3',
             '-segment_list', f'{video_id}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_id}/stream%03d.ts'
         ]
         subprocess.run(command)

@@ -6,11 +6,11 @@ const youtubesearchapi = require("youtube-search-api");
 import { createClient } from "redis";
 
 
-function getRandomElements(arr: string[], n: number): string[] {
-  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+function getRandomElements(arr: string[], n: number, neverPicks: string[] = []): string[] {
+  const filtered = arr.filter(item => !neverPicks.includes(item));
+  const shuffled = [...filtered].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, n);
 }
-
 
 export const youtubeRouter = createTRPCRouter({
 
@@ -18,11 +18,12 @@ export const youtubeRouter = createTRPCRouter({
     .input(z.object({ topic: z.string() }))
     .query(async ({input}) => {
 
-      const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10)
+      const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10, [{ type: "video", videoDuration: "short" }])
+      console.log(results)
       const videoIds = results.items
         .filter((item: { type: string; }) => item.type === 'video')
         .map((item: { id: any; }) => item.id);
-      const picks = getRandomElements(videoIds, 2)
+      const picks = getRandomElements(videoIds, 2, ["zQy9sbRuMUw"])
       console.log(picks)
 
       let redisClient = await createClient({

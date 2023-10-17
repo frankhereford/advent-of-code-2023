@@ -17,7 +17,7 @@ def append_to_redis_list(redis_host='redis', redis_port=6379, key_to_append='enc
 
 def download_youtube_video(video_id):
     try:
-        subprocess.run(['yt-dlp', '--write-subs', '--write-auto-sub', '-o', '%(id)s.mp4', '-f', "best[height<=?360]", video_id])
+        subprocess.run(['timeout', '30s', 'yt-dlp', '--write-subs', '--write-auto-sub', '-o', '%(id)s.mp4', '-f', "best[height<=?360]", video_id])
     except Exception as e:
         print(f"Something went wrong: {e}")
 

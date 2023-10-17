@@ -20,7 +20,7 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id }) => {
     }
   }, [video_id]);
 
-  return <video ref={videoRef} muted autoPlay></video>;
+  return <video ref={videoRef} muted autoPlay loop></video>;
 };
 
 export default VideoComponent;
