@@ -15,6 +15,10 @@ def validate_string(s):
     pattern = re.compile("^[a-zA-Z0-9-_]+$")
     return bool(pattern.match(s))
 
+def store_metadata_in_redis(video_id, metadata):
+    # Create a Redis hash for this video_id
+    r.hset(f"video:{video_id}", mapping=metadata)
+
 def run_ffmpeg(video_id):
     if not validate_string(video_id):
         print("Invalid video ID")
@@ -182,6 +186,10 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
         video_id = video_id.decode('utf-8')
         print(f"Got video ID {video_id} from {queue_to_poll}")
         run_ffmpeg(video_id)
+        metdata = {
+            completed_at: datetime.datetime.now().isoformat()
+        }
+        store_metadata_in_redis(video_id, metadata)
 
 
 if __name__ == "__main__":
