@@ -1,40 +1,24 @@
-version: '3'
+version: '3.7'  # Updated version to support newer features
 services:
   download:
-    depends_on:
-      - redis
-    build: download
-    container_name: download
+    image: frankinaustin/television-download:latest
     volumes:
       - .:/application
   crt:
-    build: crt
-    container_name: crt
-    depends_on:
-      - redis
-    #devices:
-      #- /dev/dri:/dev/dri
+    image: frankinaustin/television-crt:latest
     volumes:
       - .:/application
   redis:
-    container_name: redis
     image: redis:latest
     ports:
       - "6379:6379"
   web:
-    container_name: web
-    build: web
-    depends_on:
-      - redis
+    image: frankinaustin/television-web:latest
     volumes:
       - .:/application
     entrypoint: ["npx", "next", "dev"]
   haproxy:
-    depends_on:
-      - web
-      - apache 
-    build: haproxy
-    container_name: haproxy
+    image: frankinaustin/television-haproxy:latest
     ports:
       - "80:80"
       - "443:443"
@@ -42,7 +26,6 @@ services:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
   apache:
     image: httpd:2.4
-    container_name: apache
     volumes:
       - ./workdir/:/usr/local/apache2/htdocs/video_processor/
     environment:
