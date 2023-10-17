@@ -19,6 +19,7 @@ export const youtubeRouter = createTRPCRouter({
     .query(async ({input}) => {
 
       const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10, [{ type: "video", videoDuration: "short" }])
+      console.log(results)
       const videoIds = results.items
         .filter((item: { type: string; }) => item.type === 'video')
         .map((item: { id: any; }) => item.id);

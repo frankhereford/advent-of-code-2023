@@ -66,6 +66,7 @@ export default function Home() {
     };
   }, [videos.data, videoReady]);
 
+          // <div id='black'></div>
   return (
     <>
       <Head>
@@ -75,7 +76,6 @@ export default function Home() {
       </Head>
       <main>
         <div id="container">
-          <div id='black'></div>
           {videoIDs.map((id, index) => (
             <VideoComponent key={index} video_id={videoReady[id] ? id : getStatic()} />
           ))}

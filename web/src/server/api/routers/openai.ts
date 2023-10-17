@@ -61,18 +61,20 @@ export const openaiRouter = createTRPCRouter({
       It doesn't need to be big. Maybe big enough to have a youtube video about it.
       Pick a B-list choice. Don't pick the obvious stuff.
       `, `
+      Really cool musicians who were cool as fuck. Only ones who had a lot of videos.
+      `, `
       Tell me the name of a saturday morning cartoon. Just that. Just the name.
       `]
 
-      //prompts = prompts.filter(item => item.includes('city'));
+      prompts = prompts.filter(item => item.includes('musicians'));
 
 
       const prompt = getRandomElement(prompts)
 
       const params: OpenAI.Chat.ChatCompletionCreateParams = {
         messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-4',
-        // model: 'gpt-3.5-turbo',
+        //model: 'gpt-4',
+        model: 'gpt-3.5-turbo',
       };
       const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
       if (chatCompletion?.choices[0]?.message?.content) {
