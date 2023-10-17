@@ -33,7 +33,7 @@ services:
     depends_on:
       - web
       - apache 
-    image: haproxy:latest
+    build: haproxy
     container_name: haproxy
     ports:
       - "80:80"
