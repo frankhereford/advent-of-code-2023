@@ -4,6 +4,19 @@ import Head from "next/head";
 import VideoComponent from './VideoComponent'; 
 
 import { api } from "~/utils/api";
+
+function getStatic(): string | null {
+  const myArray: string[] = ["CKsLgdbzlfk", "OUoA-dKQhtc", "S7askw5Z084", "yCPtemRqJks", "bVy32Lx41-o"];
+
+  if (myArray.length === 0) {
+    return null;
+  }
+
+  const randomIndex = Math.floor(Math.random() * myArray.length);
+  return myArray[randomIndex]!;
+}
+
+
 export default function Home() {
   
   //const [videoReady, setVideoReady] = useState({});
@@ -57,7 +70,7 @@ export default function Home() {
       <main>
         <div id="container">
           {videoIDs.map((id, index) => (
-            <VideoComponent key={index} video_id={videoReady[id] ? id : null} />
+            <VideoComponent key={index} video_id={videoReady[id] ? id : getStatic()} />
           ))}
           <img id="mask" src="/web/televisions_mask.png"></img>
         </div>
