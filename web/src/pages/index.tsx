@@ -48,7 +48,7 @@ export default function Home() {
         // Skip if this video is already ready
         if (videoReady[videoID]) continue;
 
-        const url = `/video_processor/${videoID}/playlist.m3u8`;
+        const url = `/${videoID}/playlist.m3u8`;
         const res = await fetch(url);
         if (res.status !== 404 && !isCancelled) {
           setVideoReady(prev => ({ ...prev, [videoID]: true }));
@@ -79,7 +79,7 @@ export default function Home() {
           {videoIDs.map((id, index) => (
             <VideoComponent key={index} video_id={videoReady[id] ? id : getStatic()} />
           ))}
-          <img id="mask" src="/web/televisions_mask.png"></img>
+          <img id="mask" src="/televisions_mask.png"></img>
         </div>
       </main>
     </>

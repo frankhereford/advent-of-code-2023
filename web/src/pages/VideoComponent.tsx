@@ -14,7 +14,7 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id }) => {
     const video = videoRef.current;
     if (Hls.isSupported() && video) {
       const hls = new Hls();
-      const url = '/video_processor/' + video_id + '/playlist.m3u8'
+      const url = video_id + '/playlist.m3u8'
       hls.loadSource(url);
       hls.attachMedia(video);
     }
