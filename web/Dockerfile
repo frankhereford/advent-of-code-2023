@@ -12,4 +12,4 @@ RUN mkdir /application
 COPY . /application/web
 WORKDIR /application/web
 RUN npm install
-CMD ["npx", "next", "dev"]
+ENTRYPOINT ["npx", "next", "dev"]
