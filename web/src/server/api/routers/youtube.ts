@@ -12,29 +12,40 @@ function getRandomElements(arr: string[], n: number, neverPicks: string[] = []):
   return shuffled.slice(0, n);
 }
 
-export const youtubeRouter = createTRPCRouter({
+async function getRandomVideoKeysFromRedis(redisClient: any, existingPicks: string[]): Promise<string[]> {
+  const keysPattern = "video:*";
+  const allKeys = await redisClient.keys(keysPattern);
+  const numToPick = 2 - existingPicks.length; // If existingPicks has 0 or 1 element, pick 2 or 1 more
+  return getRandomElements(allKeys.map((key: string) => key.split(":")[1]), numToPick, existingPicks);
+}
 
+export const youtubeRouter = createTRPCRouter({
   get_video: publicProcedure
     .input(z.object({ topic: z.string() }))
-    .query(async ({input}) => {
-
-      const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10, [{ type: "video", videoDuration: "short" }])
-      console.log(results)
+    .query(async ({ input }) => {
+      const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10, [{ type: "video", videoDuration: "short" }]);
       const videoIds = results.items
         .filter((item: { type: string; }) => item.type === 'video')
         .map((item: { id: any; }) => item.id);
-      const picks = getRandomElements(videoIds, 2, ["zQy9sbRuMUw"])
-      console.log(picks)
 
       let redisClient = await createClient({
         url: 'redis://redis'
       }).connect();
 
+      let picks: string[] = [];
+
+      picks = getRandomElements(videoIds, 2, ["zQy9sbRuMUw"]);
+
+      // Adding from Redis, if needed
+      const additionalPicks = await getRandomVideoKeysFromRedis(redisClient, picks);
+      picks = [...picks, ...additionalPicks];
+
+      console.log(picks);
+
       await redisClient.rPush('start_queue', picks);
 
       return {
         videos: picks
-    }
-
+      };
     }),
 });

@@ -180,7 +180,7 @@ def run_ffmpeg(video_id):
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
             '-i', f'{source_path}/{video_id}.mp4',
-            '-vframes', '4000',
+            '-vframes', '500',
             '-an', # mute
             '-c:v', 'libx264', # encode in h264, required by HLS
             #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
