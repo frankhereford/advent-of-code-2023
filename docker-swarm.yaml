@@ -28,6 +28,6 @@ services:
   apache:
     image: httpd:2.4
     volumes:
-      - ./workdir/hls:/usr/local/apache2/htdocs/
+      - ./media/hls:/usr/local/apache2/htdocs/
     environment:
       - TZ=UTC

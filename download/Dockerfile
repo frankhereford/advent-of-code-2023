@@ -13,8 +13,8 @@ RUN python3 -m pip install -U yt-dlp vtt_to_srt3 redis
 
 RUN mkdir /application
 COPY . /application/download
-RUN mkdir /application/workdir
-WORKDIR /application/workdir
+RUN mkdir /application/media
+WORKDIR /application/media
 
 ENTRYPOINT ["/application/download/download_video.py"]
 

@@ -38,7 +38,7 @@ def run_ffmpeg(video_id):
         print("Invalid video ID")
         return
     try:
-        source_path = f'/application/workdir/downloads/{video_id}'
+        source_path = f'/application/media/downloads/{video_id}'
         subtitles = None
         if os.path.exists(f'{video_id}.en.srt'):
             subtitles=f"subtitles={source_path}/{video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
@@ -161,7 +161,7 @@ def run_ffmpeg(video_id):
 
 
         # Create a directory for the video
-        video_dir = f"/application/workdir/hls/{video_id}"
+        video_dir = f"/application/media/hls/{video_id}"
         if os.path.exists(video_dir):
             shutil.rmtree(video_dir)
         os.makedirs(video_dir, exist_ok=True)

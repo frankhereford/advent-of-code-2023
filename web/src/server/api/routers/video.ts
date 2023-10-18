@@ -5,7 +5,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import fs from 'fs';
 import path from 'path';
 
-const dirPath: string = '/application/workdir/';
+const dirPath: string = '/application/media/';
 
 const getDirectories = (source: string): string[] => {
   return fs.readdirSync(source, { withFileTypes: true })

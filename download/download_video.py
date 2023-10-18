@@ -15,7 +15,7 @@ def append_to_redis_list(redis_host='redis', redis_port=6379, key_to_append='enc
 def download_youtube_video(video_id):
     try:
         # Create a directory for the video
-        video_dir = f"/application/workdir/downloads/{video_id}"
+        video_dir = f"/application/media/downloads/{video_id}"
         os.makedirs(video_dir, exist_ok=True)
 
         subprocess.run(['timeout', '60s', 'yt-dlp', '--write-subs', '--write-auto-sub', '-o', f"{video_dir}/%(id)s.mp4", '-f', "best[height<=?360]", video_id])
@@ -24,7 +24,7 @@ def download_youtube_video(video_id):
 
 def convert_subtitles(video_id):
     try:
-        convert_file = ConvertFile(f"/application/workdir/{video_id}.en.vtt", "utf-8")
+        convert_file = ConvertFile(f"/application/media/{video_id}.en.vtt", "utf-8")
         convert_file.convert()
     except Exception as e:
         print(f"Couldn't convert subttitles: {e}")
