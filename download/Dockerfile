@@ -11,6 +11,9 @@ RUN apt-get install -y vim aptitude python3-pip magic-wormhole file
 # install youtube downloader
 RUN python3 -m pip install -U yt-dlp vtt_to_srt3 redis
 
+RUN mkdir /application
+COPY . /application/download
+RUN mkdir /application/workdir
 WORKDIR /application/workdir
 
 ENTRYPOINT ["/application/download/download_video.py"]

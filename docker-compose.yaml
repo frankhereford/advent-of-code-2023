@@ -12,21 +12,10 @@ services:
     container_name: crt
     depends_on:
       - redis
-    cap_add:
-      - SYS_ADMIN
     #devices:
       #- /dev/dri:/dev/dri
     volumes:
       - .:/application
-  #serve:
-    #container_name: serve
-    #build: serve
-    #depends_on:
-      #- redis
-    #environment:
-      #- FLASK_ENV=development
-    #volumes:
-      #- .:/application
   redis:
     container_name: redis
     image: redis:latest
@@ -35,6 +24,8 @@ services:
   web:
     container_name: web
     build: web
+    depends_on:
+      - redis
     volumes:
       - .:/application
     entrypoint: ["npx", "next", "dev"]
@@ -42,10 +33,11 @@ services:
     depends_on:
       - web
       - apache 
-    image: haproxy:latest
+    build: haproxy
     container_name: haproxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
   apache:

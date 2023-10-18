@@ -3,9 +3,12 @@
 # https://oioiiooixiii.blogspot.com
 
 import subprocess
+import redis
 import sys
 import os
 import re
+import shutil
+import datetime
 
 def validate_string(s):
     if len(s) != 11:
@@ -13,14 +16,32 @@ def validate_string(s):
     pattern = re.compile("^[a-zA-Z0-9-_]+$")
     return bool(pattern.match(s))
 
+def store_metadata_in_redis(video_id, metadata):
+    # Create a Redis hash key for this video_id
+    r = redis.Redis(host='redis', port=6379, db=0)
+
+    redis_key = f"video:{video_id}"
+    
+    # Fetch existing data if any
+    existing_data_raw = r.hgetall(redis_key)
+    existing_data = {k.decode(): v.decode() for k, v in existing_data_raw.items()}
+    
+    if existing_data:
+        # Merge existing and new metadata (new values overwrite existing ones)
+        existing_data.update(metadata)
+        r.hmset(redis_key, existing_data)
+    else:
+        r.hmset(redis_key, metadata)
+
 def run_ffmpeg(video_id):
     if not validate_string(video_id):
         print("Invalid video ID")
         return
     try:
+        source_path = f'/application/workdir/downloads/{video_id}'
         subtitles = None
         if os.path.exists(f'{video_id}.en.srt'):
-            subtitles=f"subtitles={video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
+            subtitles=f"subtitles={source_path}/{video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
 
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
@@ -139,8 +160,11 @@ def run_ffmpeg(video_id):
         skipFrames="select=mod(n\,2)"
 
 
-        subprocess.run(f'rm -frv {video_id}', shell=True)
-        subprocess.run(f'mkdir {video_id}', shell=True)
+        # Create a directory for the video
+        video_dir = f"/application/workdir/hls/{video_id}"
+        if os.path.exists(video_dir):
+            shutil.rmtree(video_dir)
+        os.makedirs(video_dir, exist_ok=True)
 
         filters = ''
         if subtitles:
@@ -155,22 +179,30 @@ def run_ffmpeg(video_id):
         command = [
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
-            '-i', f'{video_id}.mp4',
+            '-i', f'{source_path}/{video_id}.mp4',
             '-vframes', '4000',
             '-an', # mute
             '-c:v', 'libx264', # encode in h264, required by HLS
             #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', filters, # apply filtergraphs
             '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '3',
-            '-segment_list', f'{video_id}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_id}/stream%03d.ts'
+            '-segment_list', f'{video_dir}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_dir}/stream%03d.ts'
         ]
         subprocess.run(command)
 
     except Exception as e:
         print(f"Something went wrong: {e}")
 
+def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_queue'):
+    r = redis.Redis(host=redis_host, port=redis_port)
+    while True:
+        _, video_id = r.blpop(queue_to_poll)
+        video_id = video_id.decode('utf-8')
+        store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
+        print(f"Got video ID {video_id} from {queue_to_poll}")
+        run_ffmpeg(video_id)
+        store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
+
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        run_ffmpeg(sys.argv[1])
-    else:
-        print("Please provide a YouTube video ID as an argument.")
+    poll_redis_list()
