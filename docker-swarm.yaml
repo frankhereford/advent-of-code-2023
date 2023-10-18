@@ -2,6 +2,8 @@ version: '3.7'  # Updated version to support newer features
 services:
   download:
     image: frankinaustin/television-download:latest
+    deploy:
+      replicas: 2
     volumes:
       - .:/application
   crt:
@@ -9,13 +11,13 @@ services:
     volumes:
       - .:/application
     deploy:
-      replicas: 6
+      replicas: 2
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
-  web:
-    image: frankinaustin/television-web:latest
+  nextjs:
+    image: frankinaustin/television-nextjs:latest
     volumes:
       - .:/application
     entrypoint: ["npx", "next", "dev"]

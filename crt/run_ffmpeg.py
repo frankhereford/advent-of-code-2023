@@ -196,6 +196,7 @@ def run_ffmpeg(video_id):
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
     while True:
+        print("about to block at redis queue")
         _, video_id = r.blpop(queue_to_poll)
         video_id = video_id.decode('utf-8')
         store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})

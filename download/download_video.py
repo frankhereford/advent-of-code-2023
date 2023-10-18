@@ -32,6 +32,7 @@ def convert_subtitles(video_id):
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='start_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
     while True:
+        print("about to block at the redis queue")
         _, video_id = r.blpop(queue_to_poll)
         video_id = video_id.decode('utf-8')
         print(f"Got video ID {video_id} from {queue_to_poll}")
