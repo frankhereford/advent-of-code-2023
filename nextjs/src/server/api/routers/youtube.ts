@@ -42,7 +42,12 @@ export const youtubeRouter = createTRPCRouter({
 
       console.log(picks);
 
-      await redisClient.rPush('start_queue', picks);
+      if (picks.length > 0) {
+        await redisClient.rPush('start_queue', picks);
+      }
+      else {
+        console.log("No videos found");
+      }
 
       return {
         videos: picks
