@@ -12,3 +12,14 @@
 ./add_video.sh vcZv6yfBcLk
 ./add_video.sh mCcNtjVBL3w
 ./add_video.sh IeRJnQBySCg
+
+
+LPUSH start_queue CKsLgdbzlfk
+LPUSH start_queue S7askw5Z084
+LPUSH start_queue bVy32Lx41-o
+LPUSH start_queue N0OPOsN3kA8
+LPUSH start_queue htdAiUyoFDU
+LPUSH start_queue nqtwZXp88w0
+LPUSH start_queue vcZv6yfBcLk
+LPUSH start_queue mCcNtjVBL3w
+LPUSH start_queue IeRJnQBySCg
