@@ -14,6 +14,7 @@ def add_encoding_key_with_time_and_ttl(video_id):
     # Connect to Redis
     r = redis.Redis(host='redis', port=6379, db=0)
 
+    video_id = video_id.decode('utf-8')
     # Create the key name
     key_name = f"encoding:{video_id}"
 
