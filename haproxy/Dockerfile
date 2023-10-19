@@ -1,4 +1,3 @@
 FROM haproxy:latest
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080

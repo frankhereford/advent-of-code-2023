@@ -9,7 +9,7 @@ RUN apt-get update && \
 RUN apt-get install -y vim aptitude python3-pip magic-wormhole file
 
 RUN mkdir /application
-COPY . /application/web
-WORKDIR /application/web
+COPY . /application/nextjs
+WORKDIR /application/nextjs
 RUN npm install
 ENTRYPOINT ["npx", "next", "dev"]
