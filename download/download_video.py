@@ -18,7 +18,7 @@ def download_youtube_video(video_id):
         video_dir = f"/application/media/downloads/{video_id}"
         os.makedirs(video_dir, exist_ok=True)
 
-        subprocess.run(['timeout', '60s', 'yt-dlp', '--write-subs', '--write-auto-sub', '-o', f"{video_dir}/%(id)s.mp4", '-f', "best[height<=?360]", video_id])
+        subprocess.run(['timeout', '60s', 'yt-dlp', '--no-progress', '--write-subs', '--write-auto-sub', '-o', f"{video_dir}/%(id)s.mp4", '-f', "best[height<=?360]", video_id])
     except Exception as e:
         print(f"Something went wrong: {e}")
 
