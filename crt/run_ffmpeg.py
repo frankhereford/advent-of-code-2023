@@ -10,6 +10,20 @@ import re
 import shutil
 import datetime
 
+def add_encoding_key_with_time_and_ttl(video_id):
+    # Connect to Redis
+    r = redis.Redis(host='redis', port=6379, db=0)
+
+    # Create the key name
+    key_name = f"encoding:{video_id}"
+
+    # Get the current time in human-readable format
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Set the value for the key with a 120-second TTL
+    r.setex(key_name, 120, current_time)
+
+
 def validate_string(s):
     if len(s) != 11:
         return False
@@ -198,6 +212,7 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
     while True:
         print("about to block at redis queue")
         _, video_id = r.blpop(queue_to_poll)
+        add_encoding_key_with_time_and_ttl(video_id)
         video_id = video_id.decode('utf-8')
         store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
         print(f"Got video ID {video_id} from {queue_to_poll}")
