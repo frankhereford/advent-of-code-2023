@@ -3,9 +3,8 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 import fs from 'fs';
-import path from 'path';
 
-const dirPath: string = '/application/media/';
+const dirPath = '/application/media/';
 
 const getDirectories = (source: string): string[] => {
   return fs.readdirSync(source, { withFileTypes: true })
@@ -13,7 +12,7 @@ const getDirectories = (source: string): string[] => {
     .map(dirent => dirent.name);
 }
 
-export const videoRouter = createTRPCRouter({
+export const mediaRouter = createTRPCRouter({
   top_television: publicProcedure
     .input(z.object({ topic: z.string() }))
     .query(() => {
