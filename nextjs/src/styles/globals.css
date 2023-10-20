@@ -3,48 +3,36 @@
 @tailwind utilities;
 
 
-#container {
-  position: relative;
-  width: 1024px;
-  height: 1024px;
-  perspective: 1000px;
-}
-
-#container video:nth-child(1) {
-  position: absolute;
-  top: 180px;
-  left: 497px;
-  width: 433px;
-  height: 300px;
-  transform: rotateY(9deg) rotateZ(2deg);
-  background-color: black;
-}
-
-#container video:nth-child(2) {
-  position: absolute;
-  top: 550px;
-  left: 470px;
-  width: 370px;
-  height: 298px;
-  background-color: black;
-}
-
-#mask {
-  position: absolute;
-  opacity: 1;
-  top: 0;
-  left: 0;
-  width: 100%;
+body, html {
+  margin: 0;
+  padding: 0;
   height: 100%;
-  pointer-events: none;
+  background-color: #1e1e21;
 }
 
-#black {
-  position: absolute;
-  top: 0;
-  left: 0;
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* 100% of the viewport height */
+  max-width: 100vw;
+}
+
+.container .photograph {
+  width: 80vw; /* 50% of the viewport width */
+  height: auto; /* To maintain aspect ratio */
+  position: relative;
+  margin: auto; /* To center it */
+}
+
+.container .photograph img {
   width: 100%;
-  height: 99%;
-  background-color: black;
-  z-index: -9999999;
+  height: auto; /* To maintain aspect ratio */
+}
+
+.container .photograph .text {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  color: white;
 }
