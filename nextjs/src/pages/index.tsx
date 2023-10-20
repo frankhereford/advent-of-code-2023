@@ -5,7 +5,7 @@ import Image from "next/image";
 import VideoComponent from './VideoComponent'; 
 
 export default function Home() {
-  //const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
+  const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
 
   return (
     <>
@@ -17,9 +17,9 @@ export default function Home() {
       <main>
         <div className="container">
           <div className="photograph">
-            <div className="text">
-              Why is she taking the picture?
-            </div>
+            {videoIDs.map((id, index) => (
+              <VideoComponent key={index} video_id={id} />
+            ))}
             <Image
               id="mask"
               alt='televisions in the window of a repair shop'
@@ -33,9 +33,3 @@ export default function Home() {
     </>
   );
 }
-
-          /*
-          {videoIDs.map((id, index) => (
-            <VideoComponent key={index} video_id={id} />
-          ))}
-          */
