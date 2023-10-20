@@ -13,8 +13,6 @@ const getRandomElement = (arr: string[]): string => {
 };
 
 export const openaiRouter = createTRPCRouter({
-
-
   get_topic: publicProcedure
     //.input(z.object({ text: z.string() }))
     .query(async () => {
