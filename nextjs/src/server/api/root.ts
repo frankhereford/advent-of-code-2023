@@ -1,5 +1,5 @@
 //import { exampleRouter } from "~/server/api/routers/example";
-import { videoRouter } from "~/server/api/routers/video";
+import { mediaRouter } from "~/server/api/routers/media";
 import { openaiRouter } from "~/server/api/routers/openai";
 import { youtubeRouter } from "~/server/api/routers/youtube";
 import { createTRPCRouter } from "~/server/api/trpc";
@@ -10,7 +10,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  video: videoRouter,
+  media: mediaRouter,
   openai: openaiRouter,
   youtube: youtubeRouter,
 });
