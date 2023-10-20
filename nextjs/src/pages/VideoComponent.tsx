@@ -1,12 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
+import videos_of_static from "../utils/videos_of_static"
+
+function getStatic(): string {
+  const randomIndex = Math.floor(Math.random() * videos_of_static.length);
+  return videos_of_static[randomIndex]!;
+}
 
 interface VideoComponentProps {
   video_id?: string | null;
 }
 
-const VideoComponent: React.FC<VideoComponentProps> = ({ video_id }) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromProps }) => {
+  const [video_id] = useState<string>(videoIdFromProps ?? getStatic());
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!video_id) return;
@@ -14,7 +21,7 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id }) => {
     const video = videoRef.current;
     if (Hls.isSupported() && video) {
       const hls = new Hls();
-      const url = video_id + '/playlist.m3u8'
+      const url = video_id + '/playlist.m3u8';
       hls.loadSource(url);
       hls.attachMedia(video);
     }
