@@ -19,7 +19,7 @@ export const openaiRouter = createTRPCRouter({
     //.input(z.object({ text: z.string() }))
     .query(async () => {
 
-      var prompts: string[] = [`
+      const prompts: string[] = [`
       I want you to provide me the name of a natural disaster or war that occurred after 1960. 
       Please provide the name only and no date information. I want only the name in the response.
       I want you to not pick the first thing that comes to mind, but rather a lesser known event. 
