@@ -26,6 +26,7 @@ export default function Home() {
               src="/televisions_mask.png"
               width={1024}
               height={1024}
+              priority
             />
           </div>
         </div>
