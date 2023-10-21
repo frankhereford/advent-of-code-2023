@@ -28,8 +28,8 @@ services:
       - redis
     volumes:
       - .:/application
-    #entrypoint: ["npx", "next", "dev"]
-    entrypoint: ["npm", "run", "start"]
+    entrypoint: ["npx", "next", "dev"]
+    #entrypoint: ["npm", "run", "start"]
   haproxy:
     depends_on:
       - nextjs
