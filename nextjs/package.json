@@ -16,7 +16,6 @@
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "axios": "^1.5.1",
-    "handwritten.js": "^18.11.3",
     "hls.js": "^1.4.12",
     "next": "^13.5.4",
     "openai": "^4.12.1",
