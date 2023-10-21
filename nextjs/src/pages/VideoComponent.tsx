@@ -7,6 +7,10 @@ function getStatic(): string {
   return videos_of_static[randomIndex]!;
 }
 
+function getRandomNumber(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 interface VideoComponentProps {
   video_id?: string | null;
 }
@@ -38,7 +42,7 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromPr
   useEffect(() => {
     if (videoIdFromProps && videoIdFromProps !== video_id) {
       setVideoId(getStatic());
-      setTimeout(() => setVideoId(videoIdFromProps), 500);
+      setTimeout(() => setVideoId(videoIdFromProps), getRandomNumber(250, 750));
     }
   }, [videoIdFromProps, video_id]);
 
