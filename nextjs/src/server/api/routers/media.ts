@@ -1,36 +1,30 @@
-import { z } from "zod";
-
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-
 import fs from 'fs';
+import path from 'path';
+import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import videos_of_static from "../../../utils/videos_of_static"
 
-const dirPath = '/application/media/';
+const hlsPath = '/application/media/hls/';
 
-const getDirectories = (source: string): string[] => {
-  return fs.readdirSync(source, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-}
+const getVideos = (srcPath: string, num: number): string[] => {
+  const allDirs = fs.readdirSync(srcPath)
+    .filter(file => fs.statSync(path.join(srcPath, file)).isDirectory())
+    .filter(dir => !videos_of_static.includes(dir) && dir !== "cdE7e1HfCpI");
+
+  // Fisher-Yates Shuffle
+  for (let i = allDirs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allDirs[i], allDirs[j]] = [allDirs[j]!, allDirs[i]!];
+  }
+
+  return allDirs.slice(0, num);
+};
 
 export const mediaRouter = createTRPCRouter({
-  top_television: publicProcedure
-    .input(z.object({ topic: z.string() }))
-    .query(() => {
-      const directories: string[] = getDirectories(dirPath);
-      const randomIndex: number = Math.floor(Math.random() * directories.length);
-      const randomDir: string = directories[randomIndex]!;
-      return {
-        video_id: randomDir,
-      };
-    }),
-  bottom_television: publicProcedure
-    .input(z.object({ topic: z.string() }))
-    .query(() => {
-      const directories: string[] = getDirectories(dirPath);
-      const randomIndex: number = Math.floor(Math.random() * directories.length);
-      const randomDir: string = directories[randomIndex]!;
-      return {
-        video_id: randomDir,
-      };
+  get_random_videos: publicProcedure
+    .input(z.object({ length: z.number() }))
+    .query(({ input }) => {
+      const directories = getVideos(hlsPath, input.length);
+      return directories;
     }),
 });

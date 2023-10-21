@@ -12,20 +12,35 @@ interface VideoComponentProps {
 }
 
 const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromProps }) => {
-  const [video_id] = useState<string>(videoIdFromProps ?? getStatic());
+  const [video_id, setVideoId] = useState<string>(videoIdFromProps ?? getStatic());
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!video_id) return;
 
     const video = videoRef.current;
-    if (Hls.isSupported() && video) {
-      const hls = new Hls();
-      const url = video_id + '/playlist.m3u8';
-      hls.loadSource(url);
-      hls.attachMedia(video);
-    }
+    const hls = new Hls();
+
+    const loadVideo = () => {
+      if (Hls.isSupported() && video) {
+        const url = video_id + '/playlist.m3u8';
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      }
+    };
+
+    loadVideo();
+
+    return () => {
+      hls.destroy();
+    };
   }, [video_id]);
+
+useEffect(() => {
+    if (videoIdFromProps) {
+      setVideoId(videoIdFromProps);
+    }
+  }, [videoIdFromProps]);
 
   return <video ref={videoRef} muted autoPlay loop></video>;
 };

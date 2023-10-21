@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import Head from "next/head";
 import Image from "next/image";
+import { api } from "~/utils/api";
 
 import VideoComponent from './VideoComponent'; 
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
+
+  const videos = api.media.get_random_videos.useQuery({ length: 2 })
+
+  useEffect(() => {
+    if (!videos.data) return;
+    setVideoIDs(videos.data);
+  }, [videos.data]);
 
   return (
     <>
@@ -21,12 +29,10 @@ export default function Home() {
               <VideoComponent key={index} video_id={id} />
             ))}
             <Image
-              id="mask"
               alt='televisions in the window of a repair shop'
               src="/televisions_mask.png"
               width={1024}
               height={1024}
-              priority
             />
           </div>
         </div>
