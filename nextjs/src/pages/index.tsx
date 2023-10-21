@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Head from "next/head";
 import Image from "next/image";
 import { api } from "~/utils/api";
+//const handwritten = require('handwritten.js')
 
 import VideoComponent from './VideoComponent'; 
 
@@ -37,8 +38,7 @@ export default function Home() {
               />
             </div>
             <div className='caption'>
-              Taco
-
+              World Trade Center Bombing
             </div>
           </div>
         </div>
