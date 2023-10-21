@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import videos_of_static from "../utils/videos_of_static"
+import videos_of_static from "../utils/videos_of_static";
 
 function getStatic(): string {
   const randomIndex = Math.floor(Math.random() * videos_of_static.length);
@@ -16,31 +16,31 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromPr
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (!video_id) return;
-
     const video = videoRef.current;
     const hls = new Hls();
 
-    const loadVideo = () => {
+    const loadVideo = (url: string) => {
       if (Hls.isSupported() && video) {
-        const url = video_id + '/playlist.m3u8';
         hls.loadSource(url);
         hls.attachMedia(video);
       }
     };
 
-    loadVideo();
+    if (video_id) {
+      loadVideo(video_id + '/playlist.m3u8');
+    }
 
     return () => {
       hls.destroy();
     };
   }, [video_id]);
 
-useEffect(() => {
-    if (videoIdFromProps) {
-      setVideoId(videoIdFromProps);
+  useEffect(() => {
+    if (videoIdFromProps && videoIdFromProps !== video_id) {
+      setVideoId(getStatic());
+      setTimeout(() => setVideoId(videoIdFromProps), 500);
     }
-  }, [videoIdFromProps]);
+  }, [videoIdFromProps, video_id]);
 
   return <video ref={videoRef} muted autoPlay loop></video>;
 };
