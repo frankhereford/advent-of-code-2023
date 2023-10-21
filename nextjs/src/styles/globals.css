@@ -23,6 +23,7 @@ body, html {
   height: auto; /* To maintain aspect ratio */
   position: relative;
   margin: auto; /* To center it */
+  perspective: 1000px;
 }
 
 .container .photograph img {
@@ -30,6 +31,8 @@ body, html {
   width: 100%;
   height: auto; /* To maintain aspect ratio */
   z-index: 2;
+  pointer-events: none;
+  opacity: 1;
 }
 
 .container .photograph .text {
@@ -42,9 +45,10 @@ body, html {
 .container .photograph video:nth-child(1) {
   position: absolute;
   top: 18.1%;
-  left: 51.5%;
-  width: 35%;
+  left: 51.3%;
+  width: 36.3%;
   z-index: 1;
+  transform: rotateY(9deg) rotateZ(2deg);
 }
 
 .container .photograph video:nth-child(2) {
