@@ -9,7 +9,8 @@ const hlsPath = '/application/media/hls/';
 const getVideos = (srcPath: string, num: number): string[] => {
   const allDirs = fs.readdirSync(srcPath)
     .filter(file => fs.statSync(path.join(srcPath, file)).isDirectory())
-    .filter(dir => !videos_of_static.includes(dir));
+    .filter(dir => !videos_of_static.includes(dir))
+    .filter(dir => fs.existsSync(path.join(srcPath, dir, 'playlist.m3u8')));
 
   // Fisher-Yates Shuffle
   for (let i = allDirs.length - 1; i > 0; i--) {
