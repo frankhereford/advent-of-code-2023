@@ -26,6 +26,7 @@ body, html {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   background-color: #eaeaea;
+  transform: rotate(-2deg);
 }
 
 .container .photograph {
@@ -37,9 +38,11 @@ body, html {
 }
 
 .caption {
-  padding: 10px;
-  font-size: 16px;
+  font-family: 'Nothing You Could Do', cursive;
+  margin-top:2vh;
+  font-size: 4vh;
   min-height:8vh;
+  transform: rotate(-2deg);
 }
 
 .container .photograph img {
