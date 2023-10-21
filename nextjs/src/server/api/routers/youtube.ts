@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from "../../../env.mjs";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-const youtubesearchapi = require("youtube-search-api");
+import youtubesearchapi from "youtube-search-api";
 
 import { createClient } from "redis";
 
@@ -28,7 +34,7 @@ export const youtubeRouter = createTRPCRouter({
         .filter((item: { type: string; }) => item.type === 'video')
         .map((item: { id: any; }) => item.id);
 
-      let redisClient = await createClient({
+      const redisClient = await createClient({
         url: 'redis://redis'
       }).connect();
 

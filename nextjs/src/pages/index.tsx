@@ -9,6 +9,8 @@ export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
 
   const videos = api.media.get_random_videos.useQuery({ length: 2 })
+  const topic = api.openai.get_topic.useQuery();
+  const youtube = api.youtube.get_video.useQuery({ topic: topic.data?.topic }, { enabled: !!topic.data });
 
   useEffect(() => {
     if (!videos.data) return;
