@@ -19,7 +19,7 @@ body, html {
 }
 
 .container .photograph {
-  width: 80vw; /* 50% of the viewport width */
+  width: 80vw;
   height: auto; /* To maintain aspect ratio */
   position: relative;
   margin: auto; /* To center it */
