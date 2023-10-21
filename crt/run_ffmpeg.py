@@ -9,6 +9,14 @@ import os
 import re
 import shutil
 import datetime
+from vtt_to_srt.vtt_to_srt import ConvertFile
+
+def convert_subtitles(video_id):
+    try:
+        convert_file = ConvertFile(f"/application/media/downloads/{video_id}/{video_id}.en.vtt", "utf-8")
+        convert_file.convert()
+    except Exception as e:
+        print(f"Couldn't convert subtitles: {e}")
 
 def add_encoding_key_with_time_and_ttl(video_id):
     # Connect to Redis
@@ -53,9 +61,9 @@ def run_ffmpeg(video_id):
         print("Invalid video ID")
         return
     try:
-        source_path = f'/application/media/downloads/{video_id}'
+        source_path = f'/application/media/downloads/{video_id}/'
         subtitles = None
-        if os.path.exists(f'{video_id}.en.srt'):
+        if os.path.exists(f'/application/media/downloads/{video_id}/{video_id}.en.srt'):
             subtitles=f"subtitles={source_path}/{video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
 
         # Reduce input to 25% PAL resolution
@@ -217,6 +225,7 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
         video_id = video_id.decode('utf-8')
         store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
         print(f"Got video ID {video_id} from {queue_to_poll}")
+        convert_subtitles(video_id)
         run_ffmpeg(video_id)
         store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
 
