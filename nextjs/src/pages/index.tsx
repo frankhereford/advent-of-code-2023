@@ -24,16 +24,22 @@ export default function Home() {
       </Head>
       <main>
         <div className="container">
-          <div className="photograph">
-            {videoIDs.map((id, index) => (
-              <VideoComponent key={index} video_id={id} />
-            ))}
-            <Image
-              alt='televisions in the window of a repair shop'
-              src="/televisions_mask.png"
-              width={1024}
-              height={1024}
-            />
+          <div className='polaroid'>
+            <div className="photograph">
+              {videoIDs.map((id, index) => (
+                <VideoComponent key={index} video_id={id} />
+              ))}
+              <Image
+                alt='televisions in the window of a repair shop'
+                src="/televisions_mask.png"
+                width={1024}
+                height={1024}
+              />
+            </div>
+            <div className='caption'>
+              Taco
+
+            </div>
           </div>
         </div>
       </main>
