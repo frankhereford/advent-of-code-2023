@@ -16,6 +16,7 @@ export default function Home() {
 
   const videoQuery = api.youtube.get_video.useQuery({ topic: topic! }, {
     enabled: searchYouTube,
+    //enabled: false,
     trpc: { context: { skipBatch: true, }, },
   });
 

@@ -1,7 +1,6 @@
 import { env } from "../../../env.mjs";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-//const youtubesearchapi = require("youtube-search-api");
 import { google, youtube_v3 } from 'googleapis';
 
 import { createClient } from "redis";
@@ -12,12 +11,13 @@ const youtube = google.youtube({
 });
 
 async function searchYouTube(query: string) {
+  console.log('in here')
   try {
     const res = await youtube.search.list({
       part: 'snippet',
       q: query,
       type: 'video',
-      maxResults: 5
+      maxResults: 10, 
     });
 
     const videos = res.data.items;
@@ -55,19 +55,25 @@ export const youtubeRouter = createTRPCRouter({
   get_video: publicProcedure
     .input(z.object({ topic: z.string() }))
     .query(async ({ input }) => {
+      const redisClient = await createClient({
+        url: 'redis://redis'
+      }).connect();
+
+      // old api
       //const results = await youtubesearchapi.GetListByKeyword(input.topic, false, 10, [{ type: "video", videoDuration: "short" }]);
       //const videoIds = results.items
         //.filter((item: { type: string; }) => item.type === 'video')
         //.map((item: { id: any; }) => item.id);
 
-      const results = await searchYouTube(input.topic)
+      // this is the new api
+      //const results = await searchYouTube(input.topic)
 
-      const redisClient = await createClient({
-        url: 'redis://redis'
-      }).connect();
+      // compute return array here when I can search again
 
-      let picks: string[] = [];
 
+      let picks: string[] = ['eE1RjBJ0wjE'];
+
+      // old
       //picks = getRandomElements(videoIds, 2, ["zQy9sbRuMUw"]);
 
       // Adding from Redis, if needed
@@ -77,7 +83,7 @@ export const youtubeRouter = createTRPCRouter({
       console.log(picks);
 
       if (picks.length > 0) {
-        //await redisClient.rPush('start_queue', picks);
+        await redisClient.rPush('start_queue', picks);
       }
       else {
         console.log("No videos found");
