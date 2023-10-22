@@ -6,9 +6,17 @@ import Polaroid from '~/pages/components/Polaroid';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>(Array.from({ length: 2 }, () => null));
-  const [label, setLabel] = useState<(string | null)>('tuna & fish');
+  const [label, setLabel] = useState<(string | null)>('');
 
 
+  const topic = api.openai.get_topic.useQuery({hint: ''}, {});
+
+  useEffect(() => {
+    if (topic.data) {
+      console.log("Topic response:", topic.data);
+      setLabel(topic.data.topic)
+    }
+  }, [topic.data]);
 
   return (
     <>
