@@ -55,15 +55,18 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     const video = videoRef.current;
     const hls = new Hls();
 
-    const loadVideo = (url: string) => {
+
+    const loadVideo = (videoId: string) => {
+      const url = videoId + '/playlist.m3u8'
       if (Hls.isSupported() && video) {
         hls.loadSource(url);
         hls.attachMedia(video);
       }
     };
 
+
     if (playingVideoId) {
-      loadVideo(playingVideoId + '/playlist.m3u8');
+      loadVideo(playingVideoId);
     }
 
     setInLoading(false);
