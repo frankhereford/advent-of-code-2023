@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import videos_of_static from "../../utils/videos_of_static";
+import videos_of_static from "~/utils/videos_of_static";
 
 function getStatic(): string {
   const randomIndex = Math.floor(Math.random() * videos_of_static.length);
