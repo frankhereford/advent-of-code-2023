@@ -80,17 +80,19 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
     if (inLoading) return;
     if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
-      setPlayingVideoId(getStatic());
       console.log("got a new video assignment", videoIdFromProps);
+      setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
       setInLoading(true);
     }
     else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
+      console.log('new nextVideo thing')
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
       setNextPlayingVideoId('');
       setInLoading(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoIdFromProps, playingVideoId, nextPlayingVideoId]);
 
   return <video ref={videoRef} muted autoPlay loop></video>;
