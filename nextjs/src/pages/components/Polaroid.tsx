@@ -14,7 +14,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
       <div className='polaroid'>
         <div className="photograph">
           {videoIDs.map((id, index) => (
-            <Video key={index} video_id={id} />
+            <Video key={index} videoId={id} />
           ))}
           <Image
             alt='televisions in the window of a repair shop'

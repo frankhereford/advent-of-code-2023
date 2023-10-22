@@ -23,7 +23,7 @@ const getVideos = (srcPath: string, num: number): string[] => {
 
 export const mediaRouter = createTRPCRouter({
   get_random_videos: publicProcedure
-    .input(z.object({ length: z.number() }))
+    .input(z.object({ length: z.number(), uuid: z.string() }))
     .query(({ input }) => {
       const directories = getVideos(hlsPath, input.length);
       return directories;
