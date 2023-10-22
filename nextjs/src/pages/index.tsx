@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import Head from "next/head";
-import Image from "next/image";
 import { api } from "~/utils/api";
 
-import Video from './components/Video'; 
+import Polaroid from './components/Polaroid';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
@@ -24,22 +23,7 @@ export default function Home() {
       </Head>
       <main>
         <div className="container">
-          <div className='polaroid'>
-            <div className="photograph">
-              {videoIDs.map((id, index) => (
-                <Video key={index} video_id={id} />
-              ))}
-              <Image
-                alt='televisions in the window of a repair shop'
-                src="/televisions_mask.png"
-                width={1024}
-                height={1024}
-              />
-            </div>
-            <div className='caption'>
-              World Trade Center Bombing
-            </div>
-          </div>
+          <Polaroid videoIDs={videoIDs} />
         </div>
       </main>
     </>
