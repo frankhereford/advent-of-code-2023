@@ -22,6 +22,7 @@ interface VideoProps {
 const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [nextPlayingVideoId, setNextPlayingVideoId] = useState<string>('');
   const [playingVideoId, setPlayingVideoId] = useState<string>(videoIdFromProps ?? getStatic());
+  const [inLoading, setInLoading] = useState<boolean>(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [uuid] = useState<string>(uuidv4());
 
@@ -41,7 +42,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     if (!videoIdFromProps) {
       timer = setInterval(() => {
         void randomVideo.refetch();
-      }, getRandomNumber(10000, 20000));
+      }, getRandomNumber(3000, 6000));
     }
 
     return () => {
@@ -65,20 +66,27 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
       loadVideo(playingVideoId + '/playlist.m3u8');
     }
 
+    setInLoading(false);
+
     return () => {
       hls.destroy();
     };
+
   }, [playingVideoId]);
 
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
+    if (inLoading) return;
     if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
       setPlayingVideoId(getStatic());
+      console.log("got a new video assignment", videoIdFromProps);
       setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
+      setInLoading(true);
     }
     else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
       setNextPlayingVideoId('');
+      setInLoading(true);
     }
   }, [videoIdFromProps, playingVideoId, nextPlayingVideoId]);
 
