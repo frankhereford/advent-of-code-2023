@@ -25,7 +25,9 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [uuid] = useState<string>(uuidv4());
 
-  const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { })
+  const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
+    refetchOnWindowFocus: false,
+  })
 
   useEffect(() => { // handle data coming back from the random video query
     if (videoIdFromProps) return;
