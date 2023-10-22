@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import Head from "next/head";
 import Image from "next/image";
 import { api } from "~/utils/api";
-//const handwritten = require('handwritten.js')
 
-import VideoComponent from './VideoComponent'; 
+import Video from './components/Video'; 
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
@@ -28,7 +27,7 @@ export default function Home() {
           <div className='polaroid'>
             <div className="photograph">
               {videoIDs.map((id, index) => (
-                <VideoComponent key={index} video_id={id} />
+                <Video key={index} video_id={id} />
               ))}
               <Image
                 alt='televisions in the window of a repair shop'
