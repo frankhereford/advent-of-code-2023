@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import OpenAI from 'openai';
 
 import { z } from "zod";
@@ -7,6 +9,11 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 const openai = new OpenAI({
 });
 
+function getRandomYear(): number {
+  const minYear = 1970;
+  const maxYear = 2023;
+  return Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
+}
 const getRandomElement = (arr: string[]): string => {
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex]!;
@@ -15,22 +22,33 @@ const getRandomElement = (arr: string[]): string => {
 export const openaiRouter = createTRPCRouter({
   get_topic: publicProcedure
     .input(z.object({ hint: z.string() }))
-    .query(async () => {
-
+    .query(async ({input}) => {
+      let hint = input.hint;
+      if (input.hint === '') {
+        hint = getRandomYear().toString();
+      }
       const prompts: string[] = [`
-      I want you to take whatever input I provide and think about what major 
-      news event has happened since 1970 that is most associated to what I say. 
-      When you pick, I want you to come up with a list of 10 things that could
+      All responses must come in the form of a JSON object with two keys.
+      The first key is named 'label' and the second key is named 'topic'. I want you
+      to only respond with the JSON object and absolutely nothing else. I am going to 
+      parse your response as JSON. Here are the instructions for generating the 
+      values for each key.
+
+      I want you to think of a major news since 1970 that is most associated
+      to this hint: '${hint}'.
+      
+      When you pick the topic, I want you to come up with a list of 10 things that could
       be good answers, and I want you to randomly select your choice. I don't 
-      want to get the same answer every time. I want you to respond with the 
-      name of that event, as it would be used to search for a video on youtube.
-      I want you to respond with just an appropriate youtube search query, 
-      and no additional text. If this is your first response, proceed without
-      any input.
+      want to get the same answer every time.
+      
+      For the 'label' key, I want you to respond with the name of that event, 
+      however, I want you to be very brief. Four words or fewer. Please prefer lowercase 
+      unless it would read poorly without capitalization. 
+
+      For the 'topic' key, I want you to respond with whatever string you think
+      would be a good search query for youtube to find news footage for the news
+      event that you picked.
       `]
-
-      // prompts = prompts.filter(item => item.includes('musicians'));
-
 
       const prompt = getRandomElement(prompts)
 
@@ -41,9 +59,10 @@ export const openaiRouter = createTRPCRouter({
       };
       const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
       if (chatCompletion?.choices[0]?.message?.content) {
-        //console.log(chatCompletion.choices[0].message.content)
+        const topicObj = JSON.parse(chatCompletion.choices[0].message.content)
         return {
-          topic: `${chatCompletion.choices[0].message.content}`,
+          label: topicObj.label,
+          topic: topicObj.topic,
         };
       } else {
         return {

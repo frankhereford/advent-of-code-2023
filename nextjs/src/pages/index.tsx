@@ -4,6 +4,8 @@ import { api } from "~/utils/api";
 
 import Polaroid from '~/pages/components/Polaroid';
 
+
+
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>(Array.from({ length: 2 }, () => null));
   const [label, setLabel] = useState<(string | null)>('');
@@ -14,7 +16,8 @@ export default function Home() {
   useEffect(() => {
     if (topic.data) {
       console.log("Topic response:", topic.data);
-      setLabel(topic.data.topic)
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setLabel(topic.data.label)
     }
   }, [topic.data]);
 
