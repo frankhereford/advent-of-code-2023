@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import videos_of_static from "../../utils/videos_of_static";
+import { v4 as uuidv4 } from 'uuid';
+import { api } from "~/utils/api";
+
+
+import videos_of_static from "~/utils/videos_of_static";
 
 function getStatic(): string {
   const randomIndex = Math.floor(Math.random() * videos_of_static.length);
@@ -12,14 +16,41 @@ function getRandomNumber(min: number, max: number): number {
 }
 
 interface VideoProps {
-  video_id?: string | null;
+  videoId?: string | null;
 }
 
-const Video: React.FC<VideoProps> = ({ video_id: videoIdFromProps }) => {
-  const [video_id, setVideoId] = useState<string>(videoIdFromProps ?? getStatic());
+const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
+  const [nextPlayingVideoId, setNextPlayingVideoId] = useState<string>('');
+  const [playingVideoId, setPlayingVideoId] = useState<string>(videoIdFromProps ?? getStatic());
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [uuid] = useState<string>(uuidv4());
 
-  useEffect(() => {
+  const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
+    refetchOnWindowFocus: false,
+  })
+
+  useEffect(() => { // handle data coming back from the random video query
+    if (videoIdFromProps) return;
+    if (!randomVideo.data) return;
+    setNextPlayingVideoId(randomVideo.data[0]!);
+  }, [randomVideo.data, videoIdFromProps]);
+
+  useEffect(() => { // handles changing the channel ever 10-20 seconds if there is not a videoId from props
+    let timer: NodeJS.Timeout;
+
+    if (!videoIdFromProps) {
+      timer = setInterval(() => {
+        void randomVideo.refetch();
+      }, getRandomNumber(10000, 20000));
+    }
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [videoIdFromProps, randomVideo]); 
+
+
+  useEffect(() => { // this handles setting up the HLS video player
     const video = videoRef.current;
     const hls = new Hls();
 
@@ -30,21 +61,26 @@ const Video: React.FC<VideoProps> = ({ video_id: videoIdFromProps }) => {
       }
     };
 
-    if (video_id) {
-      loadVideo(video_id + '/playlist.m3u8');
+    if (playingVideoId) {
+      loadVideo(playingVideoId + '/playlist.m3u8');
     }
 
     return () => {
       hls.destroy();
     };
-  }, [video_id]);
+  }, [playingVideoId]);
 
-  useEffect(() => {
-    if (videoIdFromProps && videoIdFromProps !== video_id) {
-      setVideoId(getStatic());
-      setTimeout(() => setVideoId(videoIdFromProps), getRandomNumber(250, 750));
+  useEffect(() => { // this makes the static flicker when the playingVideoId changes
+    if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
+      setPlayingVideoId(getStatic());
+      setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
     }
-  }, [videoIdFromProps, video_id]);
+    else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
+      setPlayingVideoId(getStatic());
+      setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
+      setNextPlayingVideoId('');
+    }
+  }, [videoIdFromProps, playingVideoId, nextPlayingVideoId]);
 
   return <video ref={videoRef} muted autoPlay loop></video>;
 };
