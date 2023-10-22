@@ -36,7 +36,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     setNextPlayingVideoId(randomVideo.data[0]!);
   }, [randomVideo.data, videoIdFromProps]);
 
-  useEffect(() => { // handles changing the channel ever 10-20 seconds if there is not a videoId from props
+  useEffect(() => { // handles changing the channel every set interval range if there is not a videoId from props
     let timer: NodeJS.Timeout;
 
     if (!videoIdFromProps) {
