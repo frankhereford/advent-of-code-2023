@@ -4,19 +4,12 @@ import { api } from "~/utils/api";
 
 import Polaroid from '~/pages/components/Polaroid';
 
-
-
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>(Array.from({ length: 2 }, () => null));
   const [label, setLabel] = useState<(string | null)>('');
 
-
   const topic = api.openai.get_topic.useQuery({ hint: '' }, {
-    trpc: {
-      context: {
-        skipBatch: true,
-      },
-    },
+    trpc: { context: { skipBatch: true, }, },
   });
 
   useEffect(() => {
