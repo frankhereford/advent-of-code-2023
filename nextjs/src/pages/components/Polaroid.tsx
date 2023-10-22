@@ -9,7 +9,6 @@ interface PolaroidProps {
 
 
 const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
-  console.log(videoIDs)
   return (
     <>
       <div className='polaroid'>
