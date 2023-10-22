@@ -39,9 +39,6 @@ body, html {
 
 .caption {
   font-family: 'Nothing You Could Do', cursive;
-  margin-top:2vh;
-  font-size: 4vh;
-  min-height:8vh;
   transform: rotate(-2deg);
 }
 
@@ -52,13 +49,6 @@ body, html {
   z-index: 2;
   pointer-events: none;
   opacity: 1;
-}
-
-.container .photograph .text {
-  position: absolute;
-  top: 20%;
-  left: 20%;
-  color: white;
 }
 
 .container .photograph video:nth-child(1) {
