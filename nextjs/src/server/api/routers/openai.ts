@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import OpenAI from 'openai';
 
 import { z } from "zod";
@@ -57,9 +55,15 @@ export const openaiRouter = createTRPCRouter({
         model: 'gpt-4',
         //model: 'gpt-3.5-turbo',
       };
-      const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
+
+      interface TopicObject {
+        label: string;
+        topic: string;
+      }
+
+      const chatCompletion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
       if (chatCompletion?.choices[0]?.message?.content) {
-        const topicObj = JSON.parse(chatCompletion.choices[0].message.content)
+        const topicObj = JSON.parse(chatCompletion.choices[0].message.content) as TopicObject
         return {
           label: topicObj.label,
           topic: topicObj.topic,

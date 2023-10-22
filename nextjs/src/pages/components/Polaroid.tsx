@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
 
 interface PolaroidProps {
   videoIDs: (string | null)[];
-  label: string | null;
+  label: string | undefined;
 }
 
 
