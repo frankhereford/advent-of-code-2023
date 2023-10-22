@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Head from "next/head";
 import { api } from "~/utils/api";
 
@@ -6,19 +6,35 @@ import Polaroid from '~/pages/components/Polaroid';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>(Array.from({ length: 2 }, () => null));
-  const [label, setLabel] = useState<(string | null)>('');
+  const [label, setLabel] = useState<(string | undefined)>('');
+  const [topic, setTopic] = useState<(string | undefined)>('');
+  const [searchYouTube, setSearchYoutube] = useState<(boolean)>(false);
 
-  const topic = api.openai.get_topic.useQuery({ hint: '' }, {
+  const topicQuery = api.openai.get_topic.useQuery({ hint: '' }, {
+    trpc: { context: { skipBatch: true, }, },
+  });
+
+  const videoQuery = api.youtube.get_video.useQuery({ topic: topic! }, {
+    enabled: searchYouTube,
     trpc: { context: { skipBatch: true, }, },
   });
 
   useEffect(() => {
-    if (topic.data) {
-      console.log("Topic response:", topic.data);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      setLabel(topic.data.label)
+    if (topicQuery.data?.label === '') return;
+    if (topicQuery.data) {
+      setLabel(topicQuery.data.label)
+      setTopic(topicQuery.data.topic)
+      setSearchYoutube(true)
     }
-  }, [topic.data]);
+  }, [topicQuery.data]);
+
+  useEffect(() => {
+    if (!videoQuery.data) return;
+    if (videoQuery.data) {
+      console.log(videoQuery.data.videos)
+      setVideoIDs(videoQuery.data.videos)
+    }
+  }, [videoQuery.data]);
 
   return (
     <>
