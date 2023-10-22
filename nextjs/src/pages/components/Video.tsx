@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
-import videos_of_static from "../utils/videos_of_static";
+import videos_of_static from "../../utils/videos_of_static";
 
 function getStatic(): string {
   const randomIndex = Math.floor(Math.random() * videos_of_static.length);
@@ -11,11 +11,11 @@ function getRandomNumber(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-interface VideoComponentProps {
+interface VideoProps {
   video_id?: string | null;
 }
 
-const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromProps }) => {
+const Video: React.FC<VideoProps> = ({ video_id: videoIdFromProps }) => {
   const [video_id, setVideoId] = useState<string>(videoIdFromProps ?? getStatic());
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -49,4 +49,4 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ video_id: videoIdFromPr
   return <video ref={videoRef} muted autoPlay loop></video>;
 };
 
-export default VideoComponent;
+export default Video;

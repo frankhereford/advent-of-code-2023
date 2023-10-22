@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import Head from "next/head";
-import Image from "next/image";
 import { api } from "~/utils/api";
 
-import VideoComponent from './VideoComponent'; 
+import Polaroid from './components/Polaroid';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
+  const [label, setLabel] = useState<(string | null)>('tuna & fish');
 
   const videos = api.media.get_random_videos.useQuery({ length: 2 })
 
@@ -24,17 +24,7 @@ export default function Home() {
       </Head>
       <main>
         <div className="container">
-          <div className="photograph">
-            {videoIDs.map((id, index) => (
-              <VideoComponent key={index} video_id={id} />
-            ))}
-            <Image
-              alt='televisions in the window of a repair shop'
-              src="/televisions_mask.png"
-              width={1024}
-              height={1024}
-            />
-          </div>
+          <Polaroid videoIDs={videoIDs} label={label} />
         </div>
       </main>
     </>

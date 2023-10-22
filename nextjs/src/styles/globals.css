@@ -16,6 +16,17 @@ body, html {
   align-items: center;
   height: 100vh; /* 100% of the viewport height */
   max-width: 100vw;
+
+
+}
+
+.container .polaroid {
+  border: 15px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  background-color: #eaeaea;
+  transform: rotate(-2deg);
 }
 
 .container .photograph {
@@ -24,6 +35,14 @@ body, html {
   position: relative;
   margin: auto; /* To center it */
   perspective: 1000px;
+}
+
+.caption {
+  font-family: 'Nothing You Could Do', cursive;
+  margin-top:2vh;
+  font-size: 4vh;
+  min-height:8vh;
+  transform: rotate(-2deg);
 }
 
 .container .photograph img {
