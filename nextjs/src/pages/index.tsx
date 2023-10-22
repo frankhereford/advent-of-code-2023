@@ -11,7 +11,13 @@ export default function Home() {
   const [label, setLabel] = useState<(string | null)>('');
 
 
-  const topic = api.openai.get_topic.useQuery({hint: ''}, {});
+  const topic = api.openai.get_topic.useQuery({ hint: '' }, {
+    trpc: {
+      context: {
+        skipBatch: true,
+      },
+    },
+  });
 
   useEffect(() => {
     if (topic.data) {
