@@ -6,6 +6,7 @@ import Polaroid from './components/Polaroid';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | null)[]>([null, null]);
+  const [label, setLabel] = useState<(string | null)>('tuna & fish');
 
   const videos = api.media.get_random_videos.useQuery({ length: 2 })
 
@@ -23,7 +24,7 @@ export default function Home() {
       </Head>
       <main>
         <div className="container">
-          <Polaroid videoIDs={videoIDs} />
+          <Polaroid videoIDs={videoIDs} label={label} />
         </div>
       </main>
     </>

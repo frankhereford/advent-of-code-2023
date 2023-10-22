@@ -4,10 +4,11 @@ import Video from './Video';
 
 interface PolaroidProps {
   videoIDs: (string | null)[];
+  label: string | null;
 }
 
 
-const Polaroid: React.FC<PolaroidProps> = ({ videoIDs }) => {
+const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
   console.log(videoIDs)
   return (
     <>
@@ -24,7 +25,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs }) => {
           />
         </div>
         <div className='caption'>
-          hi
+          { label }
         </div>
       </div>
     </>
