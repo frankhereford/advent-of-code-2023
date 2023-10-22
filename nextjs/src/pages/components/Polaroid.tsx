@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Video from './Video'; 
+import Video from '~/pages/components/Video'; 
 
 
 interface PolaroidProps {
