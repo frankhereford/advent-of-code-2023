@@ -3,7 +3,6 @@ import Hls from 'hls.js';
 import { v4 as uuidv4 } from 'uuid';
 import { api } from "~/utils/api";
 
-
 import videos_of_static from "~/utils/videos_of_static";
 
 function getStatic(): string {
@@ -16,15 +15,14 @@ function getRandomNumber(min: number, max: number): number {
 }
 
 interface VideoProps {
-  videoId?: string | null;
+  videoId?: string | undefined;
 }
 
 const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [nextPlayingVideoId, setNextPlayingVideoId] = useState<string>('');
   const [playingVideoId, setPlayingVideoId] = useState<string>(videoIdFromProps ?? getStatic());
-  const [inLoading, setInLoading] = useState<boolean>(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [uuid] = useState<string>(uuidv4());
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
     refetchOnWindowFocus: false,
@@ -55,42 +53,33 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     const video = videoRef.current;
     const hls = new Hls();
 
-
-    const loadVideo = (videoId: string) => {
-      const url = videoId + '/playlist.m3u8'
+    const loadVideo = (url: string) => {
       if (Hls.isSupported() && video) {
         hls.loadSource(url);
         hls.attachMedia(video);
       }
     };
 
-
     if (playingVideoId) {
-      loadVideo(playingVideoId);
+      loadVideo(playingVideoId + '/playlist.m3u8');
     }
-
-    setInLoading(false);
 
     return () => {
       hls.destroy();
     };
-
   }, [playingVideoId]);
 
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
-    if (inLoading) return;
     if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
-      console.log("got a new video assignment", videoIdFromProps);
+      console.log("Showing as video as assigned via props:", videoIdFromProps);
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
-      setInLoading(true);
     }
     else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
-      console.log('new nextVideo thing')
+      console.log('Showing a new "changing channel" video.')
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
       setNextPlayingVideoId('');
-      setInLoading(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoIdFromProps, playingVideoId, nextPlayingVideoId]);
