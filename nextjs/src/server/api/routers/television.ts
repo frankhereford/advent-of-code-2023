@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import OpenAI from 'openai';
+import { google, youtube_v3 } from 'googleapis';
 import { z } from "zod";
 
+import { env } from "../../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 const openai = new OpenAI({
@@ -65,11 +68,73 @@ const getOpenAIResponse = async (input: string): Promise<OpenAiResponseType> => 
   return openAiResponse;
 }
 
+
+const getYouTubeVideos = async (topic: string): Promise<string[]> => {
+  // Initialize the YouTube API client
+  const youtube = google.youtube({
+    version: "v3",
+    auth: env.YOUTUBE_API_KEY
+  });
+
+  const params = {
+    q: topic,
+    part: "snippet",
+    type: "video",
+    maxResults: 5,
+  };
+
+  // Perform the search
+  async function searchYouTube() {
+      const response = await youtube.search.list(params);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const results = response.data.items;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return results
+    }
+
+  // Execute the function
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const results = await searchYouTube();
+
+  type YoutubeSearchResult = {
+    kind: string;
+    etag: string;
+    id: { kind: string; videoId: string };
+    snippet: {
+      publishedAt: string;
+      channelId: string;
+      title: string;
+      description: string;
+      thumbnails: object;
+      channelTitle: string;
+      liveBroadcastContent: string;
+      publishTime: string;
+    };
+  };
+
+  const getRandomVideoIds = (data: YoutubeSearchResult[], n: number): string[] => {
+    // Shuffle the original array
+    const shuffledData = [...data].sort(() => Math.random() - 0.5);
+    // Get first n items
+    const selectedItems = shuffledData.slice(0, n);
+    // Extract videoIds
+    const videoIds = selectedItems.map(item => item.id.videoId);
+    return videoIds;
+  };
+
+  // FIXME this 2 is magic. it should be passed down.
+  const randomVideoIds = getRandomVideoIds(results, 2);
+  return randomVideoIds;
+}
+
+
 export const televisionRouter = createTRPCRouter({
   think: publicProcedure
     .input(z.object({ user_input: z.string() }))
     .query(async ({ input }) => {
       const subject = await getOpenAIResponse(input.user_input);
       console.log(subject)
+      const videos = await getYouTubeVideos(subject.topic);
+      console.log(videos)
     }),
 });
