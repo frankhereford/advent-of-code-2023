@@ -31,7 +31,7 @@ export const openaiRouter = createTRPCRouter({
       parse your response as JSON. Here are the instructions for generating the 
       values for each key.
 
-      I want you to think of a major news since 1970 that is most associated
+      I want you to think of a major news story since 1970 that is most associated
       to this hint: '${hint}'.
       
       When you pick the topic, I want you to come up with a list of 10 things that could
@@ -40,7 +40,8 @@ export const openaiRouter = createTRPCRouter({
       
       For the 'label' key, I want you to respond with the name of that event, 
       however, I want you to be very brief. Four words or fewer. Please prefer lowercase 
-      unless it would read poorly without capitalization. 
+      unless it would read poorly without capitalization.  I am going to use this
+      as a label on an image of polaroid photo.
 
       For the 'topic' key, I want you to respond with whatever string you think
       would be a good search query for youtube to find news footage for the news
