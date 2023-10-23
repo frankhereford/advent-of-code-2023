@@ -16,15 +16,16 @@ const getRandomElement = (arr: string[]): string => {
   return arr[randomIndex]!;
 };
 
-export const openaiRouter = createTRPCRouter({
-  think: publicProcedure
-    .input(z.object({ hint: z.string() }))
-    .query(async ({ input }) => {
-      let hint = input.hint;
-      if (input.hint === '') {
-        hint = getRandomYear().toString();
-      }
-      const prompts: string[] = [`
+interface OpenAiResponseType {
+  label: string;
+  topic: string;
+}
+
+const getOpenAIResponse = async (input: string): Promise<OpenAiResponseType> => {
+  let hint = input;
+  if (input === '') hint = getRandomYear().toString();
+
+  const prompts: string[] = [`
       All responses must come in the form of a JSON object with two keys.
       The first key is named 'label' and the second key is named 'topic'. I want you
       to only respond with the JSON object and absolutely nothing else. I am going to 
@@ -36,7 +37,8 @@ export const openaiRouter = createTRPCRouter({
       
       When you pick the topic, I want you to come up with a list of 10 things that could
       be good answers, and I want you to randomly select your choice. I don't 
-      want to get the same answer every time.
+      want to get the same answer every time. Really try to pick "B-list" news events.
+      Don't be obvious.
       
       For the 'label' key, I want you to respond with the name of that event, 
       however, I want you to be very brief. Four words or fewer. Please prefer lowercase 
@@ -48,24 +50,26 @@ export const openaiRouter = createTRPCRouter({
       event that you picked.
       `]
 
-      const prompt = getRandomElement(prompts)
+  const prompt = getRandomElement(prompts)
 
-      const params: OpenAI.Chat.ChatCompletionCreateParams = {
-        messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-4',
-        //model: 'gpt-3.5-turbo',
-      };
+  const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    messages: [{ role: 'user', content: prompt }],
+    model: 'gpt-4',
+    //model: 'gpt-3.5-turbo', // too hard of a prompt for 3.5 generally
+  };
 
-      const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
+  const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
 
-      if (chatCompletion?.choices[0]?.message?.content) {
-        return {
-          topic: `${chatCompletion.choices[0].message.content}`,
-        };
-      } else {
-        return {
-          topic: 'Error: Could not retrieve prompt from OpenAI',
-        };
-      }
+  // this feels very risky. this should trap gpt 4 giving bogus JSON and try again.
+  const openAiResponse = JSON.parse(chatCompletion.choices[0]!.message.content!) as OpenAiResponseType;
+  return openAiResponse;
+}
+
+export const televisionRouter = createTRPCRouter({
+  think: publicProcedure
+    .input(z.object({ user_input: z.string() }))
+    .query(async ({ input }) => {
+      const subject = await getOpenAIResponse(input.user_input);
+      console.log(subject)
     }),
 });

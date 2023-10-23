@@ -9,6 +9,10 @@ export default function Home() {
   const [label, setLabel] = useState<(string | undefined)>('');
   const [topic, setTopic] = useState<(string | undefined)>('');
 
+  const randomVideo = api.television.think.useQuery({ user_input: '' }, {
+    refetchOnWindowFocus: false,
+  })
+
   return (
     <>
       <Head>
