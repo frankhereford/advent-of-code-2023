@@ -28,4 +28,19 @@ export const mediaRouter = createTRPCRouter({
       const directories = getVideos(hlsPath, input.length);
       return directories;
     }),
+  is_ready: publicProcedure
+    .input(z.object({ video: z.string() }))
+    .query(async ({ input }) => {
+      const m3u8Path = path.join(hlsPath, input.video, 'playlist.m3u8');
+      const tsPath = path.join(hlsPath, input.video, 'stream001.ts');
+
+      try {
+        await fs.promises.access(m3u8Path);
+        await fs.promises.access(tsPath);
+      } catch (err) {
+        return false;
+      }
+
+      return true;
+    }),
 });

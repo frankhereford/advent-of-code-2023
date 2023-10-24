@@ -2,12 +2,10 @@ import Image from "next/image";
 import Video from '~/pages/components/Video'; 
 import React, { useEffect, useRef } from "react";
 
-
 interface PolaroidProps {
-  videoIDs: (string | null)[];
+  videoIDs: (string | undefined)[];
   label: string | undefined;
 }
-
 
 const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
   
