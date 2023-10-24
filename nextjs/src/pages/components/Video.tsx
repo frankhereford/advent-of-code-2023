@@ -40,7 +40,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
 
   useEffect(() => {
     if (videoReadiness.data) {
-      console.log("We've received a ready, on topic video: ", videoIdFromProps)
+      console.info("We've received a ready, on topic video: ", videoIdFromProps)
       setNextPlayingVideoId(videoIdFromProps!);
       setShouldPoll(false);
     }
