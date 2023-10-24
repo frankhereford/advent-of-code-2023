@@ -40,13 +40,14 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
 
   useEffect(() => {
     if (videoReadiness.data) {
+      console.log("We've received a ready, on topic video: ", videoIdFromProps)
       setNextPlayingVideoId(videoIdFromProps!);
       setShouldPoll(false);
     }
   }, [videoReadiness.data, videoIdFromProps]);
 
   useEffect(() => { // handle data coming back from the random video query
-    if (videoIdFromProps) return;
+    //if (videoIdFromProps) return;
     if (!randomVideo.data) return;
     setNextPlayingVideoId(randomVideo.data[0]!);
   }, [randomVideo.data, videoIdFromProps]);
@@ -54,7 +55,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   useEffect(() => { // handles changing the channel every set interval range if there is not a videoId from props
     let timer: NodeJS.Timeout;
 
-    if (!videoIdFromProps && shouldPoll) {
+    if (!videoIdFromProps || shouldPoll) {
       timer = setInterval(() => {
         void randomVideo.refetch();
       }, getRandomNumber(2000, 5000));
@@ -63,7 +64,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     return () => {
       clearInterval(timer);
     };
-  }, [videoIdFromProps, randomVideo]); 
+  }, [videoIdFromProps, randomVideo, shouldPoll]); 
 
 
   useEffect(() => { // this handles setting up the HLS video player
@@ -88,9 +89,8 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
 
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
     if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
-      console.log('Showing a new "changing channel" video.')
       setPlayingVideoId(getStatic());
-      setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
+      setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(350, 950));
       setNextPlayingVideoId('');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
