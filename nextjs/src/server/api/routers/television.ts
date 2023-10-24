@@ -181,9 +181,9 @@ export const televisionRouter = createTRPCRouter({
       const videos = await getYouTubeVideos(subject.topic);
       console.log(videos)
       await addToRedisQueue(videos)
-      console.log("waiting for files to exist")
-      await checkAllFilesExist(videos);
-      console.log("files exist")
+      //console.log("waiting for files to exist")
+      //await checkAllFilesExist(videos);
+      //console.log("files exist")
       return { videos: videos };
     }),
 });
