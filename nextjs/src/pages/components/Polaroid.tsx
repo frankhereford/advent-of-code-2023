@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Video from '~/pages/components/Video'; 
 import React, { useEffect, useRef } from "react";
+import { useVideos } from '~/pages/contexts/VideosContext';
 
 interface PolaroidProps {
   videoIDs: (string | undefined)[];
@@ -11,6 +12,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
   
   const photographRef = useRef<HTMLDivElement | null>(null);
   const captionRef = useRef<HTMLDivElement | null>(null);
+  const { videosLoaded, incrementVideosLoaded, resetVideosLoaded } = useVideos();
 
   const adjustFontSize = () => {
     if (photographRef.current && captionRef.current) {
@@ -53,7 +55,9 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
           />
         </div>
         <div ref={captionRef} className='caption'>
-          { label }
+          <div className={`fade-in ${videosLoaded >= 2 ? 'visible' : ''}`}>
+            { label }
+          </div>
         </div>
       </div>
     </>
