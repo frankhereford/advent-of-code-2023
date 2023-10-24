@@ -9,6 +9,8 @@ import os
 import re
 import shutil
 import datetime
+import shlex
+
 from vtt_to_srt.vtt_to_srt import ConvertFile
 
 def check_video_exists(video_id):
@@ -76,7 +78,8 @@ def run_ffmpeg(video_id):
         source_path = f'/application/media/downloads/{video_id}/'
         subtitles = None
         if os.path.exists(f'/application/media/downloads/{video_id}/{video_id}.en.srt'):
-            subtitles=f"subtitles={source_path}/{video_id}.en.srt:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
+            shell_safe_path = shlex.quote(f'/application/media/downloads/{video_id}/{video_id}.en.srt')
+            subtitles=f"subtitles={shell_safe_path}:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
 
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
@@ -211,6 +214,9 @@ def run_ffmpeg(video_id):
                 {screenGauss} {reflections}
                 {highlight}, {curveImage}, {bloomEffect}'''
 
+
+        playlist_path = shlex.quote(f'{video_dir}/playlist.m3u8')
+        stream_base_path = shlex.quote(f'{video_dir}')
         command = [
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
@@ -221,7 +227,7 @@ def run_ffmpeg(video_id):
             #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', filters, # apply filtergraphs
             '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '3',
-            '-segment_list', f'{video_dir}/playlist.m3u8', '-segment_format', 'mpegts', f'{video_dir}/stream%03d.ts'
+            '-segment_list', playlist_path, '-segment_format', 'mpegts', f'{stream_base_path}/stream%03d.ts'
         ]
         subprocess.run(command)
 
