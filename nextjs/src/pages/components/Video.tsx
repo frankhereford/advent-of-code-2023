@@ -44,6 +44,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
       setShouldPoll(false);
     }
   }, [videoReadiness.data, videoIdFromProps]);
+
   useEffect(() => { // handle data coming back from the random video query
     if (videoIdFromProps) return;
     if (!randomVideo.data) return;

@@ -10,13 +10,19 @@ export default function Home() {
 
   const videos = api.television.think.useQuery({ user_input: '' }, {
     refetchOnWindowFocus: false,
-  })
+  });
+
+  useEffect(() => {
+    if (videos.data) {
+      setVideoIDs(videos.data.videos);
+      setLabel(videos.data.label);
+    }
+  }, [videos.data]);
 
   useEffect(() => {
     console.log(videos.data)
     if (videos.data) {
       setVideoIDs(videos.data.videos);
-      setLabel(videos.data.label);
     }
   }, [videos.data]);
 
