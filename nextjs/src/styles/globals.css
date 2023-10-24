@@ -68,10 +68,9 @@ body, html {
   z-index: 1;
 }
 
-
 .fade-in {
   opacity: 0;
-  min-height: 1em;
+  min-height: 1.6em;
   transition: opacity 3s;
 }
 
