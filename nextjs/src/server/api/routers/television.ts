@@ -83,7 +83,7 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
     q: topic,
     part: "snippet",
     type: "video",
-    maxResults: 5,
+    maxResults: 2,
   };
 
   // Perform the search
@@ -181,9 +181,6 @@ export const televisionRouter = createTRPCRouter({
       const videos = await getYouTubeVideos(subject.topic);
       console.log(videos)
       await addToRedisQueue(videos)
-      //console.log("waiting for files to exist")
-      //await checkAllFilesExist(videos);
-      //console.log("files exist")
       return { videos: videos };
     }),
 });

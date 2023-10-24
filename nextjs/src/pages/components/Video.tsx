@@ -23,11 +23,27 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [playingVideoId, setPlayingVideoId] = useState<string>(videoIdFromProps ?? getStatic());
   const [uuid] = useState<string>(uuidv4());
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldPoll, setShouldPoll] = useState(true);
 
   const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
+    //enabled: false,
     refetchOnWindowFocus: false,
   })
 
+  const videoReadiness = api.media.is_ready.useQuery(
+    { video: videoIdFromProps },
+    {
+      enabled: !!videoIdFromProps && shouldPoll,
+      refetchInterval: shouldPoll ? 1000 : undefined,
+    }
+  );
+
+  useEffect(() => {
+    if (videoReadiness.data) {
+      setNextPlayingVideoId(videoIdFromProps!);
+      setShouldPoll(false);
+    }
+  }, [videoReadiness.data, videoIdFromProps]);
   useEffect(() => { // handle data coming back from the random video query
     if (videoIdFromProps) return;
     if (!randomVideo.data) return;
@@ -37,10 +53,10 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   useEffect(() => { // handles changing the channel every set interval range if there is not a videoId from props
     let timer: NodeJS.Timeout;
 
-    if (!videoIdFromProps) {
+    if (!videoIdFromProps && shouldPoll) {
       timer = setInterval(() => {
         void randomVideo.refetch();
-      }, getRandomNumber(3000, 6000));
+      }, getRandomNumber(2000, 5000));
     }
 
     return () => {
@@ -70,12 +86,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   }, [playingVideoId]);
 
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
-    if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
-      console.log("Showing as video as assigned via props:", videoIdFromProps);
-      setPlayingVideoId(getStatic());
-      setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
-    }
-    else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
+    if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
       console.log('Showing a new "changing channel" video.')
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
