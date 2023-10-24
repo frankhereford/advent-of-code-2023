@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { v4 as uuidv4 } from 'uuid';
 import { api } from "~/utils/api";
+import { useVideos } from '~/pages/contexts/VideosContext';
 
 import videos_of_static from "~/utils/videos_of_static";
 
@@ -24,6 +25,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [uuid] = useState<string>(uuidv4());
   const videoRef = useRef<HTMLVideoElement>(null);
   const [shouldPoll, setShouldPoll] = useState(true);
+  const { videosLoaded, incrementVideosLoaded, resetVideosLoaded } = useVideos();
 
   const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
     trpc: { context: { skipBatch: true, }, },
@@ -43,6 +45,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
       console.info("We've received a ready, on topic video: ", videoIdFromProps)
       setNextPlayingVideoId(videoIdFromProps!);
       setShouldPoll(false);
+      incrementVideosLoaded();
     }
   }, [videoReadiness.data, videoIdFromProps]);
 
