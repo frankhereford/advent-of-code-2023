@@ -9,6 +9,7 @@ export default function Home() {
   const [label, setLabel] = useState<(string | undefined)>('');
 
   const videos = api.television.think.useQuery({ user_input: '' }, {
+    trpc: { context: { skipBatch: true, }, },
     refetchOnWindowFocus: false,
   });
 

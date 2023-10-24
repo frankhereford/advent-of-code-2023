@@ -26,7 +26,7 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [shouldPoll, setShouldPoll] = useState(true);
 
   const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
-    //enabled: false,
+    trpc: { context: { skipBatch: true, }, },
     refetchOnWindowFocus: false,
   })
 
