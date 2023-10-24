@@ -7,6 +7,11 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 const openai = new OpenAI({
 });
 
+function getRandomYear(): number {
+  const minYear = 1970;
+  const maxYear = 2023;
+  return Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
+}
 const getRandomElement = (arr: string[]): string => {
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex]!;
@@ -14,71 +19,54 @@ const getRandomElement = (arr: string[]): string => {
 
 export const openaiRouter = createTRPCRouter({
   get_topic: publicProcedure
-    //.input(z.object({ text: z.string() }))
-    .query(async () => {
-
+    .input(z.object({ hint: z.string() }))
+    .query(async ({input}) => {
+      let hint = input.hint;
+      if (input.hint === '') {
+        hint = getRandomYear().toString();
+      }
       const prompts: string[] = [`
-      I want you to provide me the name of a natural disaster or war that occurred after 1960. 
-      Please provide the name only and no date information. I want only the name in the response.
-      I want you to not pick the first thing that comes to mind, but rather a lesser known event. 
-      I would like you to pick randomly from your ideas, because I am going to ask you this 
-      many, many times and I want as many different answers as possible.
-      `, `
-      I want you to think of a media property from the 70s, 80s, or 90s.
-      Please say the name of it in this format: <Media Name>
-      I want you to pick something sort of "B-list". Don't pick the obvious stuff.
-      Don't say anything else.
-      Don't pick fucking quantum leap anymore.
-      `, `
-      say "bill wurtz" and nothing else
-      `, `
-      Give me the media name for a interesting thing that happened to a US president."
-      I want you to pick something sort of "B-list". Don't pick the obvious stuff.
-      Don't say anything else.
-      `, `
-      Pick a famous scientific discovery from the last century. 
-      Tell me the name of the discovery plainly.
-      Just the name. Like "Discovering radioactivity."
-      Don't say anything else.
-      `, `
-      Give me a brief title of a subject that makes Texas uncomfortable.
-      Only pick gun control about 1/4 of the time instead of 100% of the time.
-      `, `
-      Give me the first and last name of a famous person who acted in movies between 1950 and 1999.
-      Just the first and last name please.
-      Please pick someone who is B-list, and pick them very randomly.
-      `, `
-      Give me the name of a Criterion Collection Movie.
-      Come up with a list of a lot of them and then pick one randomly. Give me just the name
-      Pick a B-list choice. Don't pick the obvious stuff.
-      `, `
-      Give me the name of a huricane and the year it occured.
-      Pick a B-list choice. Don't pick the obvious stuff.
-      `, `
-      Give me the name of a US city.
-      It doesn't need to be big. Maybe big enough to have a youtube video about it.
-      Pick a B-list choice. Don't pick the obvious stuff.
-      `, `
-      Really cool musicians who were cool as fuck. Only ones who had a lot of videos.
-      `, `
-      Tell me the name of a saturday morning cartoon. Just that. Just the name.
+      All responses must come in the form of a JSON object with two keys.
+      The first key is named 'label' and the second key is named 'topic'. I want you
+      to only respond with the JSON object and absolutely nothing else. I am going to 
+      parse your response as JSON. Here are the instructions for generating the 
+      values for each key.
+
+      I want you to think of a major news since 1970 that is most associated
+      to this hint: '${hint}'.
+      
+      When you pick the topic, I want you to come up with a list of 10 things that could
+      be good answers, and I want you to randomly select your choice. I don't 
+      want to get the same answer every time.
+      
+      For the 'label' key, I want you to respond with the name of that event, 
+      however, I want you to be very brief. Four words or fewer. Please prefer lowercase 
+      unless it would read poorly without capitalization. 
+
+      For the 'topic' key, I want you to respond with whatever string you think
+      would be a good search query for youtube to find news footage for the news
+      event that you picked.
       `]
-
-      // prompts = prompts.filter(item => item.includes('musicians'));
-
 
       const prompt = getRandomElement(prompts)
 
       const params: OpenAI.Chat.ChatCompletionCreateParams = {
         messages: [{ role: 'user', content: prompt }],
-        //model: 'gpt-4',
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
+        //model: 'gpt-3.5-turbo',
       };
-      const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
+
+      interface TopicObject {
+        label: string;
+        topic: string;
+      }
+
+      const chatCompletion: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(params);
       if (chatCompletion?.choices[0]?.message?.content) {
-        //console.log(chatCompletion.choices[0].message.content)
+        const topicObj = JSON.parse(chatCompletion.choices[0].message.content) as TopicObject
         return {
-          topic: `${chatCompletion.choices[0].message.content}`,
+          label: topicObj.label,
+          topic: topicObj.topic,
         };
       } else {
         return {

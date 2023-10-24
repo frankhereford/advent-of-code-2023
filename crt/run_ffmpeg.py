@@ -11,6 +11,18 @@ import shutil
 import datetime
 from vtt_to_srt.vtt_to_srt import ConvertFile
 
+def check_video_exists(video_id):
+    video_id = video_id.decode('utf-8')
+    # Connect to Redis
+    r = redis.Redis(host='redis', port=6379, db=0)
+    
+    # Construct the key
+    key = f'video:{video_id}'
+    
+    # Check if the key exists
+    return r.exists(key) == 1
+
+
 def convert_subtitles(video_id):
     try:
         convert_file = ConvertFile(f"/application/media/downloads/{video_id}/{video_id}.en.vtt", "utf-8")
@@ -203,7 +215,7 @@ def run_ffmpeg(video_id):
             '/usr/local/bin/ffmpeg', '-y',
             #'-hwaccel', 'qsv',
             '-i', f'{source_path}/{video_id}.mp4',
-            '-vframes', '8000',
+            '-vframes', '6000', # 8000
             '-an', # mute
             '-c:v', 'libx264', # encode in h264, required by HLS
             #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
@@ -221,13 +233,14 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
     while True:
         print("about to block at redis queue")
         _, video_id = r.blpop(queue_to_poll)
-        add_encoding_key_with_time_and_ttl(video_id)
-        video_id = video_id.decode('utf-8')
-        store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
-        print(f"Got video ID {video_id} from {queue_to_poll}")
-        convert_subtitles(video_id)
-        run_ffmpeg(video_id)
-        store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
+        if not check_video_exists(video_id):
+            add_encoding_key_with_time_and_ttl(video_id)
+            video_id = video_id.decode('utf-8')
+            store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
+            print(f"Got video ID {video_id} from {queue_to_poll}")
+            convert_subtitles(video_id)
+            run_ffmpeg(video_id)
+            store_metadata_in_redis(video_id, { 'completed_at': datetime.datetime.now().isoformat() })
 
 
 if __name__ == "__main__":

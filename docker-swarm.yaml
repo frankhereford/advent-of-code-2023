@@ -11,7 +11,7 @@ services:
     volumes:
       - .:/application
     deploy:
-      replicas: 6
+      replicas: 4
   redis:
     image: redis:latest
     ports:

@@ -3,7 +3,6 @@ import Hls from 'hls.js';
 import { v4 as uuidv4 } from 'uuid';
 import { api } from "~/utils/api";
 
-
 import videos_of_static from "~/utils/videos_of_static";
 
 function getStatic(): string {
@@ -16,18 +15,35 @@ function getRandomNumber(min: number, max: number): number {
 }
 
 interface VideoProps {
-  videoId?: string | null;
+  videoId?: string | undefined;
 }
 
 const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   const [nextPlayingVideoId, setNextPlayingVideoId] = useState<string>('');
   const [playingVideoId, setPlayingVideoId] = useState<string>(videoIdFromProps ?? getStatic());
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [uuid] = useState<string>(uuidv4());
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [shouldPoll, setShouldPoll] = useState(true);
 
   const randomVideo = api.media.get_random_videos.useQuery({ length: 1, uuid: uuid }, { 
+    //enabled: false,
     refetchOnWindowFocus: false,
   })
+
+  const videoReadiness = api.media.is_ready.useQuery(
+    { video: videoIdFromProps },
+    {
+      enabled: !!videoIdFromProps && shouldPoll,
+      refetchInterval: shouldPoll ? 1000 : undefined,
+    }
+  );
+
+  useEffect(() => {
+    if (videoReadiness.data) {
+      setNextPlayingVideoId(videoIdFromProps!);
+      setShouldPoll(false);
+    }
+  }, [videoReadiness.data, videoIdFromProps]);
 
   useEffect(() => { // handle data coming back from the random video query
     if (videoIdFromProps) return;
@@ -35,13 +51,13 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
     setNextPlayingVideoId(randomVideo.data[0]!);
   }, [randomVideo.data, videoIdFromProps]);
 
-  useEffect(() => { // handles changing the channel ever 10-20 seconds if there is not a videoId from props
+  useEffect(() => { // handles changing the channel every set interval range if there is not a videoId from props
     let timer: NodeJS.Timeout;
 
-    if (!videoIdFromProps) {
+    if (!videoIdFromProps && shouldPoll) {
       timer = setInterval(() => {
         void randomVideo.refetch();
-      }, getRandomNumber(10000, 20000));
+      }, getRandomNumber(2000, 5000));
     }
 
     return () => {
@@ -71,15 +87,13 @@ const Video: React.FC<VideoProps> = ({ videoId: videoIdFromProps }) => {
   }, [playingVideoId]);
 
   useEffect(() => { // this makes the static flicker when the playingVideoId changes
-    if (videoIdFromProps && videoIdFromProps !== playingVideoId) {
-      setPlayingVideoId(getStatic());
-      setTimeout(() => setPlayingVideoId(videoIdFromProps), getRandomNumber(250, 750));
-    }
-    else if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
+    if (nextPlayingVideoId && nextPlayingVideoId !== playingVideoId) {
+      console.log('Showing a new "changing channel" video.')
       setPlayingVideoId(getStatic());
       setTimeout(() => setPlayingVideoId(nextPlayingVideoId), getRandomNumber(250, 750));
       setNextPlayingVideoId('');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoIdFromProps, playingVideoId, nextPlayingVideoId]);
 
   return <video ref={videoRef} muted autoPlay loop></video>;
