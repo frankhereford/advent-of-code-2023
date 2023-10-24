@@ -7,7 +7,6 @@ import Polaroid from '~/pages/components/Polaroid';
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | undefined)[]>(Array.from({ length: 2 }, () => undefined));
   const [label, setLabel] = useState<(string | undefined)>('');
-  const [topic, setTopic] = useState<(string | undefined)>('');
 
   const videos = api.television.think.useQuery({ user_input: '' }, {
     refetchOnWindowFocus: false,
@@ -17,6 +16,7 @@ export default function Home() {
     console.log(videos.data)
     if (videos.data) {
       setVideoIDs(videos.data.videos);
+      setLabel(videos.data.label);
     }
   }, [videos.data]);
 

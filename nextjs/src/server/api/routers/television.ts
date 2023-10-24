@@ -181,6 +181,6 @@ export const televisionRouter = createTRPCRouter({
       const videos = await getYouTubeVideos(subject.topic);
       console.log(videos)
       await addToRedisQueue(videos)
-      return { videos: videos };
+      return { videos: videos, label: subject.label };
     }),
 });
