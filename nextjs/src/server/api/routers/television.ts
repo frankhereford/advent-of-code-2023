@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import OpenAI from 'openai';
-import { google, youtube_v3 } from 'googleapis';
+import { google } from 'googleapis';
+import { createClient } from "redis";
 import { z } from "zod";
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { env } from "../../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -127,6 +130,47 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
   return randomVideoIds;
 }
 
+// Function to add array elements to 'start_encode' Redis list
+const addToRedisQueue = async (videos: string[]): Promise<void> => {
+  const redisClient = await createClient({
+    url: 'redis://redis'
+  }).connect();
+
+  if (videos.length > 0) {
+    await redisClient.rPush('start_queue', videos);
+  }
+  else {
+    console.log("No videos found");
+  }
+}
+
+async function checkAllFilesExist(videoIds: string[]): Promise<boolean> {
+  let allExist = false;
+
+  while (!allExist) {
+    allExist = true; // Reset for each iteration
+
+    for (const videoId of videoIds) {
+      const m3u8Path = path.join("/application/media/hls", videoId, "playlist.m3u8");
+      const tsPath = path.join("/application/media/hls", videoId, "stream001.ts");
+
+      try {
+        await fs.access(m3u8Path);
+        await fs.access(tsPath);
+      } catch (err) {
+        allExist = false;
+        break; // Exit the loop early if any file doesn't exist
+      }
+    }
+
+    if (!allExist) {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before next iteration
+    }
+  }
+
+  return true;
+}
+
 
 export const televisionRouter = createTRPCRouter({
   think: publicProcedure
@@ -136,5 +180,10 @@ export const televisionRouter = createTRPCRouter({
       console.log(subject)
       const videos = await getYouTubeVideos(subject.topic);
       console.log(videos)
+      await addToRedisQueue(videos)
+      console.log("waiting for files to exist")
+      await checkAllFilesExist(videos);
+      console.log("files exist")
+      return { videos: videos };
     }),
 });
