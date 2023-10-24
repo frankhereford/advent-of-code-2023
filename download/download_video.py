@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 
 
 import subprocess
 import sys
 import redis
 import os
+import shlex
 from vtt_to_srt.vtt_to_srt import ConvertFile
 
 
@@ -18,13 +19,19 @@ def download_youtube_video(video_id):
         video_dir = f"/application/media/downloads/{video_id}"
         os.makedirs(video_dir, exist_ok=True)
 
-        subprocess.run(['timeout', '60s', 'yt-dlp', '--no-progress', '--write-subs', '--write-auto-sub', '-o', f"{video_dir}/%(id)s.mp4", '-f', "best[height<=?360]", video_id])
+        output_path = shlex.quote(f"{video_dir}/{video_id}.mp4")
+
+        cmd = ['timeout', '60s', 'yt-dlp', '--no-progress', '--write-subs', '--write-auto-sub', 
+                        '-o', output_path, '-f', "best[height<=?360]", '--', shlex.quote(video_id)]
+
+        subprocess.run(cmd)
+
     except Exception as e:
         print(f"Something went wrong: {e}")
 
 def convert_subtitles(video_id):
     try:
-        convert_file = ConvertFile(f"/application/media/{video_id}.en.vtt", "utf-8")
+        convert_file = ConvertFile(f"/application/media/downloads/{video_id}/{video_id}.en.vtt", "utf-8")
         convert_file.convert()
     except Exception as e:
         print(f"Couldn't convert subttitles: {e}")
