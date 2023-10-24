@@ -5,6 +5,7 @@ import { createClient } from "redis";
 import { z } from "zod";
 import * as fs from 'fs';
 import * as path from 'path';
+import videos_of_static from "~/utils/videos_of_static";
 
 import { env } from "../../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -84,50 +85,41 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
     part: "snippet",
     type: "video",
     maxResults: 2,
+    fields: "items/id/videoId",
   };
 
-  // Perform the search
-  async function searchYouTube() {
-      const response = await youtube.search.list(params);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const results = response.data.items;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return results
+  try {
+    const response = await youtube.search.list(params);
+    const results = response.data.items;
+
+    if (!results || results.length === 0) {
+      // If no results from YouTube, get random videos from HLS
+      return getRandomVideosFromHLS(2);
+    } else {
+      type YoutubeSearchResult = {
+        kind: string;
+        etag: string;
+        id: { videoId: string };
+      };
+
+      const getRandomVideoIds = (data: YoutubeSearchResult[], n: number): string[] => {
+        // Shuffle the original array
+        const shuffledData = [...data].sort(() => Math.random() - 0.5);
+        // Get first n items
+        const selectedItems = shuffledData.slice(0, n);
+        // Extract videoIds
+        const videoIds = selectedItems.map(item => item.id.videoId);
+        return videoIds;
+      };
+
+      // Get random video IDs from the results
+      return getRandomVideoIds(results, 2);
     }
-
-  // Execute the function
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const results = await searchYouTube();
-
-  type YoutubeSearchResult = {
-    kind: string;
-    etag: string;
-    id: { kind: string; videoId: string };
-    snippet: {
-      publishedAt: string;
-      channelId: string;
-      title: string;
-      description: string;
-      thumbnails: object;
-      channelTitle: string;
-      liveBroadcastContent: string;
-      publishTime: string;
-    };
-  };
-
-  const getRandomVideoIds = (data: YoutubeSearchResult[], n: number): string[] => {
-    // Shuffle the original array
-    const shuffledData = [...data].sort(() => Math.random() - 0.5);
-    // Get first n items
-    const selectedItems = shuffledData.slice(0, n);
-    // Extract videoIds
-    const videoIds = selectedItems.map(item => item.id.videoId);
-    return videoIds;
-  };
-
-  // FIXME this 2 is magic. it should be passed down.
-  const randomVideoIds = getRandomVideoIds(results, 2);
-  return randomVideoIds;
+  } catch (error) {
+    console.error("Error querying YouTube:", error);
+    // On error, get random videos from HLS
+    return getRandomVideosFromHLS(2);
+  }
 }
 
 // Function to add array elements to 'start_encode' Redis list
@@ -169,6 +161,15 @@ async function checkAllFilesExist(videoIds: string[]): Promise<boolean> {
   }
 
   return true;
+}
+
+function getRandomVideosFromHLS(n: number): string[] {
+  const hlsDirectory = "/application/media/hls"; // Path to your HLS library
+  // List all files/folders in the directory, and filter them to avoid static videos
+  const allVideos = fs.readdirSync(hlsDirectory).filter(video => !videos_of_static.includes(video));
+  // Shuffle the array and pick the first n items
+  const selectedVideos = [...allVideos].sort(() => Math.random() - 0.5).slice(0, n);
+  return selectedVideos;
 }
 
 
