@@ -67,7 +67,7 @@ const getOpenAIResponse = async (input: string): Promise<OpenAiResponseType> => 
 
   const chatCompletion: OpenAI.Chat.ChatCompletion | undefined = await openai.chat.completions.create(params);
 
-  // this feels very risky. this should trap gpt 4 giving bogus JSON and try again.
+  // this feels very risky. this should trap gpt 4 giving bogus JSON and try again. it hasn't failed me yet though.
   const openAiResponse = JSON.parse(chatCompletion.choices[0]!.message.content!) as OpenAiResponseType;
   return openAiResponse;
 }
