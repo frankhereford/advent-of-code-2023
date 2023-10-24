@@ -79,7 +79,7 @@ def run_ffmpeg(video_id):
         subtitles = None
         if os.path.exists(f'/application/media/downloads/{video_id}/{video_id}.en.srt'):
             shell_safe_path = shlex.quote(f'/application/media/downloads/{video_id}/{video_id}.en.srt')
-            subtitles=f"subtitles={shell_safe_path}:force_style='FontName=Arial,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
+            subtitles=f"subtitles={shell_safe_path}:force_style='FontName=FreeMono,PrimaryColour=&H00ffffff,OutlineColour=&H00000000,BackColour=&H00000000,BorderStyle=3,Outline=1,Shadow=0,MarginV=35'"
 
         # Reduce input to 25% PAL resolution
         shrink144="scale=-2:144"
@@ -136,11 +136,12 @@ def run_ffmpeg(video_id):
         # Re-scale input to full PAL resolution with linear pixel
         scale2PALpix="scale=720:576:flags=neighbor"
 
+        font = "/usr/share/fonts/truetype/freefont/FreeSerif.ttf"
         # Add magnetic damage effect to input [crt screen]
-        screenGauss="""[base];
+        screenGauss=f"""[base];
                     nullsrc=size=720x576,
                         drawtext=
-                        fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf:
+                        fontfile={font}:
                         text='@':
                         x=600:
                         y=30:
@@ -150,18 +151,18 @@ def run_ffmpeg(video_id):
                     [gauss][base] blend=all_mode=screen:shortest=1"""
 
         # Add reflections to input [crt screen]
-        reflections="""[base];
+        reflections=f"""[base];
                     nullsrc=size=720x576,
                     format=gbrp,
                     drawtext=
-                    fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf:
+                    fontfile={font}:
                     text='€':
                     x=50:
                     y=50:
                     fontsize=150:
                     fontcolor=white,
                     drawtext=
-                    fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf:
+                    fontfile={font}:
                     text='J':
                     x=600:
                     y=460:
@@ -171,11 +172,11 @@ def run_ffmpeg(video_id):
                     [lights][base] blend=all_mode=screen:shortest=1"""
 
         # Add more detailed highlight to input [crt screen]
-        highlight="""[base];
+        highlight=f"""[base];
                     nullsrc=size=720x576,
                     format=gbrp,
                     drawtext=
-                    fontfile=/usr/share/fonts/truetype/freefont/FreeSerif.ttf:
+                    fontfile={font}:
                     text='¡':
                     x=80:
                     y=60:
