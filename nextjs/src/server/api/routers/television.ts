@@ -7,6 +7,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 import videos_of_static from "~/utils/videos_of_static";
 
+import * as pgPromise from "pg-promise";
+
+const pgp = pgPromise();
+
+const db = pgp({
+  host: "postgres",
+  port: 5432,
+  database: "television",
+  user: "television",
+  password: "television"
+});
+
+
 import { env } from "../../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
