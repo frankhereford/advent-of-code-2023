@@ -84,7 +84,7 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
     q: topic,
     part: "snippet",
     type: "video",
-    maxResults: 2,
+    maxResults: 20,
     fields: "items/id/videoId",
   };
 
@@ -112,8 +112,22 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
         return videoIds;
       };
 
+      const storeAlternateIds = async (video_id: string, alternateIds: string[]): Promise<void> => {
+        const redisClient = await createClient({
+          url: 'redis://redis'
+        }).connect();
+
+        const key = `alternate:${video_id}`;
+        await redisClient.rPush(key, alternateIds);
+      };
+
       // Get random video IDs from the results
-      return getRandomVideoIds(results, 2);
+      const videos = getRandomVideoIds(results, 6);
+      // stash some alternative videos if these turn out to be unsuitable in the
+      // follow on python steps.
+      await storeAlternateIds(videos[0]!, videos.slice(2, 4));
+      await storeAlternateIds(videos[1]!, videos.slice(4, 6));
+      return videos.slice(0, 2)
     }
   } catch (error) {
     console.error("Error querying YouTube:", error);
