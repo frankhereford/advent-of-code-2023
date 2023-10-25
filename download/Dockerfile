@@ -9,7 +9,7 @@ RUN apt-get update && \
 RUN apt-get install -y vim aptitude python3-pip magic-wormhole file
 
 # install youtube downloader
-RUN python3 -m pip install -U yt-dlp vtt_to_srt3 redis
+RUN python3 -m pip install -U yt-dlp vtt_to_srt3 redis moviepy
 
 RUN mkdir /application
 COPY . /application/download
