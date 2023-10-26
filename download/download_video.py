@@ -54,6 +54,7 @@ def get_another_video(video_id: str) -> str:
         SELECT video_id
         FROM videos
         WHERE search = %s AND video_id != %s
+        order by random()
         LIMIT 1
     """, (search_id, video_id))
 
