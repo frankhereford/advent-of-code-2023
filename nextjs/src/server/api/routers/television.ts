@@ -4,12 +4,12 @@
 import OpenAI from 'openai';
 import { google } from 'googleapis';
 import { createClient } from "redis";
+import pgPromise, { IDatabase } from "pg-promise";
 import { z } from "zod";
 import * as fs from 'fs';
 import * as path from 'path';
-import videos_of_static from "~/utils/videos_of_static";
 
-import pgPromise from "pg-promise";
+import videos_of_static from "~/utils/videos_of_static";
 
 const pgp = pgPromise();
 
