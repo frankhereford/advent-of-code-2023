@@ -10,6 +10,7 @@ export const env = createEnv({
     NODE_ENV: z.enum(["development", "test", "production"]),
     OPENAI_API_KEY: z.string().min(1),
     YOUTUBE_API_KEY: z.string().min(1),
+    USE_CACHED_SEARCHES: z.string(),
   },
 
   /**
@@ -29,6 +30,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
+    USE_CACHED_SEARCHES: process.env.USE_CACHED_SEARCHES,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
