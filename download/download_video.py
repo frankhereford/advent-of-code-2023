@@ -7,20 +7,62 @@ import os
 import shlex
 from vtt_to_srt.vtt_to_srt import ConvertFile
 from moviepy.editor import VideoFileClip
+import psycopg2
 
-def get_and_remove_first_alternate(video_id: str) -> str:
-    # Connect to Redis
-    r = redis.Redis(host='redis', port=6379)
-    
-    # Generate the key for the list
-    redis_key = f"alternate:{video_id}"
-    
-    # Pop the first element from the list and return it
-    alternate_video_id = r.lpop(redis_key)
-    
-    # Convert bytes to string if alternate_video_id is not None
-    return alternate_video_id.decode('utf-8') if alternate_video_id else None
 
+def remove_files_from_video_dir(video_id):
+    directory = f"/application/media/downloads/{video_id}/"
+
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}. Reason: {e}")
+
+
+def get_another_video(video_id: str) -> str:
+    # Connect to PostgreSQL
+    conn = psycopg2.connect(
+        host="postgres",
+        database="television",
+        user="television",
+        password="television"
+    )
+    cursor = conn.cursor()
+
+    # Find the most recent search related to the given video_id
+    cursor.execute("""
+        SELECT s.id
+        FROM searches s
+        JOIN videos v ON s.id = v.search
+        WHERE v.video_id = %s
+        ORDER BY s.creation DESC
+        LIMIT 1
+    """, (video_id,))
+    
+    search_id = cursor.fetchone()
+    
+    if search_id is None:
+        return None
+
+    search_id = search_id[0]
+    
+    # Get another video_id related to the same search
+    cursor.execute("""
+        SELECT video_id
+        FROM videos
+        WHERE search = %s AND video_id != %s
+        LIMIT 1
+    """, (search_id, video_id))
+
+    alternate_video_id = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return alternate_video_id[0] if alternate_video_id else None
 
 def check_video_dimensions(video_id: str) -> bool:
     r = redis.Redis(host='redis', port=6379)
@@ -53,13 +95,20 @@ def download_youtube_video(video_id):
 
         subprocess.run(cmd)
 
-        # it always feels good to write something recursive
-        if not check_video_dimensions(video_id):
+        original_video_id = video_id
+
+        while not check_video_dimensions(video_id):
             print(f"Video {video_id} is too small, skipping")
-            alternate = get_and_remove_first_alternate(video_id)
-            if (alternate):
-                return download_youtube_video(alternate)
-        return video_id
+            alternate = get_another_video(video_id)
+
+            print("alternate video is", alternate)
+            if alternate:
+                remove_files_from_video_dir(video_id)
+                cmd = ['timeout', '60s', 'yt-dlp', '--no-progress', '--write-subs', '--write-auto-sub', 
+                            '-o', output_path, '-f', "best[height<=?360]", '--', shlex.quote(alternate)]
+                subprocess.run(cmd)
+
+        return original_video_id
 
     except Exception as e:
         print(f"Something went wrong: {e}")
