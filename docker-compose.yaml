@@ -48,3 +48,15 @@ services:
       - ./media/hls:/usr/local/apache2/htdocs/
     environment:
       - TZ=UTC
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: television
+      POSTGRES_USER: television
+      POSTGRES_PASSWORD: television
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql

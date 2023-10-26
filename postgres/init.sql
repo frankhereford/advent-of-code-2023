@@ -1,0 +1,17 @@
+CREATE TABLE searches (
+  id SERIAL PRIMARY KEY,
+  topic VARCHAR(255) NOT NULL,
+  label VARCHAR(255) NOT NULL,
+  results json NULL,
+  creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE videos (
+  id SERIAL PRIMARY KEY,
+  video_id VARCHAR(255) NOT NULL,
+  search INTEGER NOT NULL,
+  width INTEGER NULL,
+  height INTEGER NULL,
+  creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (search) REFERENCES searches(id)
+);

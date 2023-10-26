@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import OpenAI from 'openai';
 import { google } from 'googleapis';
@@ -6,6 +8,19 @@ import { z } from "zod";
 import * as fs from 'fs';
 import * as path from 'path';
 import videos_of_static from "~/utils/videos_of_static";
+
+import pgPromise from "pg-promise";
+
+const pgp = pgPromise();
+
+const db = pgp({
+  host: "postgres",
+  port: 5432,
+  database: "television",
+  user: "television",
+  password: "television"
+});
+
 
 import { env } from "../../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -73,7 +88,7 @@ const getOpenAIResponse = async (input: string): Promise<OpenAiResponseType> => 
 }
 
 
-const getYouTubeVideos = async (topic: string): Promise<string[]> => {
+const getYouTubeVideos = async (topic: string, search_id: number): Promise<string[]> => {
   // Initialize the YouTube API client
   const youtube = google.youtube({
     version: "v3",
@@ -84,13 +99,14 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
     q: topic,
     part: "snippet",
     type: "video",
-    maxResults: 2,
+    maxResults: 20,
     fields: "items/id/videoId",
   };
 
   try {
     const response = await youtube.search.list(params);
     const results = response.data.items;
+
 
     if (!results || results.length === 0) {
       // If no results from YouTube, get random videos from HLS
@@ -102,18 +118,56 @@ const getYouTubeVideos = async (topic: string): Promise<string[]> => {
         id: { videoId: string };
       };
 
-      const getRandomVideoIds = (data: YoutubeSearchResult[], n: number): string[] => {
-        // Shuffle the original array
-        const shuffledData = [...data].sort(() => Math.random() - 0.5);
-        // Get first n items
-        const selectedItems = shuffledData.slice(0, n);
-        // Extract videoIds
-        const videoIds = selectedItems.map(item => item.id.videoId);
-        return videoIds;
-      };
+      async function updateSearchResults(newResults: object, rowId: number): Promise<void> {
+        await db.none("UPDATE searches SET results = $1 WHERE id = $2", [JSON.stringify(results), search_id]);
+      }
 
-      // Get random video IDs from the results
-      return getRandomVideoIds(results, 2);
+      await updateSearchResults(results, search_id)
+
+      interface VideoIdObject {
+        id: { videoId: string };
+      }
+
+      async function insertVideoIds(
+        videoIds: VideoIdObject[],
+        search_id: number
+      ): Promise<void> {
+        const cs = new pgp.helpers.ColumnSet(["video_id", "search"], {
+          table: "videos",
+        });
+
+        const values = videoIds.map((obj) => ({
+          video_id: obj.id.videoId,
+          search: search_id,
+        }));
+
+        const query = pgp.helpers.insert(values, cs);
+        await db.none(query);
+      }
+
+      await insertVideoIds(results, search_id)
+
+      //console.log("results:", results)
+
+      async function getRandomVideoIds(search_id: number): Promise<string[]> {
+        const query = `
+          SELECT video_id
+          FROM videos
+          WHERE search = $1
+          ORDER BY RANDOM()
+          LIMIT 2
+        `;
+
+        try {
+          const result = await db.many(query, [search_id]);
+          return result.map(row => row.video_id);
+        } catch (err) {
+          console.error("Error fetching random video IDs: ", err);
+          return [];
+        }
+      }
+
+      return await getRandomVideoIds(search_id)
     }
   } catch (error) {
     console.error("Error querying YouTube:", error);
@@ -172,14 +226,21 @@ function getRandomVideosFromHLS(n: number): string[] {
   return selectedVideos;
 }
 
+async function insertSearch(topic: string, label: string): Promise<number> {
+  const result = await db.one("INSERT INTO searches(topic, label) VALUES($1, $2) RETURNING id", [topic, label]);
+  return result.id;
+}
+
 
 export const televisionRouter = createTRPCRouter({
   think: publicProcedure
     .input(z.object({ user_input: z.string() }))
     .query(async ({ input }) => {
       const subject = await getOpenAIResponse(input.user_input);
-      console.log(subject)
-      const videos = await getYouTubeVideos(subject.topic);
+      console.log("search:", subject)
+      const search_id = await insertSearch(subject.topic, subject.label);
+      console.log("search_id:", search_id)
+      const videos = await getYouTubeVideos(subject.topic, search_id);
       console.log(videos)
       await addToRedisQueue(videos)
       return { videos: videos, label: subject.label };
