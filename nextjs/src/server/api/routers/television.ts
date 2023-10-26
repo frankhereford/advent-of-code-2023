@@ -231,17 +231,66 @@ async function insertSearch(topic: string, label: string): Promise<number> {
   return result.id;
 }
 
+// Define the interface for the random search result
+interface ISearch {
+  id: number;
+  topic: string;
+  label: string;
+}
 
+// Define the interface for the video result
+interface IVideo {
+  video_id: string;
+}
+
+export async function getRandomVideoIdsFromRandomSearch(): Promise<{ topic: string, label: string, videos: string[] }> {
+  // First, get a random search
+  const randomSearch: ISearch = await db.one('SELECT id, topic, label FROM searches ORDER BY RANDOM() LIMIT 1');
+
+  // Then, get two random video IDs associated with that search
+  const videos: IVideo[] = await db.manyOrNone(`
+        SELECT video_id FROM videos 
+        WHERE search = $1 
+        ORDER BY RANDOM() 
+        LIMIT 2
+    `, [randomSearch.id]);
+
+  // Construct the result
+  const result = {
+    topic: randomSearch.topic,
+    label: randomSearch.label,
+    videos: videos.map(video => video.video_id)
+  };
+
+  return result;
+}
 export const televisionRouter = createTRPCRouter({
   think: publicProcedure
     .input(z.object({ user_input: z.string() }))
     .query(async ({ input }) => {
+
+      if (env.USE_CACHED_SEARCHES === 'true') {
+        console.log("skipping openai")
+        const random = await getRandomVideoIdsFromRandomSearch();
+        console.log(random)
+        await addToRedisQueue(random.videos)
+        return { videos: random.videos, label: random.label };
+      }
+
       const subject = await getOpenAIResponse(input.user_input);
       console.log("search:", subject)
       const search_id = await insertSearch(subject.topic, subject.label);
       console.log("search_id:", search_id)
       const videos = await getYouTubeVideos(subject.topic, search_id);
       console.log(videos)
+      if (videos.length === 0) {
+        console.log("No videos found");
+        console.log("Let's draw on the cache.")
+        const random = await getRandomVideoIdsFromRandomSearch();
+        await addToRedisQueue(random.videos)
+        return { videos: random.videos, label: random.label };
+      }
+
       await addToRedisQueue(videos)
       return { videos: videos, label: subject.label };
     }),
