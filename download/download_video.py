@@ -76,7 +76,7 @@ def check_video_dimensions(video_id: str) -> bool:
     with VideoFileClip(video_path) as clip:
         width, height = clip.size
     
-    return width > 180 and height > 144
+    return width > 180 and height > 144 and width / height > 1.25
 
 def append_to_redis_list(redis_host='redis', redis_port=6379, key_to_append='encode_queue', value_to_append=''):
     r = redis.Redis(host=redis_host, port=redis_port)
