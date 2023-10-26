@@ -119,7 +119,7 @@ def convert_subtitles(video_id):
         convert_file = ConvertFile(f"/application/media/downloads/{video_id}/{video_id}.en.vtt", "utf-8")
         convert_file.convert()
     except Exception as e:
-        print(f"Couldn't convert subttitles: {e}")
+        print(f"Couldn't convert subtitles: {e}")
 
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='start_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
