@@ -2,7 +2,7 @@ CREATE TABLE searches (
   id SERIAL PRIMARY KEY,
   topic VARCHAR(255) NOT NULL,
   label VARCHAR(255) NOT NULL,
-  results jsonb NOT NULL,
+  results json NULL,
   creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
