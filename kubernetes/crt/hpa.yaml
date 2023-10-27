@@ -21,7 +21,7 @@ spec:
       stabilizationWindowSeconds: 10  # How long to hold off scaling up after the previous scale up
       policies:
       - type: Pods
-        value: 4
+        value: 1
         periodSeconds: 5
       - type: Percent
         value: 100
@@ -30,7 +30,7 @@ spec:
       stabilizationWindowSeconds: 10  # How long to hold off scaling down after the previous scale down
       policies:
       - type: Pods
-        value: 2
+        value: 1
         periodSeconds: 5
       - type: Percent
         value: 100
