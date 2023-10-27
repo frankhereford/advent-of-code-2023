@@ -14,6 +14,7 @@ import shlex
 from vtt_to_srt.vtt_to_srt import ConvertFile
 
 def check_video_exists(video_id):
+    return False
     video_id = video_id.decode('utf-8')
     # Connect to Redis
     r = redis.Redis(host='redis', port=6379, db=0)
