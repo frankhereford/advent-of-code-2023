@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crt
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: crt
+  template:
+    metadata:
+      labels:
+        app: crt
+    spec:
+      containers:
+      - name: crt
+        image: frankinaustin/television-crt:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 100m
+        volumeMounts:
+        - name: application-data
+          mountPath: /application
+      volumes:
+      - name: application-data
+        hostPath:
+          path: /Users/frank/Development/advent-of-code-2023
+          type: Directory
