@@ -16,6 +16,9 @@ spec:
       - name: crt
         image: frankinaustin/television-crt:latest
         imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 100m
         volumeMounts:
         - name: application-data
           mountPath: /application
