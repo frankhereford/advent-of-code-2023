@@ -236,11 +236,21 @@ def run_ffmpeg(video_id):
     except Exception as e:
         print(f"Something went wrong: {e}")
 
+def self_destruct():
+    print("I want to self destruct..")
+
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
     while True:
         print("about to block at redis queue")
-        _, video_id = r.blpop(queue_to_poll)
+        
+        result = r.blpop(queue_to_poll, timeout=30)  # Wait for 30 seconds
+        if result is None:
+            self_destruct()
+            #continue
+        
+
+        _, video_id = result
         if not check_video_exists(video_id):
             add_encoding_key_with_time_and_ttl(video_id)
             video_id = video_id.decode('utf-8')
