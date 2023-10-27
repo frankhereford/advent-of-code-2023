@@ -15,7 +15,7 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 80
+        averageUtilization: 120
   behavior:   # Behavior field for scaling policies
     scaleUp:
       stabilizationWindowSeconds: 10  # How long to hold off scaling up after the previous scale up

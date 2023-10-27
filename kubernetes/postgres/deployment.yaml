@@ -21,13 +21,14 @@ spec:
         - configMapRef:
             name: postgres-config
         volumeMounts:
-        #- name: postgres-data
-          #mountPath: /var/lib/postgresql/data
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
         - name: postgres-init
           mountPath: /docker-entrypoint-initdb.d/
       volumes:
       - name: postgres-data
-        emptyDir: {} # Placeholder, to be replaced with PersistentVolumeClaim
+        persistentVolumeClaim:
+          claimName: postgres-pvc
       - name: postgres-init
         hostPath:
           path: /Users/frank/Development/advent-of-code-2023/postgres/

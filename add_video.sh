@@ -1,3 +1,3 @@
 #!/bin/bash
 
-redis-cli  LPUSH start_queue "$1"
+redis-cli -p 31780 LPUSH start_queue "$1"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi # Adjust this based on your needs
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/Users/frank/Development/advent-of-code-2023/media/postgres" 
