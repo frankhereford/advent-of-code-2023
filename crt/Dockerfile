@@ -8,7 +8,7 @@ RUN apt-get update && \
 # normal stuffs
 RUN apt-get install -y vim aptitude python3-pip magic-wormhole file fonts-freefont-ttf git binutils
 
-RUN pip install redis vtt_to_srt3
+RUN pip install redis vtt_to_srt3 kubernetes
 
 # install amazon's efs-utils
 WORKDIR /root
