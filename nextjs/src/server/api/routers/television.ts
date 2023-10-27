@@ -172,7 +172,8 @@ const getYouTubeVideos = async (topic: string, search_id: number): Promise<strin
   } catch (error) {
     console.error("Error querying YouTube:", error);
     // On error, get random videos from HLS
-    return getRandomVideosFromHLS(2);
+    // return getRandomVideosFromHLS(2);
+    return []
   }
 }
 
