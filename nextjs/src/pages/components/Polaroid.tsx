@@ -48,8 +48,16 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
             <Video key={index} videoId={id} />
           ))}
           <Image
+            className='televisions'
             alt='televisions in the window of a repair shop'
             src="/televisions_mask.png"
+            width={1024}
+            height={1024}
+          />
+          <Image
+            className='polaroid_texture'
+            alt='texture'
+            src="/polaroid_texture.png"
             width={1024}
             height={1024}
           />
