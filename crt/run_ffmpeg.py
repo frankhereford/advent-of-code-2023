@@ -244,13 +244,15 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_q
     while True:
         print("about to block at redis queue")
         
-        result = r.blpop(queue_to_poll, timeout=30)  # Wait for 30 seconds
-        if result is None:
-            self_destruct()
+        # this needs to be done via the k8ts api
+        #result = r.blpop(queue_to_poll, timeout=30)  # Wait for 30 seconds
+        #if result is None:
+            #self_destruct()
             #continue
+        #_, video_id = result
         
 
-        _, video_id = result
+        _, video_id = r.blpop(queue_to_poll)
         if not check_video_exists(video_id):
             add_encoding_key_with_time_and_ttl(video_id)
             video_id = video_id.decode('utf-8')
