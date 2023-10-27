@@ -19,6 +19,15 @@ spec:
         resources:
           requests:
             cpu: 100m
+        env:  # This is where the env field should be
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         volumeMounts:
         - name: application-data
           mountPath: /application

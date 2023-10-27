@@ -10,6 +10,27 @@ import re
 import shutil
 import datetime
 import shlex
+from kubernetes import client, config
+
+def annotate_pod(annotation_key, annotation_value):
+    # Load the kube config
+    config.load_incluster_config()
+
+    # Create API client
+    v1 = client.CoreV1Api()
+
+    # Get the pod's namespace and name from environment variables
+    namespace = os.environ.get("MY_POD_NAMESPACE")
+    pod_name = os.environ.get("MY_POD_NAME")
+
+    # Annotate the pod
+    body = {
+        "metadata": {
+            "annotations": {annotation_key: annotation_value}
+        }
+    }
+    v1.patch_namespaced_pod(name=pod_name, namespace=namespace, body=body)
+
 
 from vtt_to_srt.vtt_to_srt import ConvertFile
 
@@ -238,9 +259,11 @@ def run_ffmpeg(video_id):
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='encode_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
     while True:
+        annotate_pod("status", "idle")
         print("about to block at redis queue")
         _, video_id = r.blpop(queue_to_poll)
         if not check_video_exists(video_id):
+            annotate_pod("status", "busy")
             add_encoding_key_with_time_and_ttl(video_id)
             video_id = video_id.decode('utf-8')
             store_metadata_in_redis(video_id, { 'started_at': datetime.datetime.now().isoformat(), 'completed_at': 'null'})
