@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: download
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: download
+  template:
+    metadata:
+      labels:
+        app: download
+    spec:
+      containers:
+      - name: download
+        image: frankinaustin/television-download:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /application
+          name: application-data
+      volumes:
+      - name: application-data
+        hostPath:
+          path: /Users/frank/Development/advent-of-code-2023
+          type: Directory
