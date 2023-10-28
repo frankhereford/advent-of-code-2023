@@ -5,6 +5,7 @@ import sys
 import redis
 import os
 import shlex
+import argparse
 from vtt_to_srt.vtt_to_srt import ConvertFile
 from moviepy.editor import VideoFileClip
 import psycopg2
@@ -121,6 +122,21 @@ def convert_subtitles(video_id):
     except Exception as e:
         print(f"Couldn't convert subtitles: {e}")
 
+def download_from_arguments(video_id, redis_host='redis', redis_port=6379):
+    r = redis.Redis(host=redis_host, port=redis_port)
+
+    if video_id:
+        print(f"Got video ID {video_id} from arguments")
+
+        video_id = download_youtube_video(video_id)
+        convert_subtitles(video_id)
+        append_to_redis_list(value_to_append=video_id)
+
+        print(f"Processed video ID {video_id}")
+    else:
+        print("No video ID provided, exiting.")
+
+
 def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='start_queue'):
     r = redis.Redis(host=redis_host, port=redis_port)
     while True:
@@ -132,6 +148,11 @@ def poll_redis_list(redis_host='redis', redis_port=6379, queue_to_poll='start_qu
         convert_subtitles(video_id)
         append_to_redis_list(value_to_append=video_id)
 
-
 if __name__ == "__main__":
-    poll_redis_list()
+    if len(sys.argv) > 1:
+        parser = argparse.ArgumentParser(description='Process a video ID.')
+        parser.add_argument('video_id', type=str, help='The video ID to process')
+        args = parser.parse_args()
+        download_from_arguments(args.video_id)
+    else:
+        poll_redis_list()
