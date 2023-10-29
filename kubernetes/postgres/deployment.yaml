@@ -31,5 +31,5 @@ spec:
           claimName: postgres-pvc
       - name: postgres-init
         hostPath:
-          path: /home/frank/advent-of-code-2023/postgres/
+          path: /home/frank/development/advent-of-code-2023/postgres/
           type: Directory

@@ -11,4 +11,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/frank/advent-of-code-2023/media/postgres" 
+    path: "/home/frank/development/advent-of-code-2023/media/postgres" 
