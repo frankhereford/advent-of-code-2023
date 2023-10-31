@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: crt
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: crt
@@ -12,9 +12,13 @@ spec:
       labels:
         app: crt
     spec:
+      securityContext:
+        runAsUser: 0  # Run as root
       containers:
       - name: crt
         image: frankinaustin/television-crt:latest
+        securityContext:
+          privileged: true
         imagePullPolicy: Always
         resources:
           requests:
@@ -22,8 +26,13 @@ spec:
         volumeMounts:
         - name: application-data
           mountPath: /application
+        - name: dev-dri
+          mountPath: /dev/dri
       volumes:
       - name: application-data
         hostPath:
-          path: /Users/frank/Development/advent-of-code-2023
+          path: /home/frank/development/advent-of-code-2023
           type: Directory
+      - name: dev-dri
+        hostPath:
+          path: /dev/dri

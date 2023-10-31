@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dev-dri-daemonset
+spec:
+  selector:
+    matchLabels:
+      name: dev-dri
+  template:
+    metadata:
+      labels:
+        name: dev-dri
+    spec:
+      hostNetwork: true
+      containers:
+      - name: dev-dri-container
+        image: alpine:latest
+        command: ["/bin/sh", "-c", "--"]
+        args: ["while true; do sleep 30; done;"]
+        volumeMounts:
+        - name: dev-dri
+          mountPath: /dev/dri
+      volumes:
+      - name: dev-dri
+        hostPath:
+          path: /dev/dri

@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get clean
 
 # normal stuffs
-RUN apt-get install -y vim aptitude python3-pip magic-wormhole file fonts-freefont-ttf git binutils
+RUN apt-get install -y vim aptitude python3-pip magic-wormhole file fonts-freefont-ttf git binutils i965-va-driver vainfo
 
 RUN pip install redis vtt_to_srt3
 

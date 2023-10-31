@@ -25,5 +25,5 @@ spec:
       volumes:
       - name: application-data
         hostPath:
-          path: /Users/frank/Development/advent-of-code-2023
+          path: /home/frank/development/advent-of-code-2023
           type: Directory
