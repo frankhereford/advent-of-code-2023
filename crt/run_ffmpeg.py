@@ -225,8 +225,8 @@ def run_ffmpeg(video_id):
             '-i', f'{source_path}/{video_id}.mp4',
             '-vframes', '6000', # 8000
             '-an', # mute
-            '-c:v', 'libx264', # encode in h264, required by HLS
-            #'-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
+            #'-c:v', 'libx264', # encode in h264, required by HLS
+            '-c:v', 'h264_qsv', # hardware accelerated encoding, still h264
             '-vf', filters, # apply filtergraphs
             '-bsf:v', 'h264_mp4toannexb', '-map', '0', '-f', 'segment', '-segment_time', '3',
             '-segment_list', playlist_path, '-segment_format', 'mpegts', f'{stream_base_path}/stream%03d.ts'
