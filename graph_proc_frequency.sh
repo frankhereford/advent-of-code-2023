@@ -12,7 +12,9 @@ while true; do
   echo $awkMHz >> $datafile
   
   # Plot using gnuplot
-  gnuplot -p -e "set terminal dumb size $(tput cols),$(tput lines); plot '$datafile' with lines"
+  gnuplot -p -e "set terminal dumb size $(tput cols),$(tput lines); plot '< tail -n 120 $datafile' with lines"
+
+
 
   #gnuplot -p -e "set terminal dumb; plot '$datafile' with lines"
   
