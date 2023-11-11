@@ -59,6 +59,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ videoIDs, label }) => {
             { label }
           </div>
         </div>
+        <div className='image-credit'>Photograph by <a className='thin-underline' href='https://en.wikipedia.org/wiki/Zoe_Leonard'>Zoe Leonard</a></div>
       </div>
     </>
   )
