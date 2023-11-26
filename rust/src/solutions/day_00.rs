@@ -1,3 +1,6 @@
+use web_sys::console;
+
+
 pub fn solution(n: u32) -> String {
     let mut count = 0;
     let mut num = 2;
@@ -5,6 +8,8 @@ pub fn solution(n: u32) -> String {
     while count < n {
         if is_prime(num) {
             count += 1;
+            // Log the current count - replace this with actual message sending
+            console::log_1(&format!("Prime count: {}", count).into());
         }
         if count < n {
             num += 1;
