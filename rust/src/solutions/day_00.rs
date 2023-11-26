@@ -1,4 +1,4 @@
-use web_sys::console;
+//use web_sys::console;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
@@ -22,6 +22,8 @@ pub fn solution(n: u32) -> String {
         }
     }
 
+    let message = format!("{n}th prime found: {num}", n = n, num = num);
+    postMessageToWorker(&message);
     num.to_string()
 }
 
