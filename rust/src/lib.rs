@@ -27,7 +27,7 @@ pub fn greet() {
 }
 
 #[wasm_bindgen]
-pub fn solution() -> String {
-    let solution = solutions::day_00::solution(10);
-    solution // Return the solution string directly
+pub fn solution(n: u32) -> String {
+    let solution = solutions::day_00::solution(n);
+    solution
 }
