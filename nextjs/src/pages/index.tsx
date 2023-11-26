@@ -3,6 +3,7 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 import Polaroid from '~/pages/components/Polaroid';
+import Rust from '~/pages/components/Rust';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | undefined)[]>(Array.from({ length: 2 }, () => undefined));
@@ -35,6 +36,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <Rust></Rust>
         <div className="container">
           <Polaroid videoIDs={videoIDs} label={label} />
         </div>
