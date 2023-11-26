@@ -105,7 +105,7 @@ export default function Terminal(props: Props) {
         setIsShown(false)
     }
 
-    const backgroundColor = 'bg-[#000000bb]'
+    const backgroundColor = 'bg-[#00000099]'
 
     return (
         <>
