@@ -1,3 +1,11 @@
+use web_sys::console;
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
+extern "C" {
+    fn postMessageToWorker(message: &str);
+}
+
 pub fn solution(n: u32) -> String {
     let mut count = 0;
     let mut num = 2;
@@ -5,6 +13,9 @@ pub fn solution(n: u32) -> String {
     while count < n {
         if is_prime(num) {
             count += 1;
+            let message = format!("Prime count: {}", count);
+            // console::log_1(&format!("{}", message).into());
+            postMessageToWorker(&message);
         }
         if count < n {
             num += 1;
