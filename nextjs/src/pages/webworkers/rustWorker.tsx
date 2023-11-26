@@ -15,7 +15,6 @@ self.onmessage = async (e: MessageEvent) => {
       if (!television) {
         await loadWasmModule();
       }
-      console.log("value", e.data.value);
       const result = await television.solution(e.data.value);
       self.postMessage({ result });
     } catch (error) {
@@ -23,7 +22,10 @@ self.onmessage = async (e: MessageEvent) => {
     }
   } else if (e.data.action === 'statusUpdate') {
     // Forward status updates to the main thread
-    self.postMessage({ statusUpdate: e.data.message });
+    self.postMessage({ action: 'statusUpdate', message: e.data.message });
+  } else {
+    self.postMessage({ action: 'genericUpdate', message: e.data.message });
   }
+
 };
 export { }; // Treat this file as a module

@@ -10,22 +10,16 @@ const Rust: React.FC = () => {
         const rustWorker = new Worker(new URL('../webworkers/rustWorker.tsx', import.meta.url), { type: 'module' });
         setWorker(rustWorker);
 
-        // Listen for messages from the worker
-        //rustWorker.onmessage = (event) => {
-            //// Handle the result here
-            //setResult(event.data.result);
-        //};
-
         rustWorker.onmessage = function (e) {
-            if (e.data.statusUpdate) {
+            //console.log("e", e)
+            if (e.data.action === 'statusUpdate') {
                 // Handle status updates here
-                console.log('Status update from Rust:', e.data.statusUpdate);
+                console.log('Status update from Rust:', e.data.message);
             } else if (e.data.result) {
                 // Handle result
                 setResult(e.data.result);
             }
         };
-
 
         // Cleanup the worker when the component unmounts
         return () => {
