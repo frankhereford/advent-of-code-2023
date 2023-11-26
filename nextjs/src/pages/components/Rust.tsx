@@ -11,7 +11,6 @@ const Rust: React.FC = () => {
         setWorker(rustWorker);
 
         rustWorker.onmessage = function (e) {
-            //console.log("e", e)
             if (e.data.action === 'statusUpdate') {
                 // Handle status updates here
                 console.log('Status update from Rust:', e.data.message);
@@ -30,7 +29,7 @@ const Rust: React.FC = () => {
     useEffect(() => {
         const initWasm = async () => {
             try {
-                await import('../../rust/television'); // Adjust the path as needed
+                await import('../../rust/television');
                 setIsWasmLoaded(true);
             } catch (error) {
                 console.error('Error initializing WASM:', error);
@@ -42,7 +41,7 @@ const Rust: React.FC = () => {
 
     const handleGreet = () => {
         if (worker && isWasmLoaded) {
-            worker.postMessage({ action: 'runSolution', value: 50000 }); // Example value
+            worker.postMessage({ action: 'runSolution', value: 4000 }); 
         }
     };
 
