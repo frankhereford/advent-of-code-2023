@@ -41,7 +41,7 @@ const Rust: React.FC = () => {
 
     const handleGreet = () => {
         if (worker && isWasmLoaded) {
-            worker.postMessage({ action: 'runSolution', value: 4000 }); 
+            worker.postMessage({ action: 'runSolution', value: 50 }); 
         }
     };
 
