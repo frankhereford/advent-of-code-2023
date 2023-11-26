@@ -110,7 +110,7 @@ export default function Terminal(props: Props) {
     return (
         <>
             {isShown && (
-                <div className="z-[40] absolute top-[17%] left-[5%] w-[85%] mx-auto drop-shadow-[10px_10px_15px_rgba(0,0,0,0.5)] ">
+                <div className="z-[40] absolute top-[14%] left-[5%] w-[85%] mx-auto drop-shadow-[10px_10px_15px_rgba(0,0,0,0.5)] ">
                     <div className={'w-full shadow-2xl subpixel-antialiased rounded h-[75vh] ' + backgroundColor + ' border-black mx-auto'}>
                         <div className="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black" id="headerTerminal">
                             <div className="flex ml-2 items-center text-center border-red-900 bg-red-500 shadow-inner rounded-full w-3 h-3" id="closebtn" onClick={close}>
@@ -124,7 +124,7 @@ export default function Terminal(props: Props) {
                             </div>
 
                         </div>
-                        <div className={'overflow-auto pl-1 pt-1 h-[72vh] transition-all text-green-200 duration-[5000ms] font-mono text-xs  '} id="console">
+                        <div className={'overflow-auto pl-1 pt-1 h-[72vh] transition-all text-green-200 duration-[5000ms] font-mono text-xs'} id="console">
                             {presentationContent.map((line, index) => (
                                 <p key={index} className="pb-1">
                                     <span className='fading'>
