@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-const Rust: React.FC = () => {
+interface RustProps {
+    onUpdate: (update: string) => void; // Callback prop type
+}
+
+
+const Rust: React.FC<RustProps> = ({ onUpdate }) => {
     const [isWasmLoaded, setIsWasmLoaded] = useState(false);
     const [worker, setWorker] = useState<Worker | null>(null);
     const [result, setResult] = useState<string | null>(null);
@@ -14,6 +19,7 @@ const Rust: React.FC = () => {
             if (e.data.action === 'statusUpdate') {
                 // Handle status updates here
                 console.log('Status update from Rust:', e.data.message);
+                onUpdate(e.data.message + "\n"); 
             } else if (e.data.result) {
                 // Handle result
                 setResult(e.data.result);
@@ -41,7 +47,7 @@ const Rust: React.FC = () => {
 
     const handleGreet = () => {
         if (worker && isWasmLoaded) {
-            worker.postMessage({ action: 'runSolution', value: 50 }); 
+            worker.postMessage({ action: 'runSolution', value: 80 }); 
         }
     };
 
