@@ -35,18 +35,22 @@ The photograph proceedes through the following steps on page load:
 
 #### Intent
 
-Pretty simply, the intent is to learn how to program in Rust.
+Pretty simply, the intent is to learn how to program in Rust. Beyond that, it's to execute Advent of Code solutions at near native, binary speed in the context of a client's browser on the client's hardware.
 
 #### Mechanism
 
 * I found this book, [Rust 🦀 and WebAssembly 🕸](https://rustwasm.github.io/docs/book/introduction.html), which inspired me to learn about compiling rust into web assembly.
 * Inside the `rust` directory, there is a rust project which is used to compile WASM.
 * This code is symlinked into a nextjs app where it is run through a <Rust /> component.
-* The rust WASM code is run in a web-worker to avoid blocking the main JS event loop which communicate to the main components through web-worker-like pub/sub methods.
+* The rust WASM code is run in a web-worker to avoid blocking the main JS event loop which communicate to the main components through web-worker-like pub/sub methods. This frees up from needing to write async code, and we can plow ahead functionally without impact on the UI/UX.
 * The rust routines are provided a mechanism to print "status updates", similar conceptually to `console.log()` statements, as it proceedes through the solution to the program.
 * These updates are collected and displayed in the `<Terminal />` component borrowed from last year's AOC website.
 * The result is that the client's web browser provides the compute for the solution, and does it through execution of "binary" files compiled from rust at compile time, not execution time.
 * Recompilation of the rust source into WASM modules interacts with the NextJS development cycle as you'd expect. When you recompile, the module is re-run, outputting its status updates to the terminal.
+
+### Deployment
+
+This is wreckless, "ride or die" deployment. Production and development environments are the same thing. If you see something break, just wait a second, I'm probably fixing it.
 
 ## Lessons Learned (to be completed)
 
