@@ -41,7 +41,7 @@ Pretty simply, the intent is to learn how to program in Rust. Beyond that, it's 
 #### Mechanism
 
 * I found this book, [Rust 🦀 and WebAssembly 🕸](https://rustwasm.github.io/docs/book/introduction.html), which inspired me to learn about compiling rust into web assembly.
-* Inside the `rust` directory, there is a rust project which is used to compile web-assembly (WASM).
+* Inside the `rust` directory, there is a rust project which they are used to compile web-assembly (WASM).
   * These binary objects are able to be transcompiled by a browser into to native, binary code rapidly and then run on the processor directly.
 * These binary WASM objects are symlinked into a nextjs app where it is run via the `<Rust />` component.
 * The rust WASM code is run in a web-worker to avoid blocking the main JS event loop. They communicate with the main components through web-worker-like pub/sub methods. This architecture frees us up from needing to write async code, and we can plow ahead functionally without impact on the UI/UX, keeping the polaroid mechanisms working as intended. This is adventagous when you're trying to just crank out a AOC solution.
