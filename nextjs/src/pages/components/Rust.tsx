@@ -15,7 +15,6 @@ const Rust: React.FC<RustProps> = ({ onUpdate }) => {
 
         rustWorker.onmessage = function (e) {
             if (e.data.action === 'statusUpdate') {
-                console.log('Status update from Rust:', e.data.message);
                 onUpdate(e.data.message + "\n");
             } else if (e.data.result) {
                 // Handle result
