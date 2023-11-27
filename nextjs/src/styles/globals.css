@@ -118,3 +118,7 @@ a.thin-underline {
     color: rgb(187 247 208);
   }
 }
+
+body {
+  overflow: hidden;
+}
