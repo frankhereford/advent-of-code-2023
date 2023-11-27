@@ -7,7 +7,7 @@ extern "C" {
 }
 
 pub fn solution(n: u32) -> String {
-    postMessageToWorker("Challenge statement: \nUse a compiled language in the client's browser to compute the 80th prime number.\n");
+    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled language in the client's browser to compute the 80th prime number.\n");
 
     let mut count = 0;
     let mut num = 2;
