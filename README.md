@@ -29,7 +29,7 @@ The photograph proceedes through the following steps on page load:
 * When both video streams are playing topical videos through the above mechanism, the topic is displayed on the polaroid.
 * While the TLS streams are being prepared, the televisions will alternate between brief flashes of videos depicting static and randomly, previously downloaded video, simulating a channel changing effect.
 * The queing system used to pass events from one stage to the next is based on redis.
-* Horizontal scalability is provided by standing the stack up in Kubernetes and using archtecture which utilizes redis queueing.
+* Horizontal scalability is provided by standing the stack up in Kubernetes and using an archtecture based around redis queueing.
 * An individual page load requires two cores of the processor to work for about two minutes, almost entirely dedicated to the `ffmpeg` processing. The cost of running this website at any level of scale would be brutal in the cloud. The current implementation is running on a real, metal `i7-10700` and can support two to three simultatinious visitors.
 
 ### Terminal
