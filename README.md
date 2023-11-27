@@ -2,7 +2,7 @@
 
 ## Photograph credit
 
-The photograph featured in this website belongs to [Zoe Leonard](https://en.wikipedia.org/wiki/Zoe_Leonard).  It is used without permission. Zoe Leonard's photography is remarkable, and I am grateful for her work questioning traditional views on gender and sexuality. I recommend anyone who reads this investigate her art further.
+The photograph featured in this website belongs to [Zoe Leonard](https://en.wikipedia.org/wiki/Zoe_Leonard). It is the inspiration for this work, and it is used without permission. Zoe Leonard's photography is remarkable, and I am grateful for her work questioning traditional views on gender and sexuality. I recommend anyone who reads this investigate her art further.
 
 ## Technology
 
