@@ -42,7 +42,7 @@ Pretty simply, the intent is to learn how to program in Rust. Beyond that, it's 
 
 * I found this book, [Rust 🦀 and WebAssembly 🕸](https://rustwasm.github.io/docs/book/introduction.html), which inspired me to learn about compiling rust into web assembly.
 * Inside the `rust` directory, there is a rust project which is used to compile WASM.
-* This code is symlinked into a nextjs app where it is run through a <Rust /> component.
+* This code is symlinked into a nextjs app where it is run via the `<Rust />`` component.
 * The rust WASM code is run in a web-worker to avoid blocking the main JS event loop, and which communicates with the main components through web-worker-like pub/sub methods. This architecture frees us up from needing to write async code, and we can plow ahead functionally without impact on the UI/UX.
 * The rust routines are provided a mechanism to print "status updates", similar conceptually to `console.log()` statements, as it proceedes through the solution to the program.
 * These updates are collected and displayed in the `<Terminal />` component borrowed from [last year's AOC website](https://snowday.gg).
