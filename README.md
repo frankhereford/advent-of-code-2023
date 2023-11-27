@@ -6,7 +6,9 @@ The photograph featured in this website belongs to [Zoe Leonard](https://en.wiki
 
 ## Technology
 
-This website consists of two, almost seperate, projects. These include the backend system used to provide the polaroid photograph with video on the televisions as well as the integration of WASM compiled from rust to compute the 2023 Advent of Code solutions.
+This website consists of two, almost seperate, projects. These include:
+* A backend system used to provide the polaroid photograph with video on the televisions
+* A nextJS app utilizing WASM compiled from rust to compute the 2023 Advent of Code solutions
 
 ### Photograph
 
