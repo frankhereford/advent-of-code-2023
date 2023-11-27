@@ -20,7 +20,7 @@ The intent of this art is to imagine what might have caused the photographer to 
 #### Mechanism
 
 The photograph proceedes through the following steps on page load:
-* A call to OpenAI's API is made to select a notable news event in a given year, randomly chosen between 1970 and now. The program picks the year, and GPT 4 picks the news event. This interval is chosen to provide a reasonabbly good chance of having news coverage of the event being available on YouTube.
+* A call to OpenAI's API is made to select a notable news event in a given year, randomly chosen between 1970 and now. The program picks the year, and GPT 4 picks the news event. This interval is chosen to provide a reasonably good chance of having news coverage of the event being available on YouTube.
 * With a topic chosen, a search is made on Google's YouTube API to find semi-randomly chosen videos from the top results on that topic.
 * With two videos chosen, each is downloaded to the server in 360p resolution.
 * With mp4 files of the videos, each is run through a complex chain of `ffmpeg` filtergraphs to simulate being displayed on a CRT.
