@@ -49,7 +49,7 @@ const Rust: React.FC<RustProps> = ({ onUpdate }) => {
 
     const handleGreet = () => {
         if (worker) {
-            worker.postMessage({ action: 'runSolution', value: 80 });
+            worker.postMessage({ action: 'runSolution', value: 111 });
         }
     };
 
