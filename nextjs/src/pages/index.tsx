@@ -4,10 +4,13 @@ import { api } from "~/utils/api";
 
 import Polaroid from '~/pages/components/Polaroid';
 import Rust from '~/pages/components/Rust';
+import Terminal from '~/pages/components/Terminal';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | undefined)[]>(Array.from({ length: 2 }, () => undefined));
   const [label, setLabel] = useState<(string | undefined)>('');
+  const [rustUpdates, setRustUpdates] = useState(''); // State variable for updates from Rust component
+
 
   const videos = api.television.think.useQuery({ user_input: '' }, {
     trpc: { context: { skipBatch: true, }, },
@@ -28,6 +31,12 @@ export default function Home() {
     }
   }, [videos.data]);
 
+  const handleRustUpdate = (update: string) => {
+    setRustUpdates(prev => prev + update); // Accumulate updates
+    console.log("tacoland:", update)
+  };
+
+
   return (
     <>
       <Head>
@@ -36,7 +45,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Rust></Rust>
+        <Rust onUpdate={handleRustUpdate}></Rust>
+        <Terminal content={rustUpdates} speed={.8} variability={3} />
         <div className="container">
           <Polaroid videoIDs={videoIDs} label={label} />
         </div>

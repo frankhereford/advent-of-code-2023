@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-const Rust: React.FC = () => {
+interface RustProps {
+    onUpdate: (update: string) => void;
+}
+
+const Rust: React.FC<RustProps> = ({ onUpdate }) => {
     const [isWasmLoaded, setIsWasmLoaded] = useState(false);
     const [worker, setWorker] = useState<Worker | null>(null);
-    const [result, setResult] = useState<string | null>(null);
 
     useEffect(() => {
         // Initialize the web worker
@@ -12,11 +15,10 @@ const Rust: React.FC = () => {
 
         rustWorker.onmessage = function (e) {
             if (e.data.action === 'statusUpdate') {
-                // Handle status updates here
                 console.log('Status update from Rust:', e.data.message);
+                onUpdate(e.data.message + "\n");
             } else if (e.data.result) {
                 // Handle result
-                setResult(e.data.result);
             }
         };
 
@@ -39,24 +41,20 @@ const Rust: React.FC = () => {
         initWasm();
     }, []);
 
-    const handleGreet = () => {
+    useEffect(() => {
         if (worker && isWasmLoaded) {
-            worker.postMessage({ action: 'runSolution', value: 50 }); 
+            handleGreet();
+        }
+    }, [worker, isWasmLoaded]); // Dependency array includes worker and isWasmLoaded
+
+    const handleGreet = () => {
+        if (worker) {
+            worker.postMessage({ action: 'runSolution', value: 80 });
         }
     };
 
-    return (
-        <div>
-            {isWasmLoaded ? (
-                <>
-                    <button onClick={handleGreet}>Run Solution in Worker</button>
-                    {result && <p>Result: {result}</p>}
-                </>
-            ) : (
-                'Loading WASM...'
-            )}
-        </div>
-    );
+    // Return an empty fragment
+    return <></>;
 };
 
 export default Rust;

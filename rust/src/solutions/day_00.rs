@@ -1,4 +1,4 @@
-use web_sys::console;
+//use web_sys::console;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
@@ -7,22 +7,26 @@ extern "C" {
 }
 
 pub fn solution(n: u32) -> String {
+    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled language in the client's browser to compute the 80th prime number.\n");
+
     let mut count = 0;
     let mut num = 2;
 
     while count < n {
         if is_prime(num) {
             count += 1;
-            let message = format!("Prime count: {}", count);
-            // console::log_1(&format!("{}", message).into());
-            postMessageToWorker(&message);
+            if count % 10 == 0 { // Post message only for every 10th prime
+                let message = format!("{count}th prime in sequence: {num}", count = count, num = num);
+                postMessageToWorker(&message);
+            }
         }
-        if count < n {
-            num += 1;
-        }
+        num += 1;
     }
 
-    num.to_string()
+    postMessageToWorker("\n");
+    let message = format!("🎉 {n}th prime found: {num}\n\n", n = n, num = num - 1);
+    postMessageToWorker(&message);
+    (num - 1).to_string()
 }
 
 fn is_prime(num: u32) -> bool {
