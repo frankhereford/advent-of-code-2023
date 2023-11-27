@@ -33,7 +33,6 @@ export default function Home() {
 
   const handleRustUpdate = (update: string) => {
     setRustUpdates(prev => prev + update); // Accumulate updates
-    console.log("tacoland:", update)
   };
 
 
