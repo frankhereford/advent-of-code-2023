@@ -31,6 +31,7 @@ The photograph proceedes through the following steps on page load:
 * The queing system used to pass events from one stage to the next is based on redis.
 * Horizontal scalability is provided by standing the stack up in Kubernetes and using an archtecture based around redis queueing.
 * An individual page load requires two cores of the processor to work for about two minutes, almost entirely dedicated to the `ffmpeg` processing. The cost of running this website at any level of scale would be brutal in the cloud. The current implementation is running on a real, metal `i7-10700` and can support two to three simultatinious visitors with transcoded video faster than the playback speed.
+  * When you use this website, a computer in my living room spins up its fans. 🖥️💨
 
 ### Terminal
 
