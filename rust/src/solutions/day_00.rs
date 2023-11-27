@@ -7,7 +7,7 @@ extern "C" {
 }
 
 pub fn solution(n: u32) -> String {
-    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 111th prime number.\n");
+    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 1,111,111th prime number.\n");
 
     let mut count = 0;
     let mut num = 2;
@@ -15,8 +15,8 @@ pub fn solution(n: u32) -> String {
     while count < n {
         if is_prime(num) {
             count += 1;
-            if count % 10 == 0 { // Post message only for every 10th prime
-                let message = format!("{count}th prime in sequence: {num}", count = count, num = num);
+            if count % 100000 == 0 {
+                let message = format!("{}th prime: {}", format_with_commas(count), format_with_commas(num));
                 postMessageToWorker(&message);
             }
         }
@@ -24,9 +24,9 @@ pub fn solution(n: u32) -> String {
     }
 
     postMessageToWorker("\n");
-    let message = format!("🎉 {n}th prime found: {num}\n\n", n = n, num = num - 1);
+    let message = format!("🎉🎯 {}th prime found: {}\n\n", format_with_commas(n), format_with_commas(num - 1));
     postMessageToWorker(&message);
-    (num - 1).to_string()
+    format_with_commas(num - 1)
 }
 
 fn is_prime(num: u32) -> bool {
@@ -47,4 +47,18 @@ fn is_prime(num: u32) -> bool {
         i += 6;
     }
     true
+}
+
+fn format_with_commas(num: u32) -> String {
+    // Convert the number to string and insert commas
+    num.to_string().chars().rev()
+       .enumerate()
+       .fold(String::new(), |mut acc, (i, c)| {
+           if i % 3 == 0 && i != 0 {
+               acc.push(',');
+           }
+           acc.push(c);
+           acc
+       })
+       .chars().rev().collect()
 }
