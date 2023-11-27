@@ -29,6 +29,7 @@ services:
     volumes:
       - .:/application
     entrypoint: ["npx", "next", "dev"]
+    #entrypoint: ["npm", "run", "start"]
   haproxy:
     depends_on:
       - nextjs
