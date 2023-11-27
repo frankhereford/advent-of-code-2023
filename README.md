@@ -31,9 +31,22 @@ The photograph proceedes through the following steps on page load:
 
 ### Terminal
 
+#### Intent
 
+Pretty simply, the intent is to learn how to program in Rust.
 
-## Lessons Learned
+#### Mechanism
+
+* I found this book, [Rust 🦀 and WebAssembly 🕸](https://rustwasm.github.io/docs/book/introduction.html), which inspired me to learn about compiling rust into web assembly.
+* Inside the `rust` directory, there is a rust project which is used to compile WASM.
+* This code is symlinked into a nextjs app where it is run through a <Rust /> component.
+* The rust WASM code is run in a web-worker to avoid blocking the main JS event loop which communicate to the main components through web-worker-like pub/sub methods.
+* The rust routines are provided a mechanism to print "status updates", similar conceptually to `console.log()` statements, as it proceedes through the solution to the program.
+* These updates are collected and displayed in the `<Terminal />` component borrowed from last year's AOC website.
+* The result is that the client's web browser provides the compute for the solution, and does it through execution of "binary" files compiled from rust at compile, not execution, time.
+* Recompilation of the rust source into WASM modules interacts with the NextJS development cycle as you'd expect. When you recompile, the module is re-run, outputting its status updates to the terminal.
+
+## Lessons Learned (to be completed)
 
 * Docker swarm
 * Doing next/react dev in a docker container or service
