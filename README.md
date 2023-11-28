@@ -2,20 +2,20 @@
 
 ## Photograph credit
 
-The photograph featured in this website belongs to [Zoe Leonard](https://en.wikipedia.org/wiki/Zoe_Leonard). It is the inspiration for this work, and it is used without permission. Zoe Leonard's photography is remarkable, and I am grateful for her work questioning traditional views on gender and sexuality. I recommend anyone who reads this investigate her art further.
+The photograph featured in this website belongs to [Zoe Leonard](https://en.wikipedia.org/wiki/Zoe_Leonard). It is the inspiration for this work, and it is used without permission. Zoe Leonard's photography is remarkable, and I am grateful for her work questioning traditional views on gender and sexuality. I recommend anyone who reads this to investigate her art further.
 
 ## Technology
 
 This website consists of two, almost seperate, projects. They were written about a month apart. These systems include:
 * A backend system used to provide the polaroid photograph with video on the televisions
   * To see this portion of the project more clearly, you can click the red close button on the terminal to hide it.
-* A nextJS app utilizing WASM compiled from rust to compute the 2023 Advent of Code solutions
+* A nextJS app utilizing WASM compiled from Rust to compute the 2023 Advent of Code solutions
 
 ### Photograph
 
 #### Intent
 
-The intent of this art is to imagine what might have caused the photographer to stop and take this photo. The motivation is provided by "turning the televisions on" and finding a way to fill them with reasonable, possible video streams that are believable. Why is she taking that photograph?
+The intent of this art is to imagine what might have caused the photographer to stop and take this photo. The motivation is provided by "turning the televisions on" and finding a way to fill them with reasonable, possible video streams that are believable. Why is she taking that photograph? This is my imagining an answer to that question.
 
 #### Mechanism
 
