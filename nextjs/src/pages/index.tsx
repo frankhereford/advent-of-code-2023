@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import Polaroid from '~/pages/components/Polaroid';
 import Rust from '~/pages/components/Rust';
 import Terminal from '~/pages/components/Terminal';
+import GitHub from '~/pages/components/GitHub';
 
 export default function Home() {
   const [videoIDs, setVideoIDs] = useState<(string | undefined)[]>(Array.from({ length: 2 }, () => undefined));
@@ -44,6 +45,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <GitHub />
         <Rust onUpdate={handleRustUpdate}></Rust>
         <Terminal content={rustUpdates} speed={.8} variability={3} />
         <div className="container">
