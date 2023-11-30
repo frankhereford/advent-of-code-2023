@@ -54,11 +54,3 @@ Pretty simply, the intent is to learn how to program in Rust. Beyond that, it's 
 ### Deployment
 
 This is wreckless, "ride or die" deployment. Production and development environments are the same thing. If you see something break, just wait a second, I'm probably fixing it.
-
-## Lessons Learned (to be completed)
-
-* Docker swarm
-* Doing next/react dev in a docker container or service
-  * docker logs -f <container>
-  * docker service logs -f <service>
-* Redis based atomic queueing
