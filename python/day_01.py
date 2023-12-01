@@ -38,7 +38,6 @@ lines = file_contents.splitlines()
 
 found_digits = []
 for line in lines:
-    print(f"Line: {line}")
     chars = list(line)
     first_digit_index = None
     last_digit_index = None
@@ -49,16 +48,11 @@ for line in lines:
                 first_digit_index = i
             last_digit_index = i
 
-    print(f"Line: {line}")
-    print(f"First digit at index: {first_digit_index}, Last digit at index: {last_digit_index}")
     str_number = line[first_digit_index] + line[last_digit_index]
     number = int(str_number)
-    print(f"Number: {number}")
     found_digits.append(number)
 
 print("Part 1: ", sum(found_digits))
-
-print("\n\n")
 
 #input = './input/day_01_part_2_test.txt'
 
@@ -69,11 +63,8 @@ lines = file_contents.splitlines()
 
 numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
-
 total = 0
 for line in lines:
-    #print()
-    #print(f"Line: {line}")
     search_index = 0
     first_digit_index = None
     first_digit_value = None
@@ -82,25 +73,15 @@ for line in lines:
     while search_index <= len(line):
         for number in numbers:
             number_length = len(number)
-            #print(line[search_index:number_length])
-            #print("Line:", line)
-            #print("Testing number:", number)
-            #print("Search index:", search_index)
-            #print("Number length:", number_length)
-            #print("Testing line:", line[search_index:number_length + search_index])
             if number == line[search_index:number_length + search_index]:
-                #print(f"Found number: {number}")
                 if first_digit_index is None:
                     first_digit_index = search_index
                     first_digit_value = numbers.index(number) + 1
                 last_digit_index = search_index
                 last_digit_value = numbers.index(number) + 1
-            #print()
         if search_index < len(line):
-            #print("Checking char:", line[search_index])
             try:
                 if int(line[search_index]) in (1,2,3,4,5,6,7,8,9,0):
-                    #print(f"Found number: {line[search_index]}")
                     if first_digit_index is None:
                         first_digit_index = search_index
                         first_digit_value = line[search_index]
@@ -109,12 +90,7 @@ for line in lines:
             except:
                 pass
         search_index += 1
-
-    #print("first_digit_value:", first_digit_value)
-    #print("last_digit_value:", last_digit_value)
-
     combined_digits = f"{first_digit_value}{last_digit_value}"
     combined_value = int(combined_digits)
-    #print("combined_digits:", combined_digits)
     total += combined_value
 print("Part 2: ", total)
