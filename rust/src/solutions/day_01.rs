@@ -2,9 +2,6 @@
 use wasm_bindgen::prelude::*;
 use regex::Regex;
 
-
-
-
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
     fn postMessageToWorker(message: &str);
@@ -19,11 +16,9 @@ pub fn solution(_n: u32) -> String {
         postMessageToWorker(&format!("line: {}", line));
 
         let re = Regex::new(r"\d").unwrap();
-
-        if let Some(cap) = re.captures(line) {
-            let matched_char = &cap[0];
-            postMessageToWorker(&format!("Found character: {}", matched_char));
-        } 
+        for digit in re.find_iter(line) {
+            postMessageToWorker(&format!("Found digit: {}", digit.as_str()));
+        }
 
     });
 
