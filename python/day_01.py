@@ -2,7 +2,7 @@
 
 # I'm sticking this right up here because I want to show what a powerful documentation / reference tool ChatGPT 4 is.
 # I'm very intentionally not using it to help me solve the creation of an algorithm to solve the problem.
-# I'm using it as an exceptionally powerful reference tool / documentation when writing Python.
+# I'm using it as an exceptional documentation reference it is when writing Python.
 
 # If one were to let GPT4 solve it, they might get through today (maybe?), but it's not going to pan out long term.
 # You have to understand how to herd it. You have to understand how to use it as a tool.
