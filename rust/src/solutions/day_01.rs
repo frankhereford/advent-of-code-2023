@@ -1,76 +1,32 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
+use regex::Regex;
+
+
+
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
     fn postMessageToWorker(message: &str);
 }
 
-pub fn solution(n: u32) -> String {
-    postMessageToWorker("Elf mission, get your sleigh bells ready: Here we go.\n");
+pub fn solution(_n: u32) -> String {
+    let content = include_str!("/home/frank/development/advent-of-code-2023/rust/src/solutions/input/day_01_test_input.txt");
 
-    let mut count = 0;
-    let mut num = 2;
+    postMessageToWorker("Concatenate the first and last digits found in a string.\n");
+    
+    content.lines().for_each(|line| {
+        postMessageToWorker(&format!("line: {}", line));
 
-    while count < n {
-        if is_prime(num) {
-            count += 1;
-            if count % 50000 == 0 {
-                let message = format!(
-                    "{}th prime: {}",
-                    format_with_commas(count),
-                    format_with_commas(num)
-                );
-                postMessageToWorker(&message);
-            }
-        }
-        num += 1;
-    }
+        let re = Regex::new(r"\d").unwrap();
 
-    postMessageToWorker("\n");
-    let message = format!(
-        "🎉🎯 {}th prime found: {}\n\n",
-        format_with_commas(n),
-        format_with_commas(num - 1)
-    );
-    postMessageToWorker(&message);
-    format_with_commas(num - 1)
+        if let Some(cap) = re.captures(line) {
+            let matched_char = &cap[0];
+            postMessageToWorker(&format!("Found character: {}", matched_char));
+        } 
+
+    });
+
+    "hi".to_string()
 }
 
-fn is_prime(num: u32) -> bool {
-    if num <= 1 {
-        return false;
-    }
-    if num <= 3 {
-        return true;
-    }
-    if num % 2 == 0 || num % 3 == 0 {
-        return false;
-    }
-    let mut i = 5;
-    while i * i <= num {
-        if num % i == 0 || num % (i + 2) == 0 {
-            return false;
-        }
-        i += 6;
-    }
-    true
-}
-
-fn format_with_commas(num: u32) -> String {
-    // Convert the number to string and insert commas
-    num.to_string()
-        .chars()
-        .rev()
-        .enumerate()
-        .fold(String::new(), |mut acc, (i, c)| {
-            if i % 3 == 0 && i != 0 {
-                acc.push(',');
-            }
-            acc.push(c);
-            acc
-        })
-        .chars()
-        .rev()
-        .collect()
-}
