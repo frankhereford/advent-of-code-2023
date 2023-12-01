@@ -47,7 +47,7 @@ export default function Home() {
       <main>
         <GitHub />
         <Rust day={1} onUpdate={handleRustUpdate}></Rust>
-        <Terminal content={rustUpdates} speed={.8} variability={3} />
+        <Terminal content={rustUpdates} speed={.2} variability={3} />
         <div className="container">
           <Polaroid videoIDs={videoIDs} label={label} />
         </div>
