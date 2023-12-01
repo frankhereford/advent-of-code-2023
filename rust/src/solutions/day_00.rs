@@ -16,7 +16,11 @@ pub fn solution(n: u32) -> String {
         if is_prime(num) {
             count += 1;
             if count % 100000 == 0 {
-                let message = format!("{}th prime: {}", format_with_commas(count), format_with_commas(num));
+                let message = format!(
+                    "{}th prime: {}",
+                    format_with_commas(count),
+                    format_with_commas(num)
+                );
                 postMessageToWorker(&message);
             }
         }
@@ -24,7 +28,11 @@ pub fn solution(n: u32) -> String {
     }
 
     postMessageToWorker("\n");
-    let message = format!("🎉🎯 {}th prime found: {}\n\n", format_with_commas(n), format_with_commas(num - 1));
+    let message = format!(
+        "🎉🎯 {}th prime found: {}\n\n",
+        format_with_commas(n),
+        format_with_commas(num - 1)
+    );
     postMessageToWorker(&message);
     format_with_commas(num - 1)
 }
@@ -51,14 +59,18 @@ fn is_prime(num: u32) -> bool {
 
 fn format_with_commas(num: u32) -> String {
     // Convert the number to string and insert commas
-    num.to_string().chars().rev()
-       .enumerate()
-       .fold(String::new(), |mut acc, (i, c)| {
-           if i % 3 == 0 && i != 0 {
-               acc.push(',');
-           }
-           acc.push(c);
-           acc
-       })
-       .chars().rev().collect()
+    num.to_string()
+        .chars()
+        .rev()
+        .enumerate()
+        .fold(String::new(), |mut acc, (i, c)| {
+            if i % 3 == 0 && i != 0 {
+                acc.push(',');
+            }
+            acc.push(c);
+            acc
+        })
+        .chars()
+        .rev()
+        .collect()
 }
