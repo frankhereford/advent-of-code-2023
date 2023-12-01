@@ -1,5 +1,5 @@
-mod utils;
 mod solutions;
+mod utils;
 use chrono::Local;
 use wasm_bindgen::prelude::*;
 
@@ -11,7 +11,7 @@ pub fn get_current_date_time() -> String {
 #[wasm_bindgen(start)]
 pub fn init() {
     utils::set_panic_hook(); // Optional: Sets up better panic messages
-    // Any other initialization code
+                             // Any other initialization code
 }
 
 #[wasm_bindgen]
@@ -22,7 +22,10 @@ extern "C" {
 #[wasm_bindgen]
 pub fn greet() {
     let date_time = get_current_date_time();
-    let greeting = format!("Hello, television! The current date and time is: {}", date_time);
+    let greeting = format!(
+        "Hello, television! The current date and time is: {}",
+        date_time
+    );
     alert(&greeting);
 }
 
