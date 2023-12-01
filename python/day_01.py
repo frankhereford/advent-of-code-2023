@@ -14,6 +14,7 @@
 # It's a really powerful tool.
 
 # Here's what I used ChatGPT 4 for when writing this:
+
 # * Reading a file into a variable in Python.
 # * Splitting file contents into lines and iterating over them.
 # * Combining file reading and line iteration in Python.
