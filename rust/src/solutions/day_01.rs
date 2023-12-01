@@ -7,7 +7,7 @@ extern "C" {
 }
 
 pub fn solution(n: u32) -> String {
-    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 1,111,111th prime number.\n");
+    postMessageToWorker("Elf mission, get your sleigh bells ready: Here we go.\n");
 
     let mut count = 0;
     let mut num = 2;
