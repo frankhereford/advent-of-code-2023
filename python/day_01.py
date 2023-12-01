@@ -1,4 +1,19 @@
-# Here's what I used ChatGPT 4 for:
+# ! README
+
+# I'm sticking this right up here because I want to show what a powerful documentation tool ChatGPT 4 is.
+# I'm very intentionally not using it to help me solve the creation of an algorithm to solve the problem.
+# I'm using it as an exceptionally powerful reference tool / documentation when writing Python.
+
+# If you let GPT4 solve it, you might get through today (maybe?), but it's not going to pan out long term.
+# You have to understand how to herd it. You have to understand how to use it as a tool.
+
+# I know it sounds dodgy, so I'm going to include every single ChatGPT 4 interaction related to AOC
+# so you can see the ways that I've used it. I really hope anyone reading this goes on to read some of the 
+# interactions with GPT-4 and thinks "Wow, that's really cool. I want to try to learn how to use that."
+
+# It's a really powerful tool.
+
+# Here's what I used ChatGPT 4 for when writing this:
 # * Reading a file into a variable in Python.
 # * Splitting file contents into lines and iterating over them.
 # * Combining file reading and line iteration in Python.
