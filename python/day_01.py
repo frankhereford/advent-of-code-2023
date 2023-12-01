@@ -1,15 +1,26 @@
-# Define the file path
-input = './input/day_01_test.txt'
+# Here's what I used ChatGPT 4 for:
+# * Reading a file into a variable in Python.
+# * Splitting file contents into lines and iterating over them.
+# * Combining file reading and line iteration in Python.
+# * Summing the elements of an array in Python.
+# * Removing the first 4 elements from an array in Python.
+# * Returning the index of a unique value in a list.
+# * Splicing a value into an array in Python.
+# * Understanding the slicing syntax in Python, specifically `line[search_index:number_length]`.
+# * Checking if a character at a certain index in a string is one of several specified characters.
+# * Converting the ASCII number of a textual digit to its actual integer value.
 
-# Using a context manager to open and read the file
+# See: https://chat.openai.com/share/c4f3e57d-e7d7-4be8-9e4e-32bffc66eed2
+
+#input = './input/day_01_part_1_test.txt'
+input = './input/day_01_real.txt'
+
 with open(input, 'r') as file:
     file_contents = file.read()
 
-# Splitting the file contents into lines
 lines = file_contents.splitlines()
 
 found_digits = []
-# Iterating over each line, splitting it into characters, and tracking digits
 for line in lines:
     print(f"Line: {line}")
     chars = list(line)
@@ -30,3 +41,64 @@ for line in lines:
     found_digits.append(number)
 
 print("Part 1: ", sum(found_digits))
+
+print("\n\n")
+
+#input = './input/day_01_part_2_test.txt'
+
+with open(input, 'r') as file:
+    file_contents = file.read()
+
+lines = file_contents.splitlines()
+
+numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+
+
+total = 0
+for line in lines:
+    #print()
+    #print(f"Line: {line}")
+    search_index = 0
+    first_digit_index = None
+    first_digit_value = None
+    last_digit_index = None
+    last_digit_value = None
+    while search_index <= len(line):
+        for number in numbers:
+            number_length = len(number)
+            #print(line[search_index:number_length])
+            #print("Line:", line)
+            #print("Testing number:", number)
+            #print("Search index:", search_index)
+            #print("Number length:", number_length)
+            #print("Testing line:", line[search_index:number_length + search_index])
+            if number == line[search_index:number_length + search_index]:
+                #print(f"Found number: {number}")
+                if first_digit_index is None:
+                    first_digit_index = search_index
+                    first_digit_value = numbers.index(number) + 1
+                last_digit_index = search_index
+                last_digit_value = numbers.index(number) + 1
+            #print()
+        if search_index < len(line):
+            #print("Checking char:", line[search_index])
+            try:
+                if int(line[search_index]) in (1,2,3,4,5,6,7,8,9,0):
+                    #print(f"Found number: {line[search_index]}")
+                    if first_digit_index is None:
+                        first_digit_index = search_index
+                        first_digit_value = line[search_index]
+                    last_digit_index = search_index
+                    last_digit_value = line[search_index]
+            except:
+                pass
+        search_index += 1
+
+    #print("first_digit_value:", first_digit_value)
+    #print("last_digit_value:", last_digit_value)
+
+    combined_digits = f"{first_digit_value}{last_digit_value}"
+    combined_value = int(combined_digits)
+    #print("combined_digits:", combined_digits)
+    total += combined_value
+print("Part 2: ", total)
