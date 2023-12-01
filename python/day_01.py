@@ -1,10 +1,10 @@
 # ! README
 
-# I'm sticking this right up here because I want to show what a powerful documentation tool ChatGPT 4 is.
+# I'm sticking this right up here because I want to show what a powerful documentation / reference tool ChatGPT 4 is.
 # I'm very intentionally not using it to help me solve the creation of an algorithm to solve the problem.
 # I'm using it as an exceptionally powerful reference tool / documentation when writing Python.
 
-# If you let GPT4 solve it, you might get through today (maybe?), but it's not going to pan out long term.
+# If one were to let GPT4 solve it, they might get through today (maybe?), but it's not going to pan out long term.
 # You have to understand how to herd it. You have to understand how to use it as a tool.
 
 # I know it sounds dodgy, so I'm going to include every single ChatGPT 4 interaction log related to AOC in the comments.
