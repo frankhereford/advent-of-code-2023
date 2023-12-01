@@ -1,22 +1,22 @@
 # ! README
 
-# This solution used GPT as a pytyhon documentation reference.
+# This solution used GPT4 as a python documentation reference.
 
-# I'm sticking this right up here because I want to show what a powerful documentation / reference tool ChatGPT 4 is.
+# I'm sticking this right up here because I want to show what a powerful documentation / reference tool GPT 4 is.
 # I'm very intentionally not using it to help me solve the creation of an algorithm to solve the problem.
 # I'm using it as an exceptionally reference / documentation when writing Python.
 
 # If one were to let GPT4 solve it, they might get through today (maybe?), but it's not going to pan out long term.
 # You have to understand how to herd it. You have to understand how to use it as a tool.
 
-# I know it sounds dodgy, so I'm going to include every single ChatGPT 4 interaction log related to AOC 
+# I know it sounds dodgy, so I'm going to include every single GPT 4 interaction log related to AOC 
 # in the comments, as a link. I'm excited to show you the ways that I've used it. I really hope anyone 
 # reading this goes on to read some of the interactions with GPT-4 and thinks "Wow, that's really cool. 
 # I want to try to learn how to use that."
 
 # It's a really powerful tool.
 
-# Here's what I used ChatGPT 4 for when writing this:
+# Here's what I used GPT 4 for when writing this:
 
 # * Reading a file into a variable in Python.
 # * Splitting file contents into lines and iterating over them.
