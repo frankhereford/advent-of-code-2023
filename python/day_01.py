@@ -1,5 +1,7 @@
 # ! README
 
+# This solution used GPT as a pytyhon documentation reference.
+
 # I'm sticking this right up here because I want to show what a powerful documentation / reference tool ChatGPT 4 is.
 # I'm very intentionally not using it to help me solve the creation of an algorithm to solve the problem.
 # I'm using it as an exceptionally reference / documentation when writing Python.
