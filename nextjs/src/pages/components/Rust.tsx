@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 interface RustProps {
     onUpdate: (update: string) => void;
+    day: number;
 }
 
-const Rust: React.FC<RustProps> = ({ onUpdate }) => {
+const Rust: React.FC<RustProps> = ({ onUpdate, day }) => {
     const [isWasmLoaded, setIsWasmLoaded] = useState(false);
     const [worker, setWorker] = useState<Worker | null>(null);
 
@@ -48,7 +49,7 @@ const Rust: React.FC<RustProps> = ({ onUpdate }) => {
 
     const handleGreet = () => {
         if (worker) {
-            worker.postMessage({ action: 'runSolution', value: 1111111 });
+            worker.postMessage({ action: 'runSolution', value: day});
         }
     };
 

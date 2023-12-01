@@ -31,6 +31,15 @@ pub fn greet() {
 
 #[wasm_bindgen]
 pub fn solution(n: u32) -> String {
-    let solution = solutions::day_00::solution(n);
-    solution
+    if n == 0 {
+        let solution = solutions::day_00::solution(1111111);
+        solution
+    }
+    else if n == 1 {
+        let solution = solutions::day_01::solution(100);
+        solution
+    } else {
+        // Handle other cases or return a default value
+        String::new() // or any other appropriate default String value
+    }
 }
