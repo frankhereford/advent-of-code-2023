@@ -16,7 +16,7 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 300 == 0  {
+        if (iteration) % 1 == 0  {
             show_message = true;
         }
 
@@ -33,9 +33,11 @@ pub fn solution_part_1() -> () {
 
 
 pub fn solution_part_2() -> () {
+    #![allow(unreachable_code)]
+    return;
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_02_part_2_test_input.txt");
+    let content = include_str!("input/day_02_part_1_test_input.txt");
     //let content = include_str!("input/day_02_input.txt");
 
     content.lines().for_each(|line| {
