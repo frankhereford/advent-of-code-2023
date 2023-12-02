@@ -10,7 +10,7 @@ extern "C" {
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Concatenate the first and last digits found in a string.\n");
     let mut iteration = -1;
-    // let content = include_str!("input/day_01_test_input.txt");
+    // let content = include_str!("input/day_01_part_1_test_input.txt");
     let content = include_str!("input/day_01_input.txt");
 
     let is_digit_regex  = Regex::new(r"\d").unwrap();
@@ -20,7 +20,7 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 100 == 0  {
+        if (iteration) % 300 == 0  {
             show_message = true;
         }
 
@@ -31,7 +31,7 @@ pub fn solution_part_1() -> () {
         }
 
         postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("line: {}", line));
+        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
         let mut first_digit: Option<&char> = None;
         let mut last_digit: Option<&char> = None;
@@ -58,5 +58,9 @@ pub fn solution_part_1() -> () {
 
 
 pub fn solution_part_2() -> () {
+    postMessageToWorker(true, "Concatenate the first and last digits found in a string.\n");
+    let mut iteration = -1;
+    let content = include_str!("input/day_01_part_2_test_input.txt");
+    // let content = include_str!("input/day_01_input.txt");
 
 }
