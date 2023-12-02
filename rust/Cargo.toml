@@ -3,6 +3,9 @@ name = "television"
 version = "0.1.0"
 authors = ["Frank Hereford <frank@frankhereford.com>"]
 edition = "2018"
+description = "Advent of Code for 2023"
+repository = "https://github.com/frankhereford/advent-of-code-2023"
+license = "Unlicense"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
