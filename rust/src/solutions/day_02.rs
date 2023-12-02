@@ -14,7 +14,7 @@ pub fn solution_part_1() -> () {
     //let content = include_str!("input/day_02_input.txt");
 
     let input_chunks = Regex::new(r"Game (\d+): (.*)").unwrap();
-    
+    let datum_parser = Regex::new(r"(\d+) (\w+)").unwrap();
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
@@ -37,17 +37,23 @@ pub fn solution_part_1() -> () {
 
         // how use regex to extract substrings from an input string
         if let Some(caps) = input_chunks.captures(line) {
+            postMessageToWorker(show_message, &format!(""));
             let game = caps.get(1).map_or("", |m| m.as_str());
+            postMessageToWorker(show_message, &format!("game: {}", game));
             let demonstrations_as_string = caps.get(2).map_or("", |m| m.as_str());
-            postMessageToWorker(show_message, &format!("demonstrations_as_string: {}", demonstrations_as_string));
             let demonstrations: Vec<&str> = demonstrations_as_string.split(';').collect();
-
             for demonstration in demonstrations {
                 postMessageToWorker(show_message, &format!("demonstration: {}", demonstration));
+                let dice_datum: Vec<&str> = demonstration.split(',').collect();
+                for datum in dice_datum {
+                    if let Some(caps) = datum_parser.captures(datum) {
+                        let count = caps.get(1).map_or("", |m| m.as_str());
+                        let color = caps.get(2).map_or("", |m| m.as_str());
+                        postMessageToWorker(show_message, &format!("__count: {}, color: {}", count, color));
+                    }
+                }
             }
 
-            //postMessageToWorker(show_message, &format!("game: {}, parameters: {}, proposed_game: {}", game, parameters, proposed_game));
-            postMessageToWorker(show_message, &format!("game: {}", game));
 
         }
 
