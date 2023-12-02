@@ -7,7 +7,7 @@ extern "C" {
     fn postMessageToWorker(do_print: bool, message: &str);
 }
 
-pub fn solution_part_1(_n: u32) -> () {
+pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Concatenate the first and last digits found in a string.\n");
     let mut iteration = -1;
     // let content = include_str!("input/day_01_test_input.txt");
@@ -54,4 +54,9 @@ pub fn solution_part_1(_n: u32) -> () {
 
     let sum: u32 = codes.iter().sum();
     postMessageToWorker(true, &format!("⭐️ sum: {}", sum));
+}
+
+
+pub fn solution_part_2() -> () {
+
 }

@@ -36,7 +36,8 @@ pub fn solution(n: u32) -> () {
         // solution
     }
     else if n == 1 {
-        let _solution_part_1 = solutions::day_01::solution_part_1(100);
+        let _solution_part_1 = solutions::day_01::solution_part_1();
+        let _solution_part_2 = solutions::day_01::solution_part_2();
         // solution
     } else {
         // Handle other cases or return a default value
