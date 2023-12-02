@@ -133,13 +133,11 @@ pub fn solution_part_2() -> () {
 }
 
 fn get_string_slice(input: &str, start: usize, chars: usize) -> &str {
+    let start_index = input.char_indices().nth(start);
+    let end_index = input.char_indices().nth(start + chars).unwrap_or((input.len(), ' ')).0;
 
-    let start_index = input.char_indices().nth(start).map(|(i, _)| i);
-    let end_index = input.char_indices().nth(start + chars).map(|(i, _)| i)
-                    .or_else(|| Some(input.len()));
-
-    match (start_index, end_index) {
-        (Some(start_idx), Some(end_idx)) => &input[start_idx..end_idx],
-        _ => ""
+    match start_index {
+        Some((start_idx, _)) => &input[start_idx..end_index],
+        None => ""
     }
 }
