@@ -88,7 +88,23 @@ pub fn solution_part_2() -> () {
         let mut first_digit: Option<&char> = None;
         let mut last_digit: Option<&char> = None;
 
-        for (_index, character) in characters.iter().enumerate() {
+        let numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+
+        for (character_index, character) in characters.iter().enumerate() {
+            if is_digit_regex.is_match(character.to_string().as_str()) {
+                postMessageToWorker(show_message, &format!("Found a digit: {}", character));
+                if first_digit == None {
+                    first_digit = Some(character);
+                }
+                last_digit = Some(character);
+            }
+            for (number_index, number) in numbers.iter().enumerate() {
+                let length = number.len();
+                let slice = get_string_slice(line, character_index, length);
+                if &slice == number {
+                    postMessageToWorker(show_message, &format!("Found a number: {}", number));
+                }
+            }
         }
     });
 }
