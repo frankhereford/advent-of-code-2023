@@ -1,6 +1,8 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 use regex::Regex;
+use std::collections::HashMap;
+
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -24,7 +26,6 @@ pub fn solution_part_1() -> () {
             show_message = true;
         }
 
-
         let characters: Vec<_> = line.chars().collect();
         if characters[0] == '#' {
             // postMessageToWorker(show_message, "Skipping line because it is a comment.");
@@ -34,11 +35,13 @@ pub fn solution_part_1() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
-
         // how use regex to extract substrings from an input string
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
             let game = caps.get(1).map_or("", |m| m.as_str());
+            
+            let mut demonstration_knowledge = HashMap::new();
+
             postMessageToWorker(show_message, &format!("game: {}", game));
             let demonstrations_as_string = caps.get(2).map_or("", |m| m.as_str());
             let demonstrations: Vec<&str> = demonstrations_as_string.split(';').collect();
@@ -50,14 +53,23 @@ pub fn solution_part_1() -> () {
                         let count = caps.get(1).map_or("", |m| m.as_str());
                         let color = caps.get(2).map_or("", |m| m.as_str());
                         postMessageToWorker(show_message, &format!("__count: {}, color: {}", count, color));
+
+                        // added .expect()s with copilot here
+                        if demonstration_knowledge.contains_key(color) {
+                            let current_count = *demonstration_knowledge.get(color).expect("Value must exist since key exists");
+                            let parsed_count = count.parse::<u32>().expect("Should be able to parse count");
+                            if parsed_count > current_count {
+                                demonstration_knowledge.insert(color, parsed_count);
+                            }
+                        } else {
+                            demonstration_knowledge.insert(color, count.parse::<u32>().expect("Should be able to parse count"));
+                        }
+                        
                     }
                 }
+            postMessageToWorker(show_message, &format!("demonstration_knowledge: {:?}", demonstration_knowledge));
             }
-
-
         }
-
-
     });
 }
 
