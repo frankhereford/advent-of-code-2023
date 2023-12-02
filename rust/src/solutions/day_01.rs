@@ -61,8 +61,8 @@ pub fn solution_part_1() -> () {
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: Concatenate the first and last digits found in a string.\n");
     let mut iteration = -1;
-    let content = include_str!("input/day_01_part_2_test_input.txt");
-    // let content = include_str!("input/day_01_input.txt");
+    // let content = include_str!("input/day_01_part_2_test_input.txt");
+    let content = include_str!("input/day_01_input.txt");
 
     let is_digit_regex  = Regex::new(r"\d").unwrap();
     let mut codes: Vec<u32> = Vec::new();
@@ -71,7 +71,7 @@ pub fn solution_part_2() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 1 == 0  {
+        if (iteration) % 300 == 0  {
             show_message = true;
         }
 
