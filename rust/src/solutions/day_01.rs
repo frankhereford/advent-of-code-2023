@@ -8,7 +8,7 @@ extern "C" {
 }
 
 pub fn solution(_n: u32) -> String {
-    let content = include_str!("/home/frank/development/advent-of-code-2023/rust/src/solutions/input/day_01_test_input.txt");
+    let content = include_str!("input/day_01_test_input.txt");
 
     postMessageToWorker("Concatenate the first and last digits found in a string.\n");
     
