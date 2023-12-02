@@ -64,7 +64,6 @@ pub fn solution_part_2() -> () {
     let content = include_str!("input/day_01_part_2_test_input.txt");
     // let content = include_str!("input/day_01_input.txt");
 
-
     let is_digit_regex  = Regex::new(r"\d").unwrap();
     let mut codes: Vec<u32> = Vec::new();
 
