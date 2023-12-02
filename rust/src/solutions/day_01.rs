@@ -91,33 +91,45 @@ pub fn solution_part_2() -> () {
 
         for (character_index, character) in characters.iter().enumerate() {
             if is_digit_regex.is_match(character.to_string().as_str()) {
-                postMessageToWorker(show_message, &format!("Found a digit: {}", character));
                 if first_digit == None {
                     let temp_string = character.to_string();
                     let char = temp_string.chars().nth(0).unwrap();
                     first_digit = Some(char);
+                    postMessageToWorker(show_message, &format!("New first digit from numeric character: {}", character));
                 }
                 let temp_string = character.to_string();
                 let char = temp_string.chars().nth(0).unwrap();
                 last_digit = Some(char);
+                postMessageToWorker(show_message, &format!("New last digit from numeric character: {}", character));
             }
             for (number_index, number) in numbers.iter().enumerate() {
                 let length = number.len();
                 let slice = get_string_slice(line, character_index, length);
                 if &slice == number {
-                    postMessageToWorker(show_message, &format!("Found a number: {}", number));
                     let found_scalar = number_index + 1;
                     
                     if first_digit.is_none() {
                         let temp_string = found_scalar.to_string();
                         let char = temp_string.chars().nth(0).unwrap();
                         first_digit = Some(char);
-                        postMessageToWorker(show_message, &format!("first_digit: {}", first_digit.unwrap()));
+                        postMessageToWorker(show_message, &format!("Found first digit: {}", first_digit.unwrap()));
                     }
+
+                    let temp_string = found_scalar.to_string();
+                    let char = temp_string.chars().nth(0).unwrap();
+                    last_digit = Some(char);
+                    postMessageToWorker(show_message, &format!("New last digit from number ({}): {}", number, last_digit.unwrap()));
                 }
             }
         }
+        let found_code_string = format!("{}{}", first_digit.unwrap(), last_digit.unwrap());
+        let found_code_int = found_code_string.parse::<u32>().unwrap();
+        postMessageToWorker(show_message, &format!("found_code: {}", found_code_int));
+        codes.push(found_code_int);
     });
+
+    let sum: u32 = codes.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ sum: {}", sum));
 }
 
 fn get_string_slice(input: &str, start: usize, chars: usize) -> &str {
