@@ -92,3 +92,16 @@ pub fn solution_part_2() -> () {
         }
     });
 }
+
+fn get_string_slice(input: &str, start: usize, chars: usize) -> &str {
+
+    let start_index = input.char_indices().nth(start).map(|(i, _)| i);
+    let end_index = input.char_indices().nth(start + chars).map(|(i, _)| i);
+
+    if let (Some(start_idx), Some(end_idx)) = (start_index, end_index) {
+        let slice = &input[start_idx..end_idx];
+        slice
+    } else {
+        ""
+    }
+}
