@@ -8,6 +8,7 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
+    return;
     postMessageToWorker(true, "Part 1: Concatenate the first and last digits found in a string.\n");
     let mut iteration = -1;
     // let content = include_str!("input/day_01_part_1_test_input.txt");
