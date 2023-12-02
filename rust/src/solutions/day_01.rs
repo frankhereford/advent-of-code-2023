@@ -105,7 +105,7 @@ pub fn solution_part_2() -> () {
             for (number_index, number) in numbers.iter().enumerate() {
                 let length = number.len();
                 let slice = get_string_slice(line, character_index, length);
-                postMessageToWorker(show_message, &format!("number: {}, slice: {}", number, slice));
+                // postMessageToWorker(show_message, &format!("number: {}, slice: {}", number, slice));
                 if &slice == number {
                     let found_scalar = number_index + 1;
                     
@@ -136,12 +136,11 @@ pub fn solution_part_2() -> () {
 fn get_string_slice(input: &str, start: usize, chars: usize) -> &str {
 
     let start_index = input.char_indices().nth(start).map(|(i, _)| i);
-    let end_index = input.char_indices().nth(start + chars).map(|(i, _)| i);
+    let end_index = input.char_indices().nth(start + chars).map(|(i, _)| i)
+                    .or_else(|| Some(input.len()));
 
-    if let (Some(start_idx), Some(end_idx)) = (start_index, end_index) {
-        let slice = &input[start_idx..end_idx];
-        slice
-    } else {
-        ""
+    match (start_index, end_index) {
+        (Some(start_idx), Some(end_idx)) => &input[start_idx..end_idx],
+        _ => ""
     }
 }
