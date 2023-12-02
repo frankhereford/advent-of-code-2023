@@ -84,8 +84,8 @@ pub fn solution_part_2() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
-        let mut first_digit: Option<&char> = None;
-        let mut last_digit: Option<&char> = None;
+        let mut first_digit: Option<char> = None;
+        let mut last_digit: Option<char> = None;
 
         let numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
@@ -93,15 +93,27 @@ pub fn solution_part_2() -> () {
             if is_digit_regex.is_match(character.to_string().as_str()) {
                 postMessageToWorker(show_message, &format!("Found a digit: {}", character));
                 if first_digit == None {
-                    first_digit = Some(character);
+                    let temp_string = character.to_string();
+                    let char = temp_string.chars().nth(0).unwrap();
+                    first_digit = Some(char);
                 }
-                last_digit = Some(character);
+                let temp_string = character.to_string();
+                let char = temp_string.chars().nth(0).unwrap();
+                last_digit = Some(char);
             }
             for (number_index, number) in numbers.iter().enumerate() {
                 let length = number.len();
                 let slice = get_string_slice(line, character_index, length);
                 if &slice == number {
                     postMessageToWorker(show_message, &format!("Found a number: {}", number));
+                    let found_scalar = number_index + 1;
+                    
+                    if first_digit.is_none() {
+                        let temp_string = found_scalar.to_string();
+                        let char = temp_string.chars().nth(0).unwrap();
+                        first_digit = Some(char);
+                        postMessageToWorker(show_message, &format!("first_digit: {}", first_digit.unwrap()));
+                    }
                 }
             }
         }
