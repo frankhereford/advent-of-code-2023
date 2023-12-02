@@ -105,6 +105,7 @@ pub fn solution_part_2() -> () {
             for (number_index, number) in numbers.iter().enumerate() {
                 let length = number.len();
                 let slice = get_string_slice(line, character_index, length);
+                postMessageToWorker(show_message, &format!("number: {}, slice: {}", number, slice));
                 if &slice == number {
                     let found_scalar = number_index + 1;
                     
