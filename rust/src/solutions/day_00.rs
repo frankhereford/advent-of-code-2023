@@ -3,11 +3,12 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
-    fn postMessageToWorker(message: &str);
+    fn postMessageToWorker(do_print: bool, message: &str);
 }
 
+
 pub fn solution(n: u32) -> String {
-    postMessageToWorker("Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 1,111,111th prime number.\n");
+    postMessageToWorker(true, "Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 1,111,111th prime number.\n");
 
     let mut count = 0;
     let mut num = 2;
@@ -21,19 +22,19 @@ pub fn solution(n: u32) -> String {
                     format_with_commas(count),
                     format_with_commas(num)
                 );
-                postMessageToWorker(&message);
+                postMessageToWorker(true, &message);
             }
         }
         num += 1;
     }
 
-    postMessageToWorker("\n");
+    postMessageToWorker(true, "\n");
     let message = format!(
         "🎉🎯 {}th prime found: {}\n\n",
         format_with_commas(n),
         format_with_commas(num - 1)
     );
-    postMessageToWorker(&message);
+    postMessageToWorker(true, &message);
     format_with_commas(num - 1)
 }
 

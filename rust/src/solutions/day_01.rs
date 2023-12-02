@@ -1,76 +1,57 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
+use regex::Regex;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
-    fn postMessageToWorker(message: &str);
+    fn postMessageToWorker(do_print: bool, message: &str);
 }
 
-pub fn solution(n: u32) -> String {
-    postMessageToWorker("Elf mission, get your sleigh bells ready: Here we go.\n");
+pub fn solution_part_1(_n: u32) -> () {
+    postMessageToWorker(true, "Concatenate the first and last digits found in a string.\n");
+    let mut iteration = -1;
+    // let content = include_str!("input/day_01_test_input.txt");
+    let content = include_str!("input/day_01_input.txt");
 
-    let mut count = 0;
-    let mut num = 2;
+    let is_digit_regex  = Regex::new(r"\d").unwrap();
+    let mut codes: Vec<u32> = Vec::new();
 
-    while count < n {
-        if is_prime(num) {
-            count += 1;
-            if count % 50000 == 0 {
-                let message = format!(
-                    "{}th prime: {}",
-                    format_with_commas(count),
-                    format_with_commas(num)
-                );
-                postMessageToWorker(&message);
+    content.lines().for_each(|line| {
+        // Provide a mechanism to limit the volume of output on the console.
+        iteration += 1;
+        let mut show_message = false;
+        if (iteration) % 100 == 0  {
+            show_message = true;
+        }
+
+        let characters: Vec<_> = line.chars().collect();
+        if characters[0] == '#' {
+            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
+            return;
+        }
+
+        postMessageToWorker(show_message, " ");
+        postMessageToWorker(show_message, &format!("line: {}", line));
+
+        let mut first_digit: Option<&char> = None;
+        let mut last_digit: Option<&char> = None;
+
+        for (_index, character) in characters.iter().enumerate() {
+            if is_digit_regex.is_match(character.to_string().as_str()) {
+                postMessageToWorker(show_message, &format!("Found a digit: {}", character));
+                if first_digit == None {
+                    first_digit = Some(character);
+                }
+                last_digit = Some(character);
             }
         }
-        num += 1;
-    }
 
-    postMessageToWorker("\n");
-    let message = format!(
-        "🎉🎯 {}th prime found: {}\n\n",
-        format_with_commas(n),
-        format_with_commas(num - 1)
-    );
-    postMessageToWorker(&message);
-    format_with_commas(num - 1)
-}
+        let found_code_string = format!("{}{}", first_digit.unwrap(), last_digit.unwrap());
+        let found_code_int = found_code_string.parse::<u32>().unwrap();
+        postMessageToWorker(show_message, &format!("found_code: {}", found_code_int));
+        codes.push(found_code_int);
+    });
 
-fn is_prime(num: u32) -> bool {
-    if num <= 1 {
-        return false;
-    }
-    if num <= 3 {
-        return true;
-    }
-    if num % 2 == 0 || num % 3 == 0 {
-        return false;
-    }
-    let mut i = 5;
-    while i * i <= num {
-        if num % i == 0 || num % (i + 2) == 0 {
-            return false;
-        }
-        i += 6;
-    }
-    true
-}
-
-fn format_with_commas(num: u32) -> String {
-    // Convert the number to string and insert commas
-    num.to_string()
-        .chars()
-        .rev()
-        .enumerate()
-        .fold(String::new(), |mut acc, (i, c)| {
-            if i % 3 == 0 && i != 0 {
-                acc.push(',');
-            }
-            acc.push(c);
-            acc
-        })
-        .chars()
-        .rev()
-        .collect()
+    let sum: u32 = codes.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ sum: {}", sum));
 }

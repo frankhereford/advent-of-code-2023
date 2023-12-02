@@ -3,6 +3,9 @@ name = "television"
 version = "0.1.0"
 authors = ["Frank Hereford <frank@frankhereford.com>"]
 edition = "2018"
+description = "Advent of Code for 2023"
+repository = "https://github.com/frankhereford/advent-of-code-2023"
+license = "Unlicense"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -14,6 +17,7 @@ default = ["console_error_panic_hook"]
 wasm-bindgen = "0.2.84"
 chrono = "0.4"
 web-sys = { version = "0.3", features = ['console'] }
+regex = "1"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
