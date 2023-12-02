@@ -9,7 +9,7 @@ extern "C" {
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
-    // let content = include_str!("input/day_02_part_1_test_input.txt");
+    let content = include_str!("input/day_02_part_1_test_input.txt");
     //let content = include_str!("input/day_02_input.txt");
 
     content.lines().for_each(|line| {
