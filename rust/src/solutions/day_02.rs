@@ -43,7 +43,6 @@ pub fn solution_part_1() -> () {
         proposed_setup.insert("blue", 14);
 
 
-        // how use regex to extract substrings from an input string
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
             let game = caps.get(1).map_or("", |m| m.as_str());
@@ -134,10 +133,8 @@ pub fn solution_part_2() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
-        // how use regex to extract substrings from an input string
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
-            // let game = caps.get(1).map_or("", |m| m.as_str());
             
             let mut demonstration_knowledge = HashMap::new();
 
