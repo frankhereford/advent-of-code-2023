@@ -1,4 +1,5 @@
 #![allow(unreachable_code)]
+#![allow(unused_variables)]
 //use web_sys::console;
 use regex::Regex;
 use std::collections::HashMap;
@@ -125,7 +126,7 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                     // we're going to make a huge assumption here: that a number is never
                     // touched by more than one symbol. the input data looks safe. this better
                     // not be the twist!! 😅
-                    for (neighbor_name, neighbor) in neighbors.iter() {
+                    for (_neighbor_name, neighbor) in neighbors.iter() {
                         match neighbor {
                             SchematicElement::Number(value) => {
                                 postMessageToWorker(
@@ -142,7 +143,6 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
             }
         }
     }
-
 }
 
 
