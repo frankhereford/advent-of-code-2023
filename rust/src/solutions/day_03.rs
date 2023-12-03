@@ -135,6 +135,8 @@ pub fn solution_part_1() -> () {
             }
         }
     }
+    let sum: u32 = part_numbers.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ part number sum: {}", sum));
 }
 
 fn parse_schematic_line(
