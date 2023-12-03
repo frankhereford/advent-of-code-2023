@@ -15,6 +15,7 @@ pub fn solution_part_1() -> () {
     // let content = include_str!("input/day_XX_input.txt");
 
     let is_digit_regex  = Regex::new(r"\d").unwrap();
+    let is_blank_regex  = Regex::new(r"\.").unwrap();
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
@@ -33,14 +34,31 @@ pub fn solution_part_1() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
-        for character in characters {
-            postMessageToWorker(show_message, &format!("Character: {}", character));
-            // if is_digit_regex.is_match(character.to_string().as_str()) {
-                // postMessageToWorker(show_message, &format!("Found a digit: {}", character));
-            // }
+        let mut is_in_number = false;
+        let mut number_location = 0;
+        let mut number_as_string = String::new();
+        for (index, character) in characters.iter().enumerate() {
+            //postMessageToWorker(show_message, &format!("Character: {}", character));
+            if is_digit_regex.is_match(character.to_string().as_str()) {
+                postMessageToWorker(show_message, &format!("Found a digit: {}", character));
+                number_as_string.push(*character);
+                if !is_in_number {
+                    is_in_number = true;
+                    number_location = index;
+                }
+            } else { // either a blank or a symbol
+                postMessageToWorker(show_message, &format!("Completed a number: {}", number_as_string));
+                is_in_number = false;
+                number_as_string = String::new();
+                if is_blank_regex.is_match(character.to_string().as_str())  {
+                } else {
+                postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
+                }
+            }
         }
-
-
+        if is_in_number {
+            postMessageToWorker(show_message, &format!("Completed a number: {}", number_as_string));
+        }
     });
 }
 
