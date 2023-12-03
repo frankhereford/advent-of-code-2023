@@ -101,6 +101,9 @@ pub fn solution_part_1() -> () {
                     }
 
                     postMessageToWorker(true, &format!("neighbors: {:?}", neighbors));
+                    // we're going to make a huge assumption here: that a number is never
+                    // touched by more than one symbol. the input data looks safe. this better
+                    // not be the twist!! 😅
                 }
             }
         }
