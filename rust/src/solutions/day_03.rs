@@ -45,10 +45,10 @@ pub fn solution_part_1() -> () {
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
-        let mut show_message = false;
-        if (iteration) % 1 == 0  {
-            show_message = true;
-        }
+        let show_message = false;
+        // if (iteration) % 1000 == 0  {
+            // show_message = true;
+        // }
 
         let characters: Vec<_> = line.chars().collect();
         if characters[0] == '`' { // defining a special comment character for today
@@ -90,7 +90,7 @@ fn parse_schematic_line(schematic: &mut Vec<Vec<SchematicElement>>, line_number:
             }
         } else { // either a blank or a symbol
             if is_in_number {
-                handle_found_number(schematic, line_number, number_location, number_as_string);
+                handle_found_number(schematic, line_number, number_location, number_as_string, show_message);
             }
             is_in_number = false;
             number_as_string = String::new();
@@ -101,15 +101,15 @@ fn parse_schematic_line(schematic: &mut Vec<Vec<SchematicElement>>, line_number:
         }
     }
     if is_in_number {
-        handle_found_number(schematic, line_number, number_location, number_as_string);
+        handle_found_number(schematic, line_number, number_location, number_as_string, show_message);
     }
 }
 
-fn handle_found_number(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, number_location: usize, number_as_string: String) -> () {
+fn handle_found_number(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, number_location: usize, number_as_string: String, show_message: bool) -> () {
     let number_length = number_as_string.len();
     for index in 0..number_location + number_length {
         if index >= number_location && index < (number_location + number_length) {
-            postMessageToWorker(true, &format!("Setting a number at {},{}: {}", line_number, index, number_as_string));
+            postMessageToWorker(show_message, &format!("Setting a number at {},{}: {}", line_number, index, number_as_string));
             schematic[line_number as usize][index] = SchematicElement::Number(number_as_string.parse::<u32>().unwrap());
         }
     }
