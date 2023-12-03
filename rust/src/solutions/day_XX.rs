@@ -1,3 +1,4 @@
+#![allow(unreachable_code)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 
@@ -33,6 +34,7 @@ pub fn solution_part_1() -> () {
 
 
 pub fn solution_part_2() -> () {
+    return;
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
     let content = include_str!("input/day_XX_part_2_test_input.txt");
