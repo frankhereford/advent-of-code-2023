@@ -24,6 +24,8 @@ pub fn solution_part_1() -> () {
     let is_digit_regex  = Regex::new(r"\d").unwrap();
     let is_blank_regex  = Regex::new(r"\.").unwrap();
 
+    let mut schematic: Vec<Vec<u32>> = Vec::new();
+
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
@@ -41,6 +43,12 @@ pub fn solution_part_1() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
+        schematic.push(Vec::new());
+        let line_length = line.len();
+        for _ in 0..line_length {
+            schematic[iteration as usize].push(0);
+        }
+
         let mut is_in_number = false;
         let mut number_location = 0;
         let mut number_as_string = String::new();
@@ -55,7 +63,7 @@ pub fn solution_part_1() -> () {
                 }
             } else { // either a blank or a symbol
                 if is_in_number {
-                    handle_found_number(number_location, number_as_string);
+                    handle_found_number(&mut schematic, iteration, number_location, number_as_string);
                 }
                 is_in_number = false;
                 number_as_string = String::new();
@@ -66,14 +74,29 @@ pub fn solution_part_1() -> () {
             }
         }
         if is_in_number {
-            handle_found_number(number_location, number_as_string);
+            handle_found_number(&mut schematic, iteration, number_location, number_as_string);
         }
     });
+    postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
 }
 
-fn handle_found_number(number_location: usize, number_as_string: String) -> () {
-    postMessageToWorker(true, &format!("Found a number at {}: {}", number_location, number_as_string));
+fn handle_found_number(schematic: &mut Vec<Vec<u32>>, line_number: i32, number_location: usize, number_as_string: String) -> () {
+    let number_length = number_as_string.len();
+    for index in 0..number_location + number_length {
+        if index >= number_location && index < (number_location + number_length) {
+            postMessageToWorker(true, &format!("Setting a number at {},{}: {}", line_number, index, number_as_string));
+            schematic[line_number as usize][index] = number_as_string.parse::<u32>().unwrap();
+        }
+    }
 }
+
+
+
+
+
+
+
+
 
 pub fn solution_part_2() -> () {
     return;
