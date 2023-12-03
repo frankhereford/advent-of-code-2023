@@ -47,7 +47,9 @@ pub fn solution_part_1() -> () {
                     number_location = index;
                 }
             } else { // either a blank or a symbol
-                postMessageToWorker(show_message, &format!("Completed a number: {}", number_as_string));
+                if is_in_number {
+                    handle_found_number(number_location, number_as_string);
+                }
                 is_in_number = false;
                 number_as_string = String::new();
                 if is_blank_regex.is_match(character.to_string().as_str())  {
@@ -57,11 +59,14 @@ pub fn solution_part_1() -> () {
             }
         }
         if is_in_number {
-            postMessageToWorker(show_message, &format!("Completed a number: {}", number_as_string));
+            handle_found_number(number_location, number_as_string);
         }
     });
 }
 
+fn handle_found_number(number_location: usize, number_as_string: String) -> () {
+    postMessageToWorker(true, &format!("Found a number at {}: {}", number_location, number_as_string));
+}
 
 pub fn solution_part_2() -> () {
     return;
