@@ -48,14 +48,10 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let show_message = false;
-        // if (iteration) % 1000 == 0  {
-        // show_message = true;
-        // }
 
         let characters: Vec<_> = line.chars().collect();
         if characters[0] == '`' {
             // defining a special comment character for today
-            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
             return;
         }
 
@@ -92,7 +88,7 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                 SchematicElement::Void(_is_void) => {}
                 SchematicElement::Symbol(symbol) => {
                     let mut show_message = false;
-                    if symbols_found % 100 == 0 {
+                    if symbols_found % 200 == 0 {
                         show_message = true;
                     }
 
@@ -232,23 +228,20 @@ fn handle_found_number(
 }
 
 pub fn solution_part_2() -> () {
-    return;
-    postMessageToWorker(true, "Part 2: \n");
+    postMessageToWorker(true, "Part 2: Sumation of gear ratio scalars.\n");
     let mut iteration = -1;
-    let content = include_str!("input/day_03_part_1_test_input.txt");
-    // let content = include_str!("input/day_XX_input.txt");
+    //let content = include_str!("input/day_03_part_1_test_input.txt");
+    let content = include_str!("input/day_03_input.txt");
+
+    let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
 
     content.lines().for_each(|line| {
-        // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
-        let mut show_message = false;
-        if (iteration) % 300 == 0 {
-            show_message = true;
-        }
+        let show_message = false;
 
         let characters: Vec<_> = line.chars().collect();
-        if characters[0] == '#' {
-            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
+        if characters[0] == '`' {
+            // defining a special comment character for today
             return;
         }
 
@@ -257,5 +250,102 @@ pub fn solution_part_2() -> () {
             show_message,
             &format!("Iteration: {}, input: {}", iteration, line),
         );
+
+        parse_schematic_line(
+            &mut schematic,
+            iteration,
+            line.to_string(),
+            characters,
+            show_message,
+        );
     });
+    //postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
+
+    let mut gear_ratios : Vec<u32> = Vec::new();
+
+    calculate_sum_of_gear_ratios(&schematic, &mut gear_ratios);
+
+    let sum: u32 = gear_ratios.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ gear ratio sum: {}", sum));
+}
+
+fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_ratios: &mut Vec<u32>) {
+    let mut symbols_found: u32 = 0;
+    for (i, row) in schematic.iter().enumerate() {
+        for (j, element) in row.iter().enumerate() {
+            match element {
+                SchematicElement::Number(_value) => {}
+                SchematicElement::Void(_is_void) => {}
+                SchematicElement::Symbol(symbol) => {
+                    // ! huge help: there are never symbols along the outside of the schematic
+                    if *symbol != '*' {
+                        // only care about the gear symbols
+                        continue;
+                    }
+                    
+                    let mut show_message = false;
+                    if symbols_found % 100 == 0 {
+                        show_message = true;
+                    }
+
+                    postMessageToWorker(
+                        show_message,
+                        &format!("Found a symbol, #{} to work '{}' at ({}, {})", symbols_found, symbol, i, j),
+                    );
+
+                    symbols_found += 1;
+
+                    let mut neighbors = HashMap::new();
+
+                    neighbors.insert("up", &schematic[i - 1][j]);
+                    neighbors.insert("down", &schematic[i + 1][j]);
+                    neighbors.insert("left", &schematic[i][j - 1]);
+                    neighbors.insert("right", &schematic[i][j + 1]);
+
+                    match neighbors.get("up") {
+                        // i really like this match thing, this is super safe
+                        Some(&SchematicElement::Number(_value)) => {}
+                        _ => {
+                            //postMessageToWorker(show_message, &format!("up is not a number"));
+                            neighbors.insert("up_left", &schematic[i - 1][j - 1]);
+                            neighbors.insert("up_right", &schematic[i - 1][j + 1]);
+                        }
+                    }
+
+                    match neighbors.get("down") {
+                        Some(&SchematicElement::Number(_value)) => {}
+                        _ => {
+                            //postMessageToWorker(show_message, &format!("down is not a number"));
+                            neighbors.insert("down_left", &schematic[i + 1][j - 1]);
+                            neighbors.insert("down_right", &schematic[i + 1][j + 1]);
+                        }
+                    }
+
+                    postMessageToWorker(show_message, &format!("neighbors: {:?}", neighbors));
+                    let mut neighbor_numbers: Vec<u32> = Vec::new();
+                    for (_neighbor_name, neighbor) in neighbors.iter() {
+                        match neighbor {
+                            SchematicElement::Number(value) => {
+                                postMessageToWorker(
+                                    show_message,
+                                    &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
+                                );
+                                neighbor_numbers.push(*value);
+
+                            }
+                            _ => { } // don't care about other things we find here
+                        }
+                    }
+                    if neighbor_numbers.len() == 2 { // some gears only touch one number
+                        let product: u32 = neighbor_numbers.iter().product();
+                        postMessageToWorker(
+                            show_message,
+                            &format!("Found a product of {} for gear at ({}, {})", product, i, j),
+                        );
+                        gear_ratios.push(product);
+                    }
+                }
+            }
+        }
+    }
 }
