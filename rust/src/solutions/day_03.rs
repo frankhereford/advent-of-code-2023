@@ -2,6 +2,8 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 use regex::Regex;
+use std::fmt;
+
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -15,6 +17,20 @@ Meaning, part two will use the symbol's meaning to determine the operator applie
 The quality of the parsing routine's output data structure will make part two easier or harder.
 */
 
+enum SchematicElement{
+    Number(u32),
+    Character(char),
+}
+
+impl fmt::Debug for SchematicElement {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            SchematicElement::Number(num) => write!(f, "Number({})", num),
+            SchematicElement::Character(ch) => write!(f, "Character({})", ch),
+        }
+    }
+}
+
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: Sumation of symbol adjacent scalars.\n");
     let mut iteration = -1;
@@ -24,7 +40,10 @@ pub fn solution_part_1() -> () {
     let is_digit_regex  = Regex::new(r"\d").unwrap();
     let is_blank_regex  = Regex::new(r"\.").unwrap();
 
-    let mut schematic: Vec<Vec<u32>> = Vec::new();
+
+    let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
+
+
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
@@ -46,7 +65,7 @@ pub fn solution_part_1() -> () {
         schematic.push(Vec::new());
         let line_length = line.len();
         for _ in 0..line_length {
-            schematic[iteration as usize].push(0);
+            schematic[iteration as usize].push(SchematicElement::Character(' '));
         }
 
         let mut is_in_number = false;
@@ -80,12 +99,12 @@ pub fn solution_part_1() -> () {
     postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
 }
 
-fn handle_found_number(schematic: &mut Vec<Vec<u32>>, line_number: i32, number_location: usize, number_as_string: String) -> () {
+fn handle_found_number(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, number_location: usize, number_as_string: String) -> () {
     let number_length = number_as_string.len();
     for index in 0..number_location + number_length {
         if index >= number_location && index < (number_location + number_length) {
             postMessageToWorker(true, &format!("Setting a number at {},{}: {}", line_number, index, number_as_string));
-            schematic[line_number as usize][index] = number_as_string.parse::<u32>().unwrap();
+            schematic[line_number as usize][index] = SchematicElement::Number(number_as_string.parse::<u32>().unwrap());
         }
     }
 }
