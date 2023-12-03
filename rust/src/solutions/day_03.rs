@@ -66,11 +66,10 @@ pub fn solution_part_1() -> () {
 
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
-            postMessageToWorker(true, &format!("{:?}", element));
-
+            // postMessageToWorker(true, &format!("{:?}", element));
             match element {
                 SchematicElement::Number(value) => {
-                    postMessageToWorker(true, &format!("Found a number {} at ({}, {})", value, i, j));
+                    //postMessageToWorker(true, &format!("Found a number {} at ({}, {})", value, i, j));
                 }
                 SchematicElement::Symbol(symbol) => {
                     postMessageToWorker(true, &format!("Found a symbol '{}' at ({}, {})", symbol, i, j));
