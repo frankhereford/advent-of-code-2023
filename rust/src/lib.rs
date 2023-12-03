@@ -30,20 +30,22 @@ pub fn greet() {
 }
 
 #[wasm_bindgen]
-pub fn solution(n: u32) -> () {
-    if n == 0 {
-        let _solution = solutions::day_00::solution(1111111);
-        // solution
-    }
-    else if n == 1 {
-        let _solution_part_1 = solutions::day_01::solution_part_1();
-        let _solution_part_2 = solutions::day_01::solution_part_2();
-        // solution
-    } else if n == 2 {
-        let _solution_part_1 = solutions::day_02::solution_part_1();
-        let _solution_part_2 = solutions::day_02::solution_part_2();
-    } else {
-        // Handle other cases or return a default value
-        // String::new() // or any other appropriate default String value
+pub fn solution(n: u32) -> String {
+    match n {
+        0 => solutions::day_00::solution(1111111),
+        1 => {
+            let _solution_part_1 = solutions::day_01::solution_part_1();
+            let _solution_part_2 = solutions::day_01::solution_part_2();
+            // solution
+        },
+        2 => {
+            let _solution_part_1 = solutions::day_02::solution_part_1();
+            let _solution_part_2 = solutions::day_02::solution_part_2();
+        },
+        3 => {
+            let _solution_part_1 = solutions::day_03::solution_part_1();
+            let _solution_part_2 = solutions::day_03::solution_part_2();
+        },
+        _ => String::new(), // or any other appropriate default String value
     }
 }
