@@ -83,7 +83,7 @@ pub fn solution_part_1() -> () {
                     // huge help: there are never symbols along the outside of the schematic
                     postMessageToWorker(
                         true,
-                        &format!("Found a symbol '{}' at ({}, {})", symbol, i, j),
+                        &format!("Found a symbol to work '{}' at ({}, {})", symbol, i, j),
                     );
 
                     let mut neighbors = HashMap::new();
@@ -97,7 +97,7 @@ pub fn solution_part_1() -> () {
                         // i really like this match thing, this is super safe
                         Some(&SchematicElement::Number(_value)) => {}
                         _ => {
-                            postMessageToWorker(true, &format!("up is not a number"));
+                            //postMessageToWorker(true, &format!("up is not a number"));
                             neighbors.insert("up_left", &schematic[i - 1][j - 1]);
                             neighbors.insert("up_right", &schematic[i - 1][j + 1]);
                         }
@@ -106,7 +106,7 @@ pub fn solution_part_1() -> () {
                     match neighbors.get("down") {
                         Some(&SchematicElement::Number(_value)) => {}
                         _ => {
-                            postMessageToWorker(true, &format!("down is not a number"));
+                            //postMessageToWorker(true, &format!("down is not a number"));
                             neighbors.insert("down_left", &schematic[i + 1][j - 1]);
                             neighbors.insert("down_right", &schematic[i + 1][j + 1]);
                         }
@@ -144,7 +144,7 @@ fn parse_schematic_line(
     let mut number_as_string = String::new();
     for (index, character) in characters.iter().enumerate() {
         if is_digit_regex.is_match(character.to_string().as_str()) {
-            postMessageToWorker(show_message, &format!("Found a digit: {}", character));
+            //postMessageToWorker(show_message, &format!("Found a digit: {}", character));
             number_as_string.push(*character);
             if !is_in_number {
                 is_in_number = true;
@@ -164,7 +164,7 @@ fn parse_schematic_line(
             is_in_number = false;
             number_as_string = String::new();
             if !is_blank_regex.is_match(character.to_string().as_str()) {
-                postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
+                //postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
                 schematic[line_number as usize][index] =
                     SchematicElement::Symbol(character.to_owned());
             }
@@ -191,13 +191,7 @@ fn handle_found_number(
     let number_length = number_as_string.len();
     for index in 0..number_location + number_length {
         if index >= number_location && index < (number_location + number_length) {
-            postMessageToWorker(
-                show_message,
-                &format!(
-                    "Setting a number at {},{}: {}",
-                    line_number, index, number_as_string
-                ),
-            );
+            //postMessageToWorker( show_message, &format!( "Setting a number at {},{}: {}", line_number, index, number_as_string),);
             schematic[line_number as usize][index] =
                 SchematicElement::Number(number_as_string.parse::<u32>().unwrap());
         }
