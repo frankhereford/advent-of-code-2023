@@ -8,6 +8,13 @@ extern "C" {
     fn postMessageToWorker(do_print: bool, message: &str);
 }
 
+/* Twist prediction:
+
+Part one is about numbers adjacent to symbols. Part two is about symbols adjacent to numbers.
+Meaning, part two will use the symbol's meaning to determine the operator applied to the numbers.
+The quality of the parsing routine's output data structure will make part two easier or harder.
+*/
+
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: Sumation of symbol adjacent scalars.\n");
     let mut iteration = -1;
