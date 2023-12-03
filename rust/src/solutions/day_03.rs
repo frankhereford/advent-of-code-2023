@@ -19,14 +19,16 @@ The quality of the parsing routine's output data structure will make part two ea
 
 enum SchematicElement{
     Number(u32),
-    Character(char),
+    Symbol(char),
+    Void(bool),
 }
 
 impl fmt::Debug for SchematicElement {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             SchematicElement::Number(num) => write!(f, "Number({})", num),
-            SchematicElement::Character(ch) => write!(f, "Character({})", ch),
+            SchematicElement::Symbol(ch) => write!(f, "Symbol({})", ch),
+            SchematicElement::Void(_bool) => write!(f, "Void()"),
         }
     }
 }
@@ -40,10 +42,7 @@ pub fn solution_part_1() -> () {
     let is_digit_regex  = Regex::new(r"\d").unwrap();
     let is_blank_regex  = Regex::new(r"\.").unwrap();
 
-
     let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
-
-
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
@@ -62,17 +61,17 @@ pub fn solution_part_1() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
+        // initialize the schematic
         schematic.push(Vec::new());
         let line_length = line.len();
         for _ in 0..line_length {
-            schematic[iteration as usize].push(SchematicElement::Character(' '));
+            schematic[iteration as usize].push(SchematicElement::Void(false));
         }
 
         let mut is_in_number = false;
         let mut number_location = 0;
         let mut number_as_string = String::new();
         for (index, character) in characters.iter().enumerate() {
-            //postMessageToWorker(show_message, &format!("Character: {}", character));
             if is_digit_regex.is_match(character.to_string().as_str()) {
                 postMessageToWorker(show_message, &format!("Found a digit: {}", character));
                 number_as_string.push(*character);
@@ -86,10 +85,10 @@ pub fn solution_part_1() -> () {
                 }
                 is_in_number = false;
                 number_as_string = String::new();
-                if is_blank_regex.is_match(character.to_string().as_str())  {
-                } else {
-                postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
-                }
+                if !is_blank_regex.is_match(character.to_string().as_str())  {
+                    postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
+                    schematic[iteration as usize][index] = SchematicElement::Symbol(character.to_owned());
+                } 
             }
         }
         if is_in_number {
