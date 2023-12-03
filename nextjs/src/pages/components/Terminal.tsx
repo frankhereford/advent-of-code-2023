@@ -16,6 +16,7 @@ function getNewText(printed: string, content: string) {
     let escapedPrinted = printed.replace(/\$/g, '\\$')
     escapedPrinted = escapedPrinted.replace(/'/g, '\\\'')
     escapedPrinted = escapedPrinted.replace(/\+/g, '\\+')
+    escapedPrinted = escapedPrinted.replace(/\*/g, '\\*')
     escapedPrinted = escapedPrinted.replace(/\[/g, '\\[')
     escapedPrinted = escapedPrinted.replace(/\]/g, '\\]')
     escapedPrinted = escapedPrinted.replace(/\(/g, '\\(')
