@@ -39,8 +39,6 @@ pub fn solution_part_1() -> () {
     let content = include_str!("input/day_03_part_1_test_input.txt");
     // let content = include_str!("input/day_XX_input.txt");
 
-    let is_digit_regex  = Regex::new(r"\d").unwrap();
-    let is_blank_regex  = Regex::new(r"\.").unwrap();
 
     let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
 
@@ -61,41 +59,50 @@ pub fn solution_part_1() -> () {
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
-        // initialize the schematic
-        schematic.push(Vec::new());
-        let line_length = line.len();
-        for _ in 0..line_length {
-            schematic[iteration as usize].push(SchematicElement::Void(false));
-        }
-
-        let mut is_in_number = false;
-        let mut number_location = 0;
-        let mut number_as_string = String::new();
-        for (index, character) in characters.iter().enumerate() {
-            if is_digit_regex.is_match(character.to_string().as_str()) {
-                postMessageToWorker(show_message, &format!("Found a digit: {}", character));
-                number_as_string.push(*character);
-                if !is_in_number {
-                    is_in_number = true;
-                    number_location = index;
-                }
-            } else { // either a blank or a symbol
-                if is_in_number {
-                    handle_found_number(&mut schematic, iteration, number_location, number_as_string);
-                }
-                is_in_number = false;
-                number_as_string = String::new();
-                if !is_blank_regex.is_match(character.to_string().as_str())  {
-                    postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
-                    schematic[iteration as usize][index] = SchematicElement::Symbol(character.to_owned());
-                } 
-            }
-        }
-        if is_in_number {
-            handle_found_number(&mut schematic, iteration, number_location, number_as_string);
-        }
+        parse_schematic_line(&mut schematic, iteration, line.to_string(), characters, show_message);
     });
     postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
+}
+
+fn parse_schematic_line(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, line: String, characters: Vec<char>, show_message: bool) -> () {
+    // initialize the schematic line
+    schematic.push(Vec::new());
+    let line_length = line.len();
+    for _ in 0..line_length {
+        schematic[line_number as usize].push(SchematicElement::Void(false));
+    }
+
+
+    let is_digit_regex  = Regex::new(r"\d").unwrap();
+    let is_blank_regex  = Regex::new(r"\.").unwrap();
+
+
+    let mut is_in_number = false;
+    let mut number_location = 0;
+    let mut number_as_string = String::new();
+    for (index, character) in characters.iter().enumerate() {
+        if is_digit_regex.is_match(character.to_string().as_str()) {
+            postMessageToWorker(show_message, &format!("Found a digit: {}", character));
+            number_as_string.push(*character);
+            if !is_in_number {
+                is_in_number = true;
+                number_location = index;
+            }
+        } else { // either a blank or a symbol
+            if is_in_number {
+                handle_found_number(schematic, line_number, number_location, number_as_string);
+            }
+            is_in_number = false;
+            number_as_string = String::new();
+            if !is_blank_regex.is_match(character.to_string().as_str())  {
+                postMessageToWorker(show_message, &format!("Found a symbol: {}", character));
+                schematic[line_number as usize][index] = SchematicElement::Symbol(character.to_owned());
+            } 
+        }
+    }
+    if is_in_number {
+        handle_found_number(schematic, line_number, number_location, number_as_string);
+    }
 }
 
 fn handle_found_number(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, number_location: usize, number_as_string: String) -> () {
