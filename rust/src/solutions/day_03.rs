@@ -77,7 +77,10 @@ pub fn solution_part_1() -> () {
     postMessageToWorker(true, &format!("⭐️ part number sum: {}", sum));
 }
 
-fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>, part_numbers: &mut Vec<u32>) {
+fn calculate_sum_of_symbol_adjacent_parts(
+    schematic: &Vec<Vec<SchematicElement>>,
+    part_numbers: &mut Vec<u32>,
+) {
     let mut symbols_found: u32 = 0;
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
@@ -91,10 +94,13 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                     }
 
                     // ! huge help: there are never symbols along the outside of the schematic
-                    
+
                     postMessageToWorker(
                         show_message,
-                        &format!("Found a symbol, #{} to work '{}' at ({}, {})", symbols_found, symbol, i, j),
+                        &format!(
+                            "Found a symbol, #{} to work '{}' at ({}, {})",
+                            symbols_found, symbol, i, j
+                        ),
                     );
 
                     symbols_found += 1;
@@ -134,12 +140,14 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                             SchematicElement::Number(value) => {
                                 postMessageToWorker(
                                     show_message,
-                                    &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
+                                    &format!(
+                                        "Found a neighbor number '{}' at ({}, {})",
+                                        value, i, j
+                                    ),
                                 );
                                 part_numbers.push(*value);
-
                             }
-                            _ => { } // don't care about other things we find here
+                            _ => {} // don't care about other things we find here
                         }
                     }
                 }
@@ -147,7 +155,6 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
         }
     }
 }
-
 
 fn parse_schematic_line(
     schematic: &mut Vec<Vec<SchematicElement>>,
@@ -259,7 +266,7 @@ pub fn solution_part_2() -> () {
     });
     //postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
 
-    let mut gear_ratios : Vec<u32> = Vec::new();
+    let mut gear_ratios: Vec<u32> = Vec::new();
 
     calculate_sum_of_gear_ratios(&schematic, &mut gear_ratios);
 
@@ -267,7 +274,10 @@ pub fn solution_part_2() -> () {
     postMessageToWorker(true, &format!("⭐️ gear ratio sum: {}", sum));
 }
 
-fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_ratios: &mut Vec<u32>) {
+fn calculate_sum_of_gear_ratios(
+    schematic: &Vec<Vec<SchematicElement>>,
+    gear_ratios: &mut Vec<u32>,
+) {
     let mut symbols_found: u32 = 0;
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
@@ -280,7 +290,7 @@ fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_rat
                         // only care about the gear symbols
                         continue;
                     }
-                    
+
                     let mut show_message = false;
                     if symbols_found % 100 == 0 {
                         show_message = true;
@@ -288,7 +298,10 @@ fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_rat
 
                     postMessageToWorker(
                         show_message,
-                        &format!("Found a symbol, #{} to work '{}' at ({}, {})", symbols_found, symbol, i, j),
+                        &format!(
+                            "Found a symbol, #{} to work '{}' at ({}, {})",
+                            symbols_found, symbol, i, j
+                        ),
                     );
 
                     symbols_found += 1;
@@ -326,14 +339,18 @@ fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_rat
                             SchematicElement::Number(value) => {
                                 postMessageToWorker(
                                     show_message,
-                                    &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
+                                    &format!(
+                                        "Found a neighbor number '{}' at ({}, {})",
+                                        value, i, j
+                                    ),
                                 );
                                 neighbor_numbers.push(*value);
                             }
-                            _ => { } // don't care about other things we find here
+                            _ => {} // don't care about other things we find here
                         }
                     }
-                    if neighbor_numbers.len() == 2 { // some gears only touch one number
+                    if neighbor_numbers.len() == 2 {
+                        // some gears only touch one number
                         let product: u32 = neighbor_numbers.iter().product();
                         postMessageToWorker(
                             show_message,

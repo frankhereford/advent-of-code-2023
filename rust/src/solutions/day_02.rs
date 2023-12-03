@@ -1,8 +1,8 @@
 //use web_sys::console;
 #![allow(unreachable_code)]
-use wasm_bindgen::prelude::*;
 use regex::Regex;
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -24,7 +24,7 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 30 == 0  {
+        if (iteration) % 30 == 0 {
             show_message = true;
         }
 
@@ -35,19 +35,21 @@ pub fn solution_part_1() -> () {
         }
 
         postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
+        postMessageToWorker(
+            show_message,
+            &format!("Iteration: {}, input: {}", iteration, line),
+        );
 
         let mut proposed_setup = HashMap::new();
         proposed_setup.insert("red", 12);
         proposed_setup.insert("green", 13);
         proposed_setup.insert("blue", 14);
 
-
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
             let game = caps.get(1).map_or("", |m| m.as_str());
             let game_int = game.parse::<u32>().expect("Should be able to parse game");
-            
+
             let mut demonstration_knowledge = HashMap::new();
 
             // postMessageToWorker(show_message, &format!("game: {}", game));
@@ -64,35 +66,48 @@ pub fn solution_part_1() -> () {
 
                         // added .expect()s with copilot here
                         if demonstration_knowledge.contains_key(color) {
-                            let current_count = *demonstration_knowledge.get(color).expect("Value must exist since key exists");
-                            let parsed_count = count.parse::<u32>().expect("Should be able to parse count");
+                            let current_count = *demonstration_knowledge
+                                .get(color)
+                                .expect("Value must exist since key exists");
+                            let parsed_count =
+                                count.parse::<u32>().expect("Should be able to parse count");
                             if parsed_count > current_count {
                                 demonstration_knowledge.insert(color, parsed_count);
                             }
                         } else {
-                            demonstration_knowledge.insert(color, count.parse::<u32>().expect("Should be able to parse count"));
+                            demonstration_knowledge.insert(
+                                color,
+                                count.parse::<u32>().expect("Should be able to parse count"),
+                            );
                         }
-                        
                     }
                 }
             }
-        postMessageToWorker(show_message, &format!("demonstration_knowledge: {:?}", demonstration_knowledge));
-        let is_possible = is_possible_game(&proposed_setup, &demonstration_knowledge);
-        if  is_possible {
-            possible_games.push(game_int)
-        }
-        postMessageToWorker(show_message, &format!("is possible: {:?}", is_possible));
+            postMessageToWorker(
+                show_message,
+                &format!("demonstration_knowledge: {:?}", demonstration_knowledge),
+            );
+            let is_possible = is_possible_game(&proposed_setup, &demonstration_knowledge);
+            if is_possible {
+                possible_games.push(game_int)
+            }
+            postMessageToWorker(show_message, &format!("is possible: {:?}", is_possible));
         }
     });
     let sum: u32 = possible_games.iter().sum();
     postMessageToWorker(true, &format!("⭐️ sum: {}", sum));
 }
 
-fn is_possible_game(proposed_setup: &HashMap<&str, u32>, demonstration_knowledge: &HashMap<&str, u32>) -> bool {
+fn is_possible_game(
+    proposed_setup: &HashMap<&str, u32>,
+    demonstration_knowledge: &HashMap<&str, u32>,
+) -> bool {
     let mut is_possible = true;
     for (color, count) in proposed_setup {
         if demonstration_knowledge.contains_key(color) {
-            let demonstration_count = *demonstration_knowledge.get(color).expect("Value must exist since key exists");
+            let demonstration_count = *demonstration_knowledge
+                .get(color)
+                .expect("Value must exist since key exists");
             if demonstration_count > *count {
                 is_possible = false;
             }
@@ -102,8 +117,6 @@ fn is_possible_game(proposed_setup: &HashMap<&str, u32>, demonstration_knowledge
     }
     is_possible
 }
-
-
 
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: Minimize valid case.\n");
@@ -120,7 +133,7 @@ pub fn solution_part_2() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 30 == 0  {
+        if (iteration) % 30 == 0 {
             show_message = true;
         }
 
@@ -131,11 +144,14 @@ pub fn solution_part_2() -> () {
         }
 
         postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
+        postMessageToWorker(
+            show_message,
+            &format!("Iteration: {}, input: {}", iteration, line),
+        );
 
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
-            
+
             let mut demonstration_knowledge = HashMap::new();
 
             // postMessageToWorker(show_message, &format!("game: {}", game));
@@ -152,25 +168,33 @@ pub fn solution_part_2() -> () {
 
                         // added .expect()s with copilot here
                         if demonstration_knowledge.contains_key(color) {
-                            let current_count = *demonstration_knowledge.get(color).expect("Value must exist since key exists");
-                            let parsed_count = count.parse::<u32>().expect("Should be able to parse count");
+                            let current_count = *demonstration_knowledge
+                                .get(color)
+                                .expect("Value must exist since key exists");
+                            let parsed_count =
+                                count.parse::<u32>().expect("Should be able to parse count");
                             if parsed_count > current_count {
                                 demonstration_knowledge.insert(color, parsed_count);
                             }
                         } else {
-                            demonstration_knowledge.insert(color, count.parse::<u32>().expect("Should be able to parse count"));
+                            demonstration_knowledge.insert(
+                                color,
+                                count.parse::<u32>().expect("Should be able to parse count"),
+                            );
                         }
-                        
                     }
                 }
             }
-        postMessageToWorker(show_message, &format!("demonstration_knowledge: {:?}", demonstration_knowledge));
-        let mut game_power = 1;
-        for (_color, count) in demonstration_knowledge {
-            game_power = game_power * count;
+            postMessageToWorker(
+                show_message,
+                &format!("demonstration_knowledge: {:?}", demonstration_knowledge),
+            );
+            let mut game_power = 1;
+            for (_color, count) in demonstration_knowledge {
+                game_power = game_power * count;
             }
-        game_powers.push(game_power);
-        postMessageToWorker(show_message, &format!("game_power: {:?}", game_power));
+            game_powers.push(game_power);
+            postMessageToWorker(show_message, &format!("game_power: {:?}", game_power));
         }
     });
 
