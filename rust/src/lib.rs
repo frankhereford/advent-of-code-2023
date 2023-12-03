@@ -36,7 +36,6 @@ pub fn solution(n: u32) -> String {
         1 => {
             let _solution_part_1 = solutions::day_01::solution_part_1();
             let _solution_part_2 = solutions::day_01::solution_part_2();
-            // solution
         },
         2 => {
             let _solution_part_1 = solutions::day_02::solution_part_1();
