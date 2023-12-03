@@ -1,4 +1,5 @@
 #![allow(unreachable_code)]
+#![allow(unused_variables)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 
