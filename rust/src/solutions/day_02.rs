@@ -10,7 +10,6 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: Check game validity by color counts.\n");
     let mut iteration = -1;
     //let content = include_str!("input/day_02_part_1_test_input.txt");
@@ -122,7 +121,7 @@ pub fn solution_part_2() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 10 == 0  {
+        if (iteration) % 30 == 0  {
             show_message = true;
         }
 
@@ -138,8 +137,7 @@ pub fn solution_part_2() -> () {
         // how use regex to extract substrings from an input string
         if let Some(caps) = input_chunks.captures(line) {
             postMessageToWorker(show_message, &format!(""));
-            let game = caps.get(1).map_or("", |m| m.as_str());
-            let game_int = game.parse::<u32>().expect("Should be able to parse game");
+            // let game = caps.get(1).map_or("", |m| m.as_str());
             
             let mut demonstration_knowledge = HashMap::new();
 
