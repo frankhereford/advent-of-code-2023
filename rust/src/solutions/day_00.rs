@@ -7,7 +7,7 @@ extern "C" {
 }
 
 
-pub fn solution(n: u32) -> String {
+pub fn solution(n: u32) -> () {
     postMessageToWorker(true, "Challenge statement, Day 0: \nUse a compiled (on the server) rust program in the client's browser to compute the 1,111,111th prime number.\n");
 
     let mut count = 0;
@@ -35,7 +35,6 @@ pub fn solution(n: u32) -> String {
         format_with_commas(num - 1)
     );
     postMessageToWorker(true, &message);
-    format_with_commas(num - 1)
 }
 
 fn is_prime(num: u32) -> bool {

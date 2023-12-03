@@ -1,5 +1,6 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
+use regex::Regex;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -11,6 +12,8 @@ pub fn solution_part_1() -> () {
     let mut iteration = -1;
     let content = include_str!("input/day_03_part_1_test_input.txt");
     // let content = include_str!("input/day_XX_input.txt");
+
+    let is_digit_regex  = Regex::new(r"\d").unwrap();
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
@@ -26,6 +29,13 @@ pub fn solution_part_1() -> () {
             return;
         }
 
+        for character in characters {
+            postMessageToWorker(show_message, &format!("Character: {}", character));
+            if is_digit_regex.is_match(character.to_string().as_str()) {
+            }
+        }
+
+
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
     });
@@ -35,7 +45,7 @@ pub fn solution_part_1() -> () {
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_XX_part_1_test_input.txt");
+    let content = include_str!("input/day_03_part_1_test_input.txt");
     // let content = include_str!("input/day_XX_input.txt");
 
     content.lines().for_each(|line| {
