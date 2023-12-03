@@ -1,5 +1,3 @@
-#![allow(unreachable_code)]
-#![allow(unused_variables)]
 //use web_sys::console;
 use regex::Regex;
 use std::collections::HashMap;
@@ -215,7 +213,7 @@ fn handle_found_number(
     line_number: i32,
     number_location: usize,
     number_as_string: String,
-    show_message: bool,
+    _show_message: bool,
 ) -> () {
     let number_length = number_as_string.len();
     for index in 0..number_location + number_length {
@@ -331,7 +329,6 @@ fn calculate_sum_of_gear_ratios(schematic: &Vec<Vec<SchematicElement>>, gear_rat
                                     &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
                                 );
                                 neighbor_numbers.push(*value);
-
                             }
                             _ => { } // don't care about other things we find here
                         }
