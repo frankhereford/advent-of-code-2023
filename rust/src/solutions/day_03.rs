@@ -76,6 +76,13 @@ pub fn solution_part_1() -> () {
 
     let mut part_numbers: Vec<u32> = Vec::new();
 
+    calculate_sum_of_symbol_adjacent_parts(&schematic, &mut part_numbers);
+
+    let sum: u32 = part_numbers.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ part number sum: {}", sum));
+}
+
+fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>, part_numbers: &mut Vec<u32>) {
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
             match element {
@@ -135,9 +142,9 @@ pub fn solution_part_1() -> () {
             }
         }
     }
-    let sum: u32 = part_numbers.iter().sum();
-    postMessageToWorker(true, &format!("⭐️ part number sum: {}", sum));
+
 }
+
 
 fn parse_schematic_line(
     schematic: &mut Vec<Vec<SchematicElement>>,
