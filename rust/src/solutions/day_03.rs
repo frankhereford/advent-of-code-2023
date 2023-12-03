@@ -2,6 +2,7 @@
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 use regex::Regex;
+use std::collections::HashMap;
 use std::fmt;
 
 
@@ -18,6 +19,7 @@ The quality of the parsing routine's output data structure will make part two ea
 
 */
 
+#[derive(Clone)]
 enum SchematicElement{
     Number(u32),
     Symbol(char),
@@ -66,20 +68,45 @@ pub fn solution_part_1() -> () {
 
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
-            // postMessageToWorker(true, &format!("{:?}", element));
             match element {
-                SchematicElement::Number(value) => {
-                    //postMessageToWorker(true, &format!("Found a number {} at ({}, {})", value, i, j));
-                }
+                SchematicElement::Number(_value) => { }
+                SchematicElement::Void(_is_void) => { }
                 SchematicElement::Symbol(symbol) => {
+                    // huge help: there are never symbols along the outside of the schematic
                     postMessageToWorker(true, &format!("Found a symbol '{}' at ({}, {})", symbol, i, j));
-                }
-                SchematicElement::Void(_is_void) => {
+
+                    let mut neighbors = HashMap::new();
+
+                    neighbors.insert("up", &schematic[i-1][j]);
+                    neighbors.insert("down", &schematic[i+1][j]);
+                    neighbors.insert("left", &schematic[i][j-1]);
+                    neighbors.insert("right", &schematic[i][j+1]);
+
+                    match neighbors.get("up") { // i really like this match thing, this is super safe
+                        Some(&SchematicElement::Number(_value)) => { }
+                        _ => { 
+                            postMessageToWorker(true, &format!("up is not a number")); 
+                            neighbors.insert("up_left", &schematic[i-1][j-1]);
+                            neighbors.insert("up_right", &schematic[i-1][j+1]);
+                        }
+                    }
+
+                    match neighbors.get("down") { 
+                        Some(&SchematicElement::Number(_value)) => { }
+                        _ => { 
+                            postMessageToWorker(true, &format!("down is not a number")); 
+                            neighbors.insert("down_left", &schematic[i+1][j-1]);
+                            neighbors.insert("down_right", &schematic[i+1][j+1]);
+                        }
+                    }
+
+                    postMessageToWorker(true, &format!("neighbors: {:?}", neighbors));
                 }
             }
         }
     }
 }
+
 
 fn parse_schematic_line(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, line: String, characters: Vec<char>, show_message: bool) -> () {
     // initialize the schematic line
