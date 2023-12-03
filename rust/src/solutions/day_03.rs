@@ -72,7 +72,9 @@ pub fn solution_part_1() -> () {
             show_message,
         );
     });
-    postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
+    //postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
+
+    let mut part_numbers: Vec<u32> = Vec::new();
 
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
@@ -116,6 +118,19 @@ pub fn solution_part_1() -> () {
                     // we're going to make a huge assumption here: that a number is never
                     // touched by more than one symbol. the input data looks safe. this better
                     // not be the twist!! 😅
+                    for (neighbor_name, neighbor) in neighbors.iter() {
+                        match neighbor {
+                            SchematicElement::Number(value) => {
+                                postMessageToWorker(
+                                    true,
+                                    &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
+                                );
+                                part_numbers.push(*value);
+
+                            }
+                            _ => { } // don't care about other things we find here
+                        }
+                    }
                 }
             }
         }
