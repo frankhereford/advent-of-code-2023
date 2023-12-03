@@ -75,7 +75,7 @@ pub fn solution_part_1() -> () {
                 SchematicElement::Symbol(symbol) => {
                     postMessageToWorker(true, &format!("Found a symbol '{}' at ({}, {})", symbol, i, j));
                 }
-                SchematicElement::Void(is_void) => {
+                SchematicElement::Void(_is_void) => {
                 }
             }
         }
