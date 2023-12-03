@@ -35,7 +35,7 @@ pub fn solution_part_1() -> () {
         }
 
         let characters: Vec<_> = line.chars().collect();
-        if characters[0] == '`' {
+        if characters[0] == '`' { // defining a special comment character for today
             // postMessageToWorker(show_message, "Skipping line because it is a comment.");
             return;
         }
