@@ -15,6 +15,7 @@ extern "C" {
 Part one is about numbers adjacent to symbols. Part two is about symbols adjacent to numbers.
 Meaning, part two will use the symbol's meaning to determine the operator applied to the numbers.
 The quality of the parsing routine's output data structure will make part two easier or harder.
+
 */
 
 enum SchematicElement{
@@ -39,7 +40,6 @@ pub fn solution_part_1() -> () {
     let content = include_str!("input/day_03_part_1_test_input.txt");
     // let content = include_str!("input/day_XX_input.txt");
 
-
     let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
 
     content.lines().for_each(|line| {
@@ -62,6 +62,24 @@ pub fn solution_part_1() -> () {
         parse_schematic_line(&mut schematic, iteration, line.to_string(), characters, show_message);
     });
     postMessageToWorker(true, &format!("Schematic: {:?}", schematic));
+
+
+    for (i, row) in schematic.iter().enumerate() {
+        for (j, element) in row.iter().enumerate() {
+            postMessageToWorker(true, &format!("{:?}", element));
+
+            match element {
+                SchematicElement::Number(value) => {
+                    postMessageToWorker(true, &format!("Found a number {} at ({}, {})", value, i, j));
+                }
+                SchematicElement::Symbol(symbol) => {
+                    postMessageToWorker(true, &format!("Found a symbol '{}' at ({}, {})", symbol, i, j));
+                }
+                SchematicElement::Void(is_void) => {
+                }
+            }
+        }
+    }
 }
 
 fn parse_schematic_line(schematic: &mut Vec<Vec<SchematicElement>>, line_number: i32, line: String, characters: Vec<char>, show_message: bool) -> () {
