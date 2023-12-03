@@ -39,8 +39,8 @@ impl fmt::Debug for SchematicElement {
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: Sumation of symbol adjacent scalars.\n");
     let mut iteration = -1;
-    let content = include_str!("input/day_03_part_1_test_input.txt");
-    // let content = include_str!("input/day_XX_input.txt");
+    // let content = include_str!("input/day_03_part_1_test_input.txt");
+    let content = include_str!("input/day_03_input.txt");
 
     let mut schematic: Vec<Vec<SchematicElement>> = Vec::new();
 
@@ -84,17 +84,26 @@ pub fn solution_part_1() -> () {
 }
 
 fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>, part_numbers: &mut Vec<u32>) {
+    let mut symbols_found: u32 = 0;
     for (i, row) in schematic.iter().enumerate() {
         for (j, element) in row.iter().enumerate() {
             match element {
                 SchematicElement::Number(_value) => {}
                 SchematicElement::Void(_is_void) => {}
                 SchematicElement::Symbol(symbol) => {
-                    // huge help: there are never symbols along the outside of the schematic
+                    let mut show_message = false;
+                    if symbols_found % 100 == 0 {
+                        show_message = true;
+                    }
+
+                    // ! huge help: there are never symbols along the outside of the schematic
+                    
                     postMessageToWorker(
-                        true,
-                        &format!("Found a symbol to work '{}' at ({}, {})", symbol, i, j),
+                        show_message,
+                        &format!("Found a symbol, #{} to work '{}' at ({}, {})", symbols_found, symbol, i, j),
                     );
+
+                    symbols_found += 1;
 
                     let mut neighbors = HashMap::new();
 
@@ -107,7 +116,7 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                         // i really like this match thing, this is super safe
                         Some(&SchematicElement::Number(_value)) => {}
                         _ => {
-                            //postMessageToWorker(true, &format!("up is not a number"));
+                            //postMessageToWorker(show_message, &format!("up is not a number"));
                             neighbors.insert("up_left", &schematic[i - 1][j - 1]);
                             neighbors.insert("up_right", &schematic[i - 1][j + 1]);
                         }
@@ -116,13 +125,13 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                     match neighbors.get("down") {
                         Some(&SchematicElement::Number(_value)) => {}
                         _ => {
-                            //postMessageToWorker(true, &format!("down is not a number"));
+                            //postMessageToWorker(show_message, &format!("down is not a number"));
                             neighbors.insert("down_left", &schematic[i + 1][j - 1]);
                             neighbors.insert("down_right", &schematic[i + 1][j + 1]);
                         }
                     }
 
-                    postMessageToWorker(true, &format!("neighbors: {:?}", neighbors));
+                    postMessageToWorker(show_message, &format!("neighbors: {:?}", neighbors));
                     // we're going to make a huge assumption here: that a number is never
                     // touched by more than one symbol. the input data looks safe. this better
                     // not be the twist!! 😅
@@ -130,7 +139,7 @@ fn calculate_sum_of_symbol_adjacent_parts(schematic: &Vec<Vec<SchematicElement>>
                         match neighbor {
                             SchematicElement::Number(value) => {
                                 postMessageToWorker(
-                                    true,
+                                    show_message,
                                     &format!("Found a neighbor number '{}' at ({}, {})", value, i, j),
                                 );
                                 part_numbers.push(*value);
