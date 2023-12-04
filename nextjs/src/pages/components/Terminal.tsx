@@ -21,6 +21,7 @@ function getNewText(printed: string, content: string) {
     escapedPrinted = escapedPrinted.replace(/\]/g, '\\]')
     escapedPrinted = escapedPrinted.replace(/\(/g, '\\(')
     escapedPrinted = escapedPrinted.replace(/\)/g, '\\)')
+    escapedPrinted = escapedPrinted.replace(/\|/g, '\\|')
     const pattern = `^${escapedPrinted}([\\s\\S]*)`
     const regex = new RegExp(pattern)
     const results = regex.exec(content)
