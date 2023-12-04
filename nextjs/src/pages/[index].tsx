@@ -8,7 +8,6 @@ import Polaroid from '~/pages/components/Polaroid';
 import Rust from '~/pages/components/Rust';
 import Terminal from '~/pages/components/Terminal';
 import GitHub from '~/pages/components/GitHub';
-import { set } from 'lodash';
 
 export const defaultDay = 3
 
