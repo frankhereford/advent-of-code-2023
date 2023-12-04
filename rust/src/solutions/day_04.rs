@@ -1,6 +1,5 @@
 #![allow(unreachable_code)]
 #![allow(unused_variables)]
-use web_sys::console;
 use wasm_bindgen::prelude::*;
 use regex::Regex;
 
@@ -12,17 +11,20 @@ extern "C" {
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_04_part_1_test_input.txt");
-    // let content = include_str!("input/day_04_input.txt");
+    // let content = include_str!("input/day_04_part_1_test_input.txt");
+    let content = include_str!("input/day_04_input.txt");
 
-    let input_chunks = Regex::new(r"Card (\d+): +(.*) \| +(.*)").unwrap();
+    let input_chunks = Regex::new(r"Card +(\d+): +(.*) \| +(.*)").unwrap();
 
     let mut card_scores: Vec<u32> = Vec::new();
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 1 == 0  {
+        //if iteration == 0 {
+            //show_message = true;
+        //}
+        if (iteration) % 60 == 0  {
             show_message = true;
         }
 
@@ -63,12 +65,12 @@ pub fn solution_part_1() -> () {
 }
 
 fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
-    console::log_1(&format!("input: {}", input).into());
+    //console::log_1(&format!("input: {}", input).into());
     let whitespace = Regex::new(r"\s+").unwrap();
     let parts_as_strings: Vec<&str> = whitespace.split(input).collect();
     let mut found_numbers: Vec<u32> = Vec::new();
     for number in parts_as_strings {
-        console::log_1(&format!("number: {}", number).into());
+        //console::log_1(&format!("number: {}", number).into());
         let number_as_int = number.parse::<u32>().expect("Should be able to parse number");
         found_numbers.push(number_as_int);
     }
