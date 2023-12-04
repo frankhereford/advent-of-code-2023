@@ -8,8 +8,10 @@ import Polaroid from '~/pages/components/Polaroid';
 import Rust from '~/pages/components/Rust';
 import Terminal from '~/pages/components/Terminal';
 import GitHub from '~/pages/components/GitHub';
+import packageJson from '~/../package.json' assert { type: 'json' }
 
-export const defaultDay = 3
+
+export const defaultDay = packageJson.defaultDay as number;
 
 export default function Home() {
   const [day, setDay] = useState(3)
