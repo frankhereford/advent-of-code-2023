@@ -9,6 +9,7 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
+    return;
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
     // let content = include_str!("input/day_04_part_1_test_input.txt");
@@ -21,9 +22,6 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        //if iteration == 0 {
-            //show_message = true;
-        //}
         if (iteration) % 60 == 0  {
             show_message = true;
         }
@@ -36,7 +34,6 @@ pub fn solution_part_1() -> () {
 
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
-
 
         if let Some(caps) = input_chunks.captures(line) {
             let card = caps.get(1).map_or("", |m| m.as_str());
@@ -78,17 +75,23 @@ fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
 }
 
 pub fn solution_part_2() -> () {
-    return;
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_04_part_1_test_input.txt");
-    // let content = include_str!("input/day_04_input.txt");
+    //let content = include_str!("input/day_04_part_1_test_input.txt");
+    let content = include_str!("input/day_04_input.txt");
+
+    let input_chunks = Regex::new(r"Card +(\d+): +(.*) \| +(.*)").unwrap();
+
+    let mut card_counts: Vec<u32> = Vec::new();
+    for _ in 0..content.lines().count(){
+        card_counts.push(1);
+    }
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) %  1== 0  {
+        if (iteration) % 70 == 0  {
             show_message = true;
         }
 
@@ -100,5 +103,36 @@ pub fn solution_part_2() -> () {
 
         postMessageToWorker(show_message, " ");
         postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
+
+        if let Some(caps) = input_chunks.captures(line) {
+            let card = caps.get(1).map_or("", |m| m.as_str());
+            let card_int = card.parse::<u32>().expect("Should be able to parse game");
+            let card_index = card_int - 1;
+            let winning_numbers_as_string = caps.get(2).map_or("", |m| m.as_str());
+            let our_numbers_as_string = caps.get(3).map_or("", |m| m.as_str());
+            let winning_numbers = split_digits_over_whitespace(winning_numbers_as_string);
+            let our_numbers = split_digits_over_whitespace(our_numbers_as_string);
+            let intersection: Vec<_> = winning_numbers.iter().filter(|&n| our_numbers.contains(n)).collect();
+            let intersection_count = intersection.len() as u32;
+            let amount_to_increase = card_counts[card_index as usize];
+            postMessageToWorker(show_message, &format!("number of matches: {:?}", intersection_count));
+            postMessageToWorker(show_message, &format!("amount_to_increase: {}", amount_to_increase));
+            //postMessageToWorker(show_message, &format!("card_counts going in: {:?}", card_counts));
+            for index in card_index..(card_index + intersection_count) {
+                let index_to_increase = index + 1;
+                //postMessageToWorker(show_message, &format!("bumping index {} by {}", index_to_increase, amount_to_increase));
+                card_counts[index_to_increase as usize] += amount_to_increase;
+            }
+            postMessageToWorker(show_message, &format!("card_counts: {:?}", card_counts));
+
+            // postMessageToWorker(show_message, &format!("card: {}", card));
+            // postMessageToWorker(show_message, &format!("winning numbers: {:?}", winning_numbers));
+            // postMessageToWorker(show_message, &format!("our numbers: {:?}", our_numbers));
+            // postMessageToWorker(show_message, &format!("our winners: {:?}", intersection));
+        }
+
     });
+    postMessageToWorker(true, &format!("Final card_counts: {:?}", card_counts));
+    let sum: u32 = card_counts.iter().sum();
+    postMessageToWorker(true, &format!("⭐️ Total card count: {}", sum));
 }
