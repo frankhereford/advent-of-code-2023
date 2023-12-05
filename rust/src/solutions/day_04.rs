@@ -9,7 +9,6 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
     // let content = include_str!("input/day_04_part_1_test_input.txt");
@@ -22,7 +21,7 @@ pub fn solution_part_1() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 60 == 0  {
+        if (iteration) % 100 == 0  {
             show_message = true;
         }
 
@@ -91,7 +90,7 @@ pub fn solution_part_2() -> () {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
         let mut show_message = false;
-        if (iteration) % 70 == 0  {
+        if (iteration) % 100 == 0  {
             show_message = true;
         }
 
