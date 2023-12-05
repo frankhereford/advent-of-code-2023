@@ -1,5 +1,6 @@
 {
   "defaultDay": 4,
+  "maxDay": 5,
   "name": "web",
   "version": "0.1.0",
   "private": true,
