@@ -12,14 +12,15 @@ extern "C" {
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
-    let content = include_str!("input/day_05_part_1_test_input.txt");
-    // let content = include_str!("input/day_05_input.txt");
+    //let content = include_str!("input/day_05_part_1_test_input.txt");
+    let content = include_str!("input/day_05_input.txt");
 
     let (seeds, almanac) = parse_alamanac(content);
     postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
     let steps_length = steps.len();
     postMessageToWorker(true, &format!("Seeds: {:?}", seeds));
+    let mut final_locations: Vec<u32> = Vec::new();
     for seed in seeds {
         let mut current_value = seed;
         for i in 0..(steps_length-1) {
@@ -36,6 +37,10 @@ pub fn solution_part_1() -> () {
             }
         }
         postMessageToWorker(true, &format!("Final value: {}", current_value));
+        final_locations.push(current_value);
+    }
+    if let Some(min) = final_locations.iter().min() {
+        postMessageToWorker(true, &format!("Min: {:?}", min));
     }
 }
 
@@ -55,7 +60,7 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, HashMap<u32, u32>
 
     while line_number < line_count {
         let line = content.lines().nth(line_number).unwrap();
-        //postMessageToWorker(show_message, &format!("Parsing line: {}", line));
+        postMessageToWorker(show_message, &format!("Parsing line: {}", line));
 
         if let Some(captures) = seed_detector.captures(line) {
             seeds = split_digits_over_whitespace(captures.get(1).map_or("", |m| m.as_str()));
@@ -72,7 +77,8 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, HashMap<u32, u32>
             line_number += 1;
             loop {
                 if line_number >= line_count {
-                    break;
+                    return (seeds, almanac);
+                    //break;
                 }
                 let line = content.lines().nth(line_number).unwrap();
                 // postMessageToWorker(show_message, &format!("Parsing line!!: {}", line));
