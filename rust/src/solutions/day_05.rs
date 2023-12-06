@@ -15,13 +15,32 @@ pub fn solution_part_1() -> () {
     let content = include_str!("input/day_05_part_1_test_input.txt");
     // let content = include_str!("input/day_05_input.txt");
 
-    let almanac = parse_alamanac(content);
+    let (seeds, almanac) = parse_alamanac(content);
     postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
-
+    let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    let steps_length = steps.len();
+    postMessageToWorker(true, &format!("Seeds: {:?}", seeds));
+    for seed in seeds {
+        let mut current_value = seed;
+        for i in 0..(steps_length-1) {
+            let step = steps[i];
+            let next_step = steps[i + 1];
+            let key = format!("{}-{}", step, next_step);
+            // postMessageToWorker(true, &format!("key: {}", key));
+            if let Some(entry) = almanac.get(&key) {
+                // postMessageToWorker(true, &format!("entry: {:?}", entry));
+                if let Some(value) = entry.get(&current_value) {
+                    // postMessageToWorker(true, &format!("value: {}", value));
+                    current_value = *value;
+                }
+            }
+        }
+        postMessageToWorker(true, &format!("Final value: {}", current_value));
+    }
 }
 
 
-fn parse_alamanac(content: &str) -> HashMap<String, HashMap<u32, u32>> {
+fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, HashMap<u32, u32>>) {
     let show_message = true;
 
     let line_count = content.lines().count();
@@ -32,20 +51,20 @@ fn parse_alamanac(content: &str) -> HashMap<String, HashMap<u32, u32>> {
     let digit_detector = Regex::new(r"\d").unwrap();
 
     let mut almanac: HashMap<String, HashMap<u32, u32>> = HashMap::new();
+    let mut seeds = Vec::new();
 
     while line_number < line_count {
         let line = content.lines().nth(line_number).unwrap();
-        postMessageToWorker(show_message, &format!("Parsing line: {}", line));
+        //postMessageToWorker(show_message, &format!("Parsing line: {}", line));
 
         if let Some(captures) = seed_detector.captures(line) {
-            let seeds = split_digits_over_whitespace(captures.get(1).map_or("", |m| m.as_str()));
-            postMessageToWorker(show_message, &format!("Seeds: {:?}", seeds));
+            seeds = split_digits_over_whitespace(captures.get(1).map_or("", |m| m.as_str()));
         }
 
         if let Some(captures) = map_detector.captures(line) {
             let origin = captures.get(1).map_or("", |m| m.as_str());
             let destination = captures.get(2).map_or("", |m| m.as_str());
-            postMessageToWorker(show_message, &format!("Origin: {}, Destination: {}", origin, destination));
+            //postMessageToWorker(show_message, &format!("Origin: {}, Destination: {}", origin, destination));
 
             let key = format!("{}-{}", origin, destination);
             almanac.insert(key.clone(), HashMap::new()); // Clone `key` here
@@ -61,12 +80,12 @@ fn parse_alamanac(content: &str) -> HashMap<String, HashMap<u32, u32>> {
                     line_number += 1;
                     // postMessageToWorker(show_message, &format!("line: {}", line));
                     let digits = split_digits_over_whitespace(line);
-                    postMessageToWorker(show_message, &format!("digits: {:?}", digits));
+                    //postMessageToWorker(show_message, &format!("digits: {:?}", digits));
                     if let Some(entry) = almanac.get_mut(&key) {
                         for i in 0..digits[2] {
                             let range_key = digits[1] + i;
                             let range_value = digits[0] + i;
-                            postMessageToWorker(show_message, &format!("range_key: {}, range_value: {}", range_key, range_value));
+                            //postMessageToWorker(show_message, &format!("range_key: {}, range_value: {}", range_key, range_value));
                             entry.insert(range_key, range_value);
                         }
                     }
@@ -80,7 +99,7 @@ fn parse_alamanac(content: &str) -> HashMap<String, HashMap<u32, u32>> {
         line_number += 1; 
     }
 
-    almanac
+    (seeds, almanac)
 }
 
 fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
