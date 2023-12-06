@@ -47,10 +47,12 @@ fn parse_alamanac(content: &str) -> HashMap<&str, HashMap<u32, u32>> {
 
     let seed_detector = Regex::new(r"seeds: ([\d ]+)").unwrap();
     let map_detector = Regex::new(r"(\w+)-to-(\w+) map").unwrap();
+    let digit_detector = Regex::new(r"\d").unwrap();
 
     //for line_number in 0..line_count {
     while line_number < line_count {
         let line = content.lines().nth(line_number).unwrap();
+        postMessageToWorker(show_message, &format!("Parsing line: {}", line));
 
         if let Some(captures) = seed_detector.captures(line) {
             let seeds = split_digits_over_whitespace(captures.get(1).map_or("", |m| m.as_str()));
@@ -60,10 +62,27 @@ fn parse_alamanac(content: &str) -> HashMap<&str, HashMap<u32, u32>> {
         if let Some(captures) = map_detector.captures(line) {
             let origin = captures.get(1).map_or("", |m| m.as_str());
             let destination = captures.get(2).map_or("", |m| m.as_str());
-            postMessageToWorker(show_message, &format!("Origin: {}, Destination: {}", origin, destination))
+            postMessageToWorker(show_message, &format!("Origin: {}, Destination: {}", origin, destination));
+
+            line_number += 1;
+            loop {
+                if line_number >= line_count {
+                    break;
+                }
+                let line = content.lines().nth(line_number).unwrap();
+                postMessageToWorker(show_message, &format!("Parsing line!!: {}", line));
+                if digit_detector.is_match(&line) {
+                    line_number += 1;
+                    postMessageToWorker(show_message, &format!("line: {}", line));
+                    let digits = split_digits_over_whitespace(line);
+                    postMessageToWorker(show_message, &format!("digits: {:?}", digits));
+                } else {
+                    break;
+                }
+            }
         }
 
-        postMessageToWorker(show_message, &format!("Parsing line: {}", line));
+
         line_number += 1; 
     }
 
