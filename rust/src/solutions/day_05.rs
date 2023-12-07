@@ -20,10 +20,10 @@ pub fn solution_part_1() -> () {
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
     let steps_length = steps.len();
     postMessageToWorker(true, &format!("Seeds: {:?}", seeds));
-    let mut final_locations: Vec<u32> = Vec::new();
+    let mut final_locations: Vec<u64> = Vec::new();
     for seed in seeds {
         postMessageToWorker(true, &format!("Seed: {}", seed));
-        let mut current_value = seed;
+        let mut current_value: u64 = seed as u64;
         for i in 0..(steps_length-1) {
             let step = steps[i];
             let next_step = steps[i + 1];
@@ -43,10 +43,6 @@ pub fn solution_part_1() -> () {
                         break;
                     }
                 }
-                //if let Some(value) = entry.get(&current_value) {
-                    // postMessageToWorker(true, &format!("value: {}", value));
-                    //current_value = *value;
-                //}
             postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
             }
         }
@@ -58,7 +54,7 @@ pub fn solution_part_1() -> () {
     }
 }
 
-fn is_applicable_map(input_number: u32, mapping: &HashMap<String, u32>) -> bool {
+fn is_applicable_map(input_number: u64, mapping: &HashMap<String, u64>) -> bool {
     let source_range = mapping.get("source_range").unwrap();
     let destination_range = mapping.get("destination_range").unwrap();
     let range_length = mapping.get("range_length").unwrap();
@@ -68,18 +64,16 @@ fn is_applicable_map(input_number: u32, mapping: &HashMap<String, u32>) -> bool 
     false
 }
 
-fn compute_output_location(input: u32, mapping: &HashMap<String, u32>) -> u32 {
-    let source_range = *mapping.get("source_range").unwrap() as i32;
-    let destination_range = *mapping.get("destination_range").unwrap() as i32;
-    let range_length = *mapping.get("range_length").unwrap() as i32;
-    let shift_magnatude: i32 = destination_range - source_range;
-    let output_location = input as i32 + shift_magnatude;
-    output_location as u32
-    //let output_location = input as i32 + shift_magnatude;
-    //output_location as u32
+fn compute_output_location(input: u64, mapping: &HashMap<String, u64>) -> u64 {
+    let source_range = *mapping.get("source_range").unwrap() as i64;
+    let destination_range = *mapping.get("destination_range").unwrap() as i64;
+    let range_length = *mapping.get("range_length").unwrap() as i64;
+    let shift_magnatude: i64 = destination_range - source_range;
+    let output_location = input as i64 + shift_magnatude;
+    output_location as u64
 }
 
-fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<String, u32>>>) {
+fn parse_alamanac(content: &str) -> (Vec<u64>, HashMap<String, Vec<HashMap<String, u64>>>) {
     let show_message = true;
 
     let line_count = content.lines().count();
@@ -89,7 +83,7 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
     let map_detector = Regex::new(r"(\w+)-to-(\w+) map").unwrap();
     let digit_detector = Regex::new(r"\d").unwrap();
 
-    let mut almanac: HashMap<String, Vec<HashMap<String, u32>>> = HashMap::new();
+    let mut almanac: HashMap<String, Vec<HashMap<String, u64>>> = HashMap::new();
     let mut seeds = Vec::new();
 
     while line_number < line_count {
@@ -112,7 +106,6 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
             loop {
                 if line_number >= line_count {
                     return (seeds, almanac);
-                    //break;
                 }
                 let line = content.lines().nth(line_number).unwrap();
                 // postMessageToWorker(show_message, &format!("Parsing line!!: {}", line));
@@ -121,7 +114,7 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
                     // postMessageToWorker(show_message, &format!("line: {}", line));
                     let digits = split_digits_over_whitespace(line);
                     //postMessageToWorker(show_message, &format!("digits: {:?}", digits));
-                    let mut mapping: HashMap<String, u32> = HashMap::new();
+                    let mut mapping: HashMap<String, u64> = HashMap::new();
                     mapping.insert("source_range".to_string(), digits[1]);
                     mapping.insert("destination_range".to_string(), digits[0]);
                     mapping.insert("range_length".to_string(), digits[2]);
@@ -131,22 +124,20 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
                 }
             }
         }
-
-
         line_number += 1; 
     }
 
     (seeds, almanac)
 }
 
-fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
+fn split_digits_over_whitespace(input: &str) -> Vec<u64> {
     //console::log_1(&format!("input: {}", input).into());
     let whitespace = Regex::new(r"\s+").unwrap();
     let parts_as_strings: Vec<&str> = whitespace.split(input).collect();
-    let mut found_numbers: Vec<u32> = Vec::new();
+    let mut found_numbers: Vec<u64> = Vec::new();
     for number in parts_as_strings {
         //console::log_1(&format!("number: {}", number).into());
-        let number_as_int = number.parse::<u32>().expect("Should be able to parse number");
+        let number_as_int = number.parse::<u64>().expect("Should be able to parse number");
         found_numbers.push(number_as_int);
     }
     found_numbers
