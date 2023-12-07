@@ -12,8 +12,8 @@ extern "C" {
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
-    let content = include_str!("input/day_05_part_1_test_input.txt");
-    //let content = include_str!("input/day_05_input.txt");
+    //let content = include_str!("input/day_05_part_1_test_input.txt");
+    let content = include_str!("input/day_05_input.txt");
 
     let (seeds, almanac) = parse_alamanac(content);
     postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
@@ -22,6 +22,7 @@ pub fn solution_part_1() -> () {
     postMessageToWorker(true, &format!("Seeds: {:?}", seeds));
     let mut final_locations: Vec<u32> = Vec::new();
     for seed in seeds {
+        postMessageToWorker(true, &format!("Seed: {}", seed));
         let mut current_value = seed;
         for i in 0..(steps_length-1) {
             let step = steps[i];
@@ -29,13 +30,24 @@ pub fn solution_part_1() -> () {
             let key = format!("{}-{}", step, next_step);
             // postMessageToWorker(true, &format!("key: {}", key));
             if let Some(entry) = almanac.get(&key) {
-                postMessageToWorker(true, &format!("mapping: {:?}", entry));
-                let applicable_map = is_applicable_map(current_value, &entry[0]);
-                postMessageToWorker(true, &format!("applicable_map: {}", applicable_map));
+                //postMessageToWorker(true, &format!("entry: {:?}", entry));
+                for mapping in entry {
+                    let applicable_map = is_applicable_map(current_value, mapping);
+                    //postMessageToWorker(true, &format!("trying this map: {:?}, is applicable?: {:?}", mapping, applicable_map));
+                    if applicable_map {
+                        let output_location = compute_output_location(current_value, mapping);
+                        postMessageToWorker(true, &format!("Current value before {}: {}", key, current_value));
+                        postMessageToWorker(true, &format!("{} mapping: {:?}", key, mapping));
+                        postMessageToWorker(true, &format!("Key: {}, output_location: {}", key, output_location));
+                        current_value = output_location;
+                        break;
+                    }
+                }
                 //if let Some(value) = entry.get(&current_value) {
                     // postMessageToWorker(true, &format!("value: {}", value));
                     //current_value = *value;
                 //}
+            postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
             }
         }
         postMessageToWorker(true, &format!("Final value: {}", current_value));
@@ -56,6 +68,17 @@ fn is_applicable_map(input_number: u32, mapping: &HashMap<String, u32>) -> bool 
     false
 }
 
+fn compute_output_location(input: u32, mapping: &HashMap<String, u32>) -> u32 {
+    let source_range = *mapping.get("source_range").unwrap() as i32;
+    let destination_range = *mapping.get("destination_range").unwrap() as i32;
+    let range_length = *mapping.get("range_length").unwrap() as i32;
+    let shift_magnatude: i32 = destination_range - source_range;
+    let output_location = input as i32 + shift_magnatude;
+    output_location as u32
+    //let output_location = input as i32 + shift_magnatude;
+    //output_location as u32
+}
+
 fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<String, u32>>>) {
     let show_message = true;
 
@@ -71,7 +94,7 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
 
     while line_number < line_count {
         let line = content.lines().nth(line_number).unwrap();
-        postMessageToWorker(show_message, &format!("Parsing line: {}", line));
+        //postMessageToWorker(show_message, &format!("Parsing line: {}", line));
 
         if let Some(captures) = seed_detector.captures(line) {
             seeds = split_digits_over_whitespace(captures.get(1).map_or("", |m| m.as_str()));
@@ -97,7 +120,7 @@ fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<Strin
                     line_number += 1;
                     // postMessageToWorker(show_message, &format!("line: {}", line));
                     let digits = split_digits_over_whitespace(line);
-                    postMessageToWorker(show_message, &format!("digits: {:?}", digits));
+                    //postMessageToWorker(show_message, &format!("digits: {:?}", digits));
                     let mut mapping: HashMap<String, u32> = HashMap::new();
                     mapping.insert("source_range".to_string(), digits[1]);
                     mapping.insert("destination_range".to_string(), digits[0]);
