@@ -29,7 +29,9 @@ pub fn solution_part_1() -> () {
             let key = format!("{}-{}", step, next_step);
             // postMessageToWorker(true, &format!("key: {}", key));
             if let Some(entry) = almanac.get(&key) {
-                postMessageToWorker(true, &format!("entry: {:?}", entry));
+                postMessageToWorker(true, &format!("mapping: {:?}", entry));
+                let applicable_map = is_applicable_map(current_value, &entry[0]);
+                postMessageToWorker(true, &format!("applicable_map: {}", applicable_map));
                 //if let Some(value) = entry.get(&current_value) {
                     // postMessageToWorker(true, &format!("value: {}", value));
                     //current_value = *value;
@@ -44,6 +46,15 @@ pub fn solution_part_1() -> () {
     }
 }
 
+fn is_applicable_map(input_number: u32, mapping: &HashMap<String, u32>) -> bool {
+    let source_range = mapping.get("source_range").unwrap();
+    let destination_range = mapping.get("destination_range").unwrap();
+    let range_length = mapping.get("range_length").unwrap();
+    if input_number >= *source_range && input_number <= source_range + range_length {
+        return true;
+    }
+    false
+}
 
 fn parse_alamanac(content: &str) -> (Vec<u32>, HashMap<String, Vec<HashMap<String, u32>>>) {
     let show_message = true;
