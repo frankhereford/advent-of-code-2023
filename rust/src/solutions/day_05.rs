@@ -11,6 +11,7 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
+    return;
     postMessageToWorker(true, "Part 1: \n");
     //let content = include_str!("input/day_05_part_1_test_input.txt");
     let content = include_str!("input/day_05_input.txt");
@@ -143,28 +144,69 @@ fn split_digits_over_whitespace(input: &str) -> Vec<u64> {
     found_numbers
 }
 
+
 pub fn solution_part_2() -> () {
-    return;
     postMessageToWorker(true, "Part 2: \n");
-    let mut iteration = -1;
     let content = include_str!("input/day_05_part_1_test_input.txt");
-    // let content = include_str!("input/day_05_input.txt");
+    //let content = include_str!("input/day_05_input.txt");
 
-    content.lines().for_each(|line| {
-        // Provide a mechanism to limit the volume of output on the console.
-        iteration += 1;
-        let mut show_message = false;
-        if (iteration) % 300 == 0  {
-            show_message = true;
+    let (mut seeds_parse, almanac) = parse_alamanac(content);
+    postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
+    postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
+    let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    let steps_length = steps.len();
+    let mut final_locations: Vec<u64> = Vec::new();
+    
+    //let mut seeds: Vec<u64> = Vec::new();
+    while seeds_parse.len() > 0 {
+        let seed_start: u64 = seeds_parse.remove(0);
+        let seed_range_length: u64 = seeds_parse.remove(0);
+        //postMessageToWorker(true, &format!("seed_start: {}, seed_range_length: {}", seed_start, seed_range_length));
+        for i in 0..seed_range_length {
+            let seed = seed_start + i;
+            // postMessageToWorker(true, &format!("Seed: {}", seed));
+            //1if seed != 82 {
+                //1continue;
+            //1}
+            let mut current_value: u64 = seed as u64;
+            for i in 0..(steps_length-1) {
+                let step = steps[i];
+                let next_step = steps[i + 1];
+                let key = format!("{}-{}", step, next_step);
+                // postMessageToWorker(true, &format!("key: {}", key));
+                if let Some(entry) = almanac.get(&key) {
+                    //postMessageToWorker(true, &format!("entry: {:?}", entry));
+                    let mut found_mapping = false;
+                    for mapping in entry {
+                        let applicable_map = is_applicable_map(current_value, mapping);
+                        //postMessageToWorker(true, &format!("trying this map: {:?}, is applicable?: {:?}", mapping, applicable_map));
+                        if applicable_map {
+                            found_mapping = true;
+                            let output_location = compute_output_location(current_value, mapping);
+                            //postMessageToWorker(true, &format!("Current value before {}: {}", key, current_value));
+                            //postMessageToWorker(true, &format!("{} mapping: {:?}", key, mapping));
+                            //postMessageToWorker(true, &format!("Key: {}, output_location: {}", key, output_location));
+                            //let message = format!("seed: {}, key: {}, source: {:?}, destination: {:?}, length: {:?}, input: {}, output: {} ", seed, key, mapping.get("source_range").unwrap(), mapping.get("destination_range").unwrap(), mapping.get("range_length").unwrap(), current_value, output_location);
+                            //postMessageToWorker(true, &message);
+                            current_value = output_location;
+                            break;
+                        } 
+                    }
+                    if !found_mapping {
+                        //let message = format!("seed: {}, key: {}, input: {}, output: {} ", seed, key, current_value, current_value);
+                        //postMessageToWorker(true, &message);
+                    }
+                //postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
+                }
+            }
+            //postMessageToWorker(true, &format!("Final value: {}", current_value));
+            //let message = format!("seed: {}, output: {} ", seed, current_value);
+            //postMessageToWorker(true, &message);
+            final_locations.push(current_value);
         }
+    }
 
-        let characters: Vec<_> = line.chars().collect();
-        if characters[0] == '#' {
-            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
-            return;
-        }
-
-        postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
-    });
+    if let Some(min) = final_locations.iter().min() {
+        postMessageToWorker(true, &format!("Min: {:?}", min));
+    }
 }
