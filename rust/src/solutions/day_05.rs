@@ -173,19 +173,13 @@ pub fn solution_part_2() -> () {
                 let step = steps[i];
                 let next_step = steps[i + 1];
                 let key = format!("{}-{}", step, next_step);
-                // postMessageToWorker(true, &format!("key: {}", key));
                 if let Some(entry) = almanac.get(&key) {
-                    //postMessageToWorker(true, &format!("entry: {:?}", entry));
                     let mut found_mapping = false;
                     for mapping in entry {
                         let applicable_map = is_applicable_map(current_value, mapping);
-                        //postMessageToWorker(true, &format!("trying this map: {:?}, is applicable?: {:?}", mapping, applicable_map));
                         if applicable_map {
                             found_mapping = true;
                             let output_location = compute_output_location(current_value, mapping);
-                            //postMessageToWorker(true, &format!("Current value before {}: {}", key, current_value));
-                            //postMessageToWorker(true, &format!("{} mapping: {:?}", key, mapping));
-                            //postMessageToWorker(true, &format!("Key: {}, output_location: {}", key, output_location));
                             //let message = format!("seed: {}, key: {}, source: {:?}, destination: {:?}, length: {:?}, input: {}, output: {} ", seed, key, mapping.get("source_range").unwrap(), mapping.get("destination_range").unwrap(), mapping.get("range_length").unwrap(), current_value, output_location);
                             //postMessageToWorker(true, &message);
                             current_value = output_location;
@@ -199,7 +193,6 @@ pub fn solution_part_2() -> () {
                 //postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
                 }
             }
-            //postMessageToWorker(true, &format!("Final value: {}", current_value));
             //let message = format!("seed: {}, output: {} ", seed, current_value);
             //postMessageToWorker(true, &message);
             final_locations.push(current_value);
