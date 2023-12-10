@@ -1,5 +1,5 @@
-#![allow(unreachable_code)]
-#![allow(unused_variables)]
+//#![allow(unreachable_code)]
+//#![allow(unused_variables)]
 //#![allow(dead_code)]
 //#![allow(unused_mut)]
 //use web_sys::console;
@@ -62,7 +62,7 @@ pub fn solution_part_1() -> () {
 
 fn is_applicable_map(input_number: u64, mapping: &HashMap<String, u64>) -> bool {
     let source_range = mapping.get("source_range").unwrap();
-    let destination_range = mapping.get("destination_range").unwrap();
+    //let destination_range = mapping.get("destination_range").unwrap();
     let range_length = mapping.get("range_length").unwrap();
     if input_number >= *source_range && input_number <= source_range + range_length {
         return true;
@@ -73,14 +73,14 @@ fn is_applicable_map(input_number: u64, mapping: &HashMap<String, u64>) -> bool 
 fn compute_output_location(input: u64, mapping: &HashMap<String, u64>) -> u64 {
     let source_range = *mapping.get("source_range").unwrap() as i64;
     let destination_range = *mapping.get("destination_range").unwrap() as i64;
-    let range_length = *mapping.get("range_length").unwrap() as i64;
+    //let range_length = *mapping.get("range_length").unwrap() as i64;
     let shift_magnatude: i64 = destination_range - source_range;
     let output_location = input as i64 + shift_magnatude;
     output_location as u64
 }
 
 fn parse_almanac(content: &str) -> (Vec<u64>, HashMap<String, Vec<HashMap<String, u64>>>) {
-    let show_message = true;
+    //let show_message = true;
 
     let line_count = content.lines().count();
     let mut line_number = 0;
@@ -184,7 +184,7 @@ pub fn solution_part_2() -> () {
                 let map_range_length = map.get("range_length").unwrap();
                 //postMessageToWorker(true, &format!("map_source_start: {}, map_destination_start: {}, map_range_length: {}", map_source_start, map_destination_start, map_range_length));
 
-                let map_source_end = map_source_start + map_range_length;
+                //let map_source_end = map_source_start + map_range_length;
                 let map_destination_end = map_destination_start + map_range_length;
                 //postMessageToWorker(true, &format!("map_source_end: {}, map_destination_end: {}", map_source_end, map_destination_end));
 
