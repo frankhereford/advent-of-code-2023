@@ -1,10 +1,15 @@
 #![allow(unreachable_code)]
 #![allow(unused_variables)]
+//#![allow(dead_code)]
+//#![allow(unused_mut)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
-use std::collections::{BTreeMap, HashMap};
 use regex::Regex;
-use serde_json;
+use std::collections::{HashMap};
+
+// for pretty printing
+//use std::collections::{BTreeMap, HashMap};
+//use serde_json;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -152,18 +157,92 @@ pub fn solution_part_2() -> () {
     //let content = include_str!("input/day_05_input.txt");
 
     let (mut seeds_parse, almanac) = parse_alamanac(content);
-    postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
-    postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
+    //postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
+    //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
     
-    pretty_print(&seeds_parse, &almanac);
+    // pretty_print_almanac_parse(&seeds_parse, &almanac);
+
+    while seeds_parse.len() > 0 {
+        let output_start: u64 = seeds_parse.remove(0);
+        let output_length: u64 = seeds_parse.remove(0);
+        let output_end = output_start + output_length;
+
+        let mut previous_step = "seed";
+        for step in steps {
+            if step == "seed" { continue; }
+            let key = format!("{}-{}", previous_step, step);
+            postMessageToWorker(true, &format!("Key: {}", key));
+            
+            for map in almanac.get(&key).unwrap() {
+                let input_range_start = map.get("source_range").unwrap();
+                let input_range_end = map.get("source_range").unwrap() + map.get("range_length").unwrap();
+
+                if output_end >= *input_range_start && output_start <= input_range_end {
+                    let output_range_start = map.get("destination_range").unwrap();
+                    let output_range_end = map.get("destination_range").unwrap() + map.get("range_length").unwrap();
+                    // postMessageToWorker(true, &format!("output_range_start: {}, output_range_end: {}", output_range_start, output_range_end));
+                }
+            }
+
+            previous_step = step;
+        }
+    }
+}
+
+
+    /*
+    while seeds_parse.len() > 0 {
+        let seed_start: u64 = seeds_parse.remove(0);
+        let seed_range_length: u64 = seeds_parse.remove(0);
+        let seed_end = seed_start + seed_range_length;
+        postMessageToWorker(true, &format!("seed_start: {}, seed_end: {}", seed_start, seed_end));
+        let mut previous_step = "seed";
+        for step in steps {
+            if step == "seed" { continue; }
+            let key = format!("{}-{}", previous_step, step);
+            postMessageToWorker(true, &format!("Key: {}", key));
+            
+            for map in almanac.get(&key).unwrap() {
+                // postMessageToWorker(true, &format!("map: {:?}", map));
+
+                let input_range_start = map.get("source_range").unwrap();
+                let input_range_end = map.get("source_range").unwrap() + map.get("range_length").unwrap();
+                postMessageToWorker(true, &format!("input_range_start: {}, input_range_end: {}", input_range_start, input_range_end));
+
+                let output_range_start = map.get("destination_range").unwrap();
+                let output_range_end = map.get("destination_range").unwrap() + map.get("range_length").unwrap();
+                // postMessageToWorker(true, &format!("output_range_start: {}, output_range_end: {}", output_range_start, output_range_end));
+
+                if seed_end >= *input_range_start && seed_start <= input_range_end {
+                    // found a range we have some overlap with
+                    let overlap_begin = if seed_start > *input_range_start { seed_start } else { *input_range_start };
+                    let overlap_end = if seed_end < input_range_end { seed_end } else { input_range_end };
+                    postMessageToWorker(true, &format!("overlap_begin: {}, overlap_end: {}", overlap_begin, overlap_end));
+
+                }
+            }
+
+            previous_step = step;
+        }
+    }
+    */
     
-    
+    /*
+    let mut previous_step = "seed";
+    for step in steps {
+        if step == "seed" { continue; }
+        let key = format!("{}-{}", previous_step, step);
+        postMessageToWorker(true, &format!("Key: {}", key));
+        for mapping in almanac.get(&key).unwrap() {
+            postMessageToWorker(true, &format!("mapping: {:?}", mapping));
+        }
+        previous_step = step;
+    }
+    */
 
 
-
-
-
+/*
 
     return;
 
@@ -216,8 +295,11 @@ pub fn solution_part_2() -> () {
         postMessageToWorker(true, &format!("Min: {:?}", min));
     }
 }
+*/
 
-fn pretty_print(data: &Vec<u64>, complex_data: &HashMap<String, Vec<HashMap<String, u64>>>) {
+/*
+
+fn pretty_print_almanac_parse(data: &Vec<u64>, complex_data: &HashMap<String, Vec<HashMap<String, u64>>>) {
     // Serialize and print Vec<u64>
     let serialized_vec = serde_json::to_string_pretty(&data).unwrap();
     postMessageToWorker(true, &format!("Vec<u64>:\n{}", serialized_vec));
@@ -245,3 +327,5 @@ fn pretty_print(data: &Vec<u64>, complex_data: &HashMap<String, Vec<HashMap<Stri
     let serialized_map = serde_json::to_string_pretty(&sorted_map).unwrap();
     postMessageToWorker(true, &format!("Sorted HashMap<String, Vec<HashMap<String, u64>>>:\n{}", serialized_map));
 }
+
+*/
