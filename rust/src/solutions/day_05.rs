@@ -2,8 +2,9 @@
 #![allow(unused_variables)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use regex::Regex;
+use serde_json;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -154,6 +155,18 @@ pub fn solution_part_2() -> () {
     postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
     postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    
+    pretty_print(&seeds_parse, &almanac);
+    
+    
+
+
+
+
+
+
+    return;
+
     let steps_length = steps.len();
     let mut final_locations: Vec<u64> = Vec::new();
     
@@ -202,4 +215,33 @@ pub fn solution_part_2() -> () {
     if let Some(min) = final_locations.iter().min() {
         postMessageToWorker(true, &format!("Min: {:?}", min));
     }
+}
+
+fn pretty_print(data: &Vec<u64>, complex_data: &HashMap<String, Vec<HashMap<String, u64>>>) {
+    // Serialize and print Vec<u64>
+    let serialized_vec = serde_json::to_string_pretty(&data).unwrap();
+    postMessageToWorker(true, &format!("Vec<u64>:\n{}", serialized_vec));
+
+    // Create BTreeMap for sorting
+    let mut sorted_map: BTreeMap<String, Vec<BTreeMap<String, u64>>> = BTreeMap::new();
+
+    // Iterate over complex_data to populate sorted_map
+    for (key, value) in complex_data {
+        let mut sorted_submaps = vec![];
+        
+        // Sorting submaps of complex data
+        for submap in value {
+            let mut sorted_submap = BTreeMap::new();
+            for (subkey, subvalue) in submap {
+                sorted_submap.insert(subkey.clone(), *subvalue);
+            }
+            sorted_submaps.push(sorted_submap);
+        }
+
+        sorted_map.insert(key.clone(), sorted_submaps);
+    }
+
+    // Serialize and print the sorted map
+    let serialized_map = serde_json::to_string_pretty(&sorted_map).unwrap();
+    postMessageToWorker(true, &format!("Sorted HashMap<String, Vec<HashMap<String, u64>>>:\n{}", serialized_map));
 }
