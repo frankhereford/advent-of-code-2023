@@ -53,6 +53,10 @@ pub fn solution(n: u32) -> () {
             solutions::day_05::solution_part_1();
             solutions::day_05::solution_part_2();
         },
+        6 => {
+            solutions::day_06::solution_part_1();
+            solutions::day_06::solution_part_2();
+        },
         _ => ()
     }
 }
