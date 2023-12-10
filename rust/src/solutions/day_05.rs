@@ -152,13 +152,79 @@ fn split_digits_over_whitespace(input: &str) -> Vec<u64> {
 
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
-    let content = include_str!("input/day_05_part_1_test_input.txt");
-    //let content = include_str!("input/day_05_input.txt");
+    //let content = include_str!("input/day_05_part_1_test_input.txt");
+    let content = include_str!("input/day_05_input.txt");
 
     let (seeds_parse, almanac) = parse_alamanac(content);
     //postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
     //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
-    let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    let mut steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    steps.reverse();
+    //postMessageToWorker(true, &format!("Steps: {:?}", steps));
+
+    //let skip = 10000;
+    //let mut location: u64 = 0;
+    let skip = 1;
+    let mut location: u64 = 81960000 - 10000;
+    let mut iteration = 0;
+    loop {
+      //postMessageToWorker(true, &format!("------------"));
+      if iteration % 10000 == 0 { postMessageToWorker(true, &format!("Iteration: {}", iteration)); }
+      //if iteration > 100 { break; } // this comes out for the real solution. just gives it a safety net for the test data
+      let testing_location = location;
+      //postMessageToWorker(true, &format!("Testing location: {}", testing_location));
+        
+        for n in 0..steps.len()-1 {
+            //postMessageToWorker(true, &format!("n: {}", n));
+            let key = format!("{}-{}", steps[n+1], steps[n]);
+            //postMessageToWorker(true, &format!("\nKey: {}", key));
+        
+            for map in almanac.get(&key).unwrap() {
+                let map_source_start = map.get("source_range").unwrap();
+                let map_destination_start = map.get("destination_range").unwrap();
+                let map_range_length = map.get("range_length").unwrap();
+                //postMessageToWorker(true, &format!("map_source_start: {}, map_destination_start: {}, map_range_length: {}", map_source_start, map_destination_start, map_range_length));
+
+                let map_source_end = map_source_start + map_range_length;
+                let map_destination_end = map_destination_start + map_range_length;
+                //postMessageToWorker(true, &format!("map_source_end: {}, map_destination_end: {}", map_source_end, map_destination_end));
+
+                if location >= *map_destination_start && location < map_destination_end {
+                    //postMessageToWorker(true, &format!("Found a map for location: {}", location));
+                    //postMessageToWorker(true, &format!("map_destination_start: {}, map_destination_end: {}", map_destination_start, map_destination_end));
+                    //postMessageToWorker(true, &format!("map_source_start: {}, map_source_end: {}", map_source_start, map_source_end));
+                    let offset_off_destination_start = location - map_destination_start; 
+                    //postMessageToWorker(true, &format!("offset_off_destination_start: {}", offset_off_destination_start));
+                    let inferred_source_value = map_source_start + offset_off_destination_start;
+                    //postMessageToWorker(true, &format!("inferred_source_value: {}", inferred_source_value));
+                    location = inferred_source_value;
+                    break; // break out of checking any more maps for this path because we found one
+                }
+
+            }
+        }
+
+        //postMessageToWorker(true, &format!("Final location: {}", location));
+        
+        let mut seeds_parse_for_this_iteration = seeds_parse.clone();
+        while seeds_parse_for_this_iteration.len() > 0 {
+            let seed_range_start: u64 = seeds_parse_for_this_iteration.remove(0);
+            let seed_range_length: u64 = seeds_parse_for_this_iteration.remove(0);
+            let seed_range_end: u64 = seed_range_start + seed_range_length;
+            //postMessageToWorker(true, &format!("seed_range_start: {}, seed_range_end: {}", seed_range_start, seed_range_end));
+            if location >= seed_range_start && location < seed_range_end {
+                postMessageToWorker(true, &format!("Found a valid seed for testing-location {} at seed value: {}", testing_location, location));
+                return
+            }
+
+        }
+
+        location = testing_location + skip;
+        iteration += 1;
+    }
+
+
+
     
     // pretty_print_almanac_parse(&seeds_parse, &almanac);
 
