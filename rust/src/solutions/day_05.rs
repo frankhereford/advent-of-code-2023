@@ -150,7 +150,22 @@ fn split_digits_over_whitespace(input: &str) -> Vec<u64> {
     found_numbers
 }
 
+pub fn solution_part_2() -> () {
+    postMessageToWorker(true, "Part 2: \n");
+    let content = include_str!("input/day_05_part_1_test_input.txt");
+    //let content = include_str!("input/day_05_input.txt");
 
+    let (seeds_parse, almanac) = parse_alamanac(content);
+    //postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
+    //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
+    let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
+    
+    // pretty_print_almanac_parse(&seeds_parse, &almanac);
+
+}
+
+
+/*
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
     let content = include_str!("input/day_05_part_1_test_input.txt");
@@ -189,7 +204,7 @@ pub fn solution_part_2() -> () {
         }
     }
 }
-
+*/
 
     /*
     while seeds_parse.len() > 0 {
