@@ -21,7 +21,7 @@ pub fn solution_part_1() -> () {
     //let content = include_str!("input/day_05_part_1_test_input.txt");
     let content = include_str!("input/day_05_input.txt");
 
-    let (seeds, almanac) = parse_alamanac(content);
+    let (seeds, almanac) = parse_almanac(content);
     //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
     let steps_length = steps.len();
@@ -79,7 +79,7 @@ fn compute_output_location(input: u64, mapping: &HashMap<String, u64>) -> u64 {
     output_location as u64
 }
 
-fn parse_alamanac(content: &str) -> (Vec<u64>, HashMap<String, Vec<HashMap<String, u64>>>) {
+fn parse_almanac(content: &str) -> (Vec<u64>, HashMap<String, Vec<HashMap<String, u64>>>) {
     let show_message = true;
 
     let line_count = content.lines().count();
@@ -154,7 +154,7 @@ pub fn solution_part_2() -> () {
     //let content = include_str!("input/day_05_part_1_test_input.txt");
     let content = include_str!("input/day_05_input.txt");
 
-    let (seeds_parse, almanac) = parse_alamanac(content);
+    let (seeds_parse, almanac) = parse_almanac(content);
     //postMessageToWorker(true, &format!("Raw Seeds: {:?}", seeds_parse));
     //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let mut steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
