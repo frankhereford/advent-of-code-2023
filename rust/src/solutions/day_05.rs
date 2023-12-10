@@ -17,13 +17,12 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: \n");
     //let content = include_str!("input/day_05_part_1_test_input.txt");
     let content = include_str!("input/day_05_input.txt");
 
     let (seeds, almanac) = parse_alamanac(content);
-    postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
+    //postMessageToWorker(true, &format!("Almanac: {:?}", almanac));
     let steps = ["seed", "soil", "fertilizer", "water", "light", "temperature", "humidity", "location"];
     let steps_length = steps.len();
     postMessageToWorker(true, &format!("Seeds: {:?}", seeds));
@@ -43,14 +42,14 @@ pub fn solution_part_1() -> () {
                     //postMessageToWorker(true, &format!("trying this map: {:?}, is applicable?: {:?}", mapping, applicable_map));
                     if applicable_map {
                         let output_location = compute_output_location(current_value, mapping);
-                        postMessageToWorker(true, &format!("Current value before {}: {}", key, current_value));
-                        postMessageToWorker(true, &format!("{} mapping: {:?}", key, mapping));
-                        postMessageToWorker(true, &format!("Key: {}, output_location: {}", key, output_location));
+                        //postMessageToWorker(true, &format!("Current value before {}: {}", key, current_value));
+                        //postMessageToWorker(true, &format!("{} mapping: {:?}", key, mapping));
+                        //postMessageToWorker(true, &format!("Key: {}, output_location: {}", key, output_location));
                         current_value = output_location;
                         break;
                     }
                 }
-            postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
+            //postMessageToWorker(true, &format!("Current value after {}: {}", key, current_value));
             }
         }
         postMessageToWorker(true, &format!("Final value: {}", current_value));
