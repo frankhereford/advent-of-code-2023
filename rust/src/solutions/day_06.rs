@@ -10,8 +10,6 @@ extern "C" {
     fn postMessageToWorker(do_print: bool, message: &str);
 }
 
-
-
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let content = include_str!("input/day_06_test_input.txt");
@@ -32,8 +30,17 @@ pub fn solution_part_1() -> () {
         distances = split_digits_over_whitespace(distances_as_string);
     }
 
-    postMessageToWorker(true, &format!("Times: {:?}", times));
-    postMessageToWorker(true, &format!("Distances: {:?}", distances));
+    //postMessageToWorker(true, &format!("Times: {:?}", times));
+    //postMessageToWorker(true, &format!("Distances: {:?}", distances));
+
+    for race in 0..times.len() {
+        //postMessageToWorker()
+        //postMessageToWorker(true,)
+        //postMessageToWorker(true, &format!("race: {}", race));
+        let duration = times[race];
+        let distance = distances[race];
+        postMessageToWorker(true, &format!("duration: {}, distance: {}", duration, distance));
+    }
 }
 
 fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
