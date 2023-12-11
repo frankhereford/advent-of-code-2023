@@ -11,7 +11,6 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: \n");
     //let content = include_str!("input/day_06_test_input.txt");
     let content = include_str!("input/day_06_input.txt");
