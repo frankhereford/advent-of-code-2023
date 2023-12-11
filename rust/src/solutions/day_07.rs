@@ -22,7 +22,6 @@ type Game = (Hand, Wager, ScoringValue);
 type Games = Vec<Game>;
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
     //let content = include_str!("input/day_07_test_input.txt");
@@ -160,7 +159,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     }
 
     // two pair
-    let mut two_pair_first_pair= false;
+    let mut two_pair_first_pair = false;
     for (card, count) in card_count.iter() {
         if *count == 2 && !two_pair_first_pair {
             two_pair_first_pair = true; 
@@ -186,12 +185,11 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
 }
 
 
-
 pub fn solution_part_2() -> () {
-    postMessageToWorker(true, "Part 1: \n");
+    postMessageToWorker(true, "Part 2: Jokers Wild \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_07_test_input.txt");
-    //let content = include_str!("input/day_07_input.txt");
+    //let content = include_str!("input/day_07_test_input.txt");
+    let content = include_str!("input/day_07_input.txt");
 
     let hand_regex = Regex::new(r"(\w{5}) (\d+)").unwrap();
 
@@ -217,7 +215,7 @@ pub fn solution_part_2() -> () {
 
     for i in 0..games.len() {
         let mut show_message = false;
-        if (i) % 1 == 0  {
+        if (i) % 100 == 0  {
             show_message = true;
         }
         games[i].2 = score_hand_part_2(show_message, games[i].0);
@@ -278,8 +276,12 @@ fn score_hand_part_2(show_message: bool, hand: Hand) -> ScoringValue {
 
 fn catagorize_hand_part_2(show_message: bool, hand: Hand, card_count: IndexMap<String, u32>) -> u32 {
     
+    //postMessageToWorker(show_message, &format!("Hand: {:?}, card_count: {:?}", hand, card_count));
+    
     // five of a kind
     for (card, count) in card_count.iter() {
+        if card == "0" { continue; }
+        //postMessageToWorker(show_message, &format!("card: {:?}, count: {:?}, jokers: {}", card, count, card_count["0"]));
         if *count == 5 {
             postMessageToWorker(show_message, &format!("Five of a kind: {:?}", hand));
             return 6;
@@ -288,54 +290,127 @@ fn catagorize_hand_part_2(show_message: bool, hand: Hand, card_count: IndexMap<S
 
     // four of a kind
     for (card, count) in card_count.iter() {
+        if card == "0" { continue; }
+        if *count == 4 && card_count["0"] == 1 {
+            postMessageToWorker(show_message, &format!("Four of a kind + J: {:?}", hand));
+            return 6;
+        }
         if *count == 4 {
             postMessageToWorker(show_message, &format!("Four of a kind: {:?}", hand));
             return 5;
         }
     }
     
-    // full house
+    // full house 
     let mut full_house_triplet = false;
     let mut full_house_pair = false;
     for (card, count) in card_count.iter() {
+        if card == "0" { continue; }
         if *count == 3 { full_house_triplet = true; }
         if *count == 2 { full_house_pair = true; }
-        if full_house_triplet && full_house_pair {
-            postMessageToWorker(show_message, &format!("Full house: {:?}", hand));
-            return 4;
-        }
+
     }
+
+    let mut full_house_pair_count = 0;
+    for (card, count) in card_count.iter() {
+        if card == "0" { continue; }
+        if *count == 2 { full_house_pair_count += 1; continue; }
+        if *count == 2 { full_house_pair_count += 1; }
+    }
+
+    if card_count["0"] == 2 && full_house_triplet {
+        postMessageToWorker(show_message, &format!("three of a kind + JJ: {:?}", hand));
+        return 6; // five of a kind
+    } else if card_count["0"] == 1 && full_house_triplet {
+        postMessageToWorker(show_message, &format!("three of a kind + J: {:?}", hand));
+        return 5; // four of a kind
+    } else if card_count["0"] == 3 && full_house_pair {
+        postMessageToWorker(show_message, &format!("pair + JJJ: {:?}", hand));
+        return 6; // five of a kind
+    } else if full_house_pair_count == 2 && card_count["0"] == 1 {
+        postMessageToWorker(show_message, &format!("two pair + J: {:?}", hand));
+        return 4; // full house
+    } else if card_count["0"] == 2 && full_house_pair {
+        postMessageToWorker(show_message, &format!("pair + JJ: {:?}", hand));
+        return 5; // four of a kind 
+    } else if card_count["0"] == 1 && full_house_pair {
+        postMessageToWorker(show_message, &format!("pair + J: {:?}", hand));
+        return 3; // three of a kind
+    } else if full_house_triplet && full_house_pair {
+        postMessageToWorker(show_message, &format!("Full house: {:?}", hand));
+        return 4;
+    }
+
 
     // three of a kind
     for (card, count) in card_count.iter() {
-        if *count == 3 {
+        if card == "0" { continue; }
+        if *count == 3 && card_count["0"] == 2 {
+            postMessageToWorker(show_message, &format!("Three of a kind + JJ: {:?}", hand));
+            return 6; // five of a kind
+        } else if *count == 3 && card_count["0"] == 1 {
+            postMessageToWorker(show_message, &format!("Three of a kind + J: {:?}", hand));
+            return 5; // four of a kind
+        } else if *count == 3 {
             postMessageToWorker(show_message, &format!("Three of a kind: {:?}", hand));
             return 3;
+
         }
     }
 
     // two pair
-    let mut two_pair_first_pair= false;
+    let mut two_pair_first_pair = false;
     for (card, count) in card_count.iter() {
+        if card == "0" { continue; }
         if *count == 2 && !two_pair_first_pair {
             two_pair_first_pair = true; 
             continue;
         }
+        if *count == 2 && two_pair_first_pair && card_count["0"] == 1 { 
+            postMessageToWorker(show_message, &format!("Two pair + J: {:?}", hand));
+            return 4; // full house
+        } else
         if *count == 2 && two_pair_first_pair { 
             postMessageToWorker(show_message, &format!("Two pair: {:?}", hand));
-            return 2;
+            return 2; // two pair
         }
     }
 
     // single pair
     for (card, count) in card_count.iter() {
-        if *count == 2 {
+        if card == "0" { continue; }
+        if *count == 2 && card_count["0"] == 3 {
+            postMessageToWorker(show_message, &format!("One pair + JJJ: {:?}", hand));
+            return 6; // five of a kind
+        } else if *count == 2 && card_count["0"] == 2 {
+            postMessageToWorker(show_message, &format!("One pair + JJ: {:?}", hand));
+            return 5; // four of a kind
+        } else if *count == 2 && card_count["0"] == 1 {
+            postMessageToWorker(show_message, &format!("One pair + J: {:?}", hand));
+            return 3; 
+        } else if *count == 2 {
             postMessageToWorker(show_message, &format!("One pair: {:?}", hand));
             return 1;
         }
     }
 
     // this catch all case is the "high card" case
+    if card_count["0"] == 5 {
+        postMessageToWorker(show_message, &format!("JJJJJ: {:?}", hand));
+        return 6; // five of a kind
+    } else if card_count["0"] == 4 {
+        postMessageToWorker(show_message, &format!("High card + JJJJ: {:?}", hand));
+        return 6; // five of a kind
+    } else if card_count["0"] == 3 {
+        postMessageToWorker(show_message, &format!("High card + JJJ: {:?}", hand));
+        return 5;  // four of a kind
+    } else if card_count["0"] == 2 {
+        postMessageToWorker(show_message, &format!("High card + JJ: {:?}", hand));
+        return 3; // three of a kind
+    } else if card_count["0"] == 1 {
+        postMessageToWorker(show_message, &format!("High card + J: {:?}", hand));
+        return 1; // one pair
+    }
     postMessageToWorker(show_message, &format!("High card: {:?}", hand));
     return 0
 }
