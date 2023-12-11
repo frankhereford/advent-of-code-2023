@@ -34,10 +34,10 @@ pub fn solution_part_1() -> () {
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
-        let mut show_message = false;
-        if (iteration) % 1 == 0  {
-            show_message = true;
-        }
+        //let mut show_message = false;
+        //if (iteration) % 100 == 0  {
+            //show_message = true;
+        //}
 
         let characters: Vec<_> = line.chars().collect();
         if characters[0] == '#' {
@@ -62,9 +62,12 @@ pub fn solution_part_1() -> () {
         }
     });
 
-    for game in games.iter_mut() {
-        postMessageToWorker(true, &format!("\n"));
-        game.2 = score_hand(true, game.0);
+    for i in 0..games.len() {
+        let mut show_message = false;
+        if (i) % 100 == 0  {
+            show_message = true;
+        }
+        games[i].2 = score_hand(show_message, games[i].0);
     }
     games.sort_by(|a, b| a.2.1.partial_cmp(&b.2.1).unwrap());
 
@@ -75,7 +78,7 @@ pub fn solution_part_1() -> () {
         let points = game.1 * (i as u32 + 1);
         total_score += points;
     }
-    postMessageToWorker(true, &format!("Games: {:?}", games));
+    //postMessageToWorker(true, &format!("Games: {:?}", games));
     postMessageToWorker(true, &format!("Total score: {:?}", total_score));
 }
 
@@ -104,7 +107,7 @@ fn base13_float_to_base10(s: &str) -> f32 {
 }
 
 fn score_hand(show_message: bool, hand: Hand) -> ScoringValue {
-    //postMessageToWorker(true, &format!("Hand: {:?}", hand));
+    //postMessageToWorker(show_message, &format!("Hand: {:?}", hand));
     let mut card_number_in_tridecimal: String = "".to_string();
     let mut decending_cards_in_tridecimal: Vec<String> = Vec::new();
     for i in 0..13 {
@@ -122,7 +125,7 @@ fn score_hand(show_message: bool, hand: Hand) -> ScoringValue {
         let count = card_count.entry(card_tridecimal).or_insert(0);
         *count += 1;
     }
-    //postMessageToWorker(true, &format!("Card count: {:?}", card_count));
+    //postMessageToWorker(show_message, &format!("Card count: {:?}", card_count));
 
     let category_score = catagorize_hand(show_message, hand, card_count);
     
@@ -130,9 +133,9 @@ fn score_hand(show_message: bool, hand: Hand) -> ScoringValue {
     let decimal_score = base13_float_to_base10(&tridecimal_score_as_string);
     let hand_score: ScoringValue = (tridecimal_score_as_string.clone(), decimal_score);
 
-    //postMessageToWorker(true, &format!("tridecimal_score_as_string: {:?}", tridecimal_score_as_string));
-    //postMessageToWorker(true, &format!("decimal_score: {:?}", decimal_score));
-    postMessageToWorker(true, &format!("hand_score: {:?}", hand_score));
+    //postMessageToWorker(show_message, &format!("tridecimal_score_as_string: {:?}", tridecimal_score_as_string));
+    //postMessageToWorker(show_message, &format!("decimal_score: {:?}", decimal_score));
+    //postMessageToWorker(show_message, &format!("hand_score: {:?}", hand_score));
 
     return hand_score
 }
@@ -141,7 +144,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // five of a kind
     for (card, count) in card_count.iter() {
         if *count == 5 {
-            postMessageToWorker(true, &format!("Five of a kind: {:?}", hand));
+            postMessageToWorker(show_message, &format!("Five of a kind: {:?}", hand));
             return 6;
         }
     }
@@ -149,7 +152,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // four of a kind
     for (card, count) in card_count.iter() {
         if *count == 4 {
-            postMessageToWorker(true, &format!("Four of a kind: {:?}", hand));
+            postMessageToWorker(show_message, &format!("Four of a kind: {:?}", hand));
             return 5;
         }
     }
@@ -161,7 +164,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
         if *count == 3 { full_house_triplet = true; }
         if *count == 2 { full_house_pair = true; }
         if full_house_triplet && full_house_pair {
-            postMessageToWorker(true, &format!("Full house: {:?}", hand));
+            postMessageToWorker(show_message, &format!("Full house: {:?}", hand));
             return 4;
         }
     }
@@ -169,7 +172,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // three of a kind
     for (card, count) in card_count.iter() {
         if *count == 3 {
-            postMessageToWorker(true, &format!("Three of a kind: {:?}", hand));
+            postMessageToWorker(show_message, &format!("Three of a kind: {:?}", hand));
             return 3;
         }
     }
@@ -177,14 +180,14 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // two pair
     let mut two_pair_first_pair= false;
     for (card, count) in card_count.iter() {
-        //postMessageToWorker(true, &format!("card: {:?}, count: {:?}", card, count));
+        //postMessageToWorker(show_message, &format!("card: {:?}, count: {:?}", card, count));
         if *count == 2 && !two_pair_first_pair {
-            //postMessageToWorker(true, &format!("Found a pair: {:?}", hand));
+            //postMessageToWorker(show_message, &format!("Found a pair: {:?}", hand));
             two_pair_first_pair = true; 
             continue;
         }
         if *count == 2 && two_pair_first_pair { 
-            postMessageToWorker(true, &format!("Two pair: {:?}", hand));
+            postMessageToWorker(show_message, &format!("Two pair: {:?}", hand));
             return 2;
         }
     }
@@ -192,14 +195,13 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // single pair
     for (card, count) in card_count.iter() {
         if *count == 2 {
-            postMessageToWorker(true, &format!("One pair: {:?}", hand));
+            postMessageToWorker(show_message, &format!("One pair: {:?}", hand));
             return 1;
         }
     }
 
     // this catch all case is the "high card" case
-
-    postMessageToWorker(true, &format!("High card: {:?}", hand));
+    postMessageToWorker(show_message, &format!("High card: {:?}", hand));
     return 0
 }
 
