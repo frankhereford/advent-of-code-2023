@@ -24,8 +24,8 @@ type Games = Vec<Game>;
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_07_test_input.txt");
-    // let content = include_str!("input/day_07_input.txt");
+    //let content = include_str!("input/day_07_test_input.txt");
+    let content = include_str!("input/day_07_input.txt");
 
     let hand_regex = Regex::new(r"(\w{5}) (\d+)").unwrap();
 
@@ -45,8 +45,8 @@ pub fn solution_part_1() -> () {
             return;
         }
 
-        postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
+        //postMessageToWorker(show_message, " ");
+        //postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
         if let Some(captures) = hand_regex.captures(line) {
             let cards_as_string = captures.get(1).map_or("", |m| m.as_str().trim());
@@ -62,13 +62,21 @@ pub fn solution_part_1() -> () {
         }
     });
 
-    postMessageToWorker(true, &format!("Games: {:?}", games));
     for game in games.iter_mut() {
         postMessageToWorker(true, &format!("\n"));
         game.2 = score_hand(true, game.0);
     }
-    postMessageToWorker(true, &format!("Games: {:?}", games));
+    games.sort_by(|a, b| a.2.1.partial_cmp(&b.2.1).unwrap());
 
+    let mut total_score: u32 = 0;
+    for i in 0..games.len() {
+        let game = &games[i];
+        //postMessageToWorker(true, &format!("Game: {:?}, Wager: {:?}", game, game.1));
+        let points = game.1 * (i as u32 + 1);
+        total_score += points;
+    }
+    postMessageToWorker(true, &format!("Games: {:?}", games));
+    postMessageToWorker(true, &format!("Total score: {:?}", total_score));
 }
 
 
@@ -77,7 +85,6 @@ fn map_card_to_base_13_digit(card: Card) -> String {
     let cards: Vec<char> = cards_string.iter().map(|&s| s.chars().next().unwrap()).collect();
     for i in 0..cards.len() {
         if cards[i] == card {
-            //postMessageToWorker(true, &format!("i: {}, card: {}, radix: {}", i, card, radix(i, 13)));
             return radix(i, 13).to_string();
         }
     }
@@ -121,11 +128,13 @@ fn score_hand(show_message: bool, hand: Hand) -> ScoringValue {
     
     let tridecimal_score_as_string: String = category_score.to_string() + "." + &card_number_in_tridecimal;
     let decimal_score = base13_float_to_base10(&tridecimal_score_as_string);
+    let hand_score: ScoringValue = (tridecimal_score_as_string.clone(), decimal_score);
 
-    postMessageToWorker(true, &format!("tridecimal_score_as_string: {:?}", tridecimal_score_as_string));
-    postMessageToWorker(true, &format!("decimal_score: {:?}", decimal_score));
+    //postMessageToWorker(true, &format!("tridecimal_score_as_string: {:?}", tridecimal_score_as_string));
+    //postMessageToWorker(true, &format!("decimal_score: {:?}", decimal_score));
+    postMessageToWorker(true, &format!("hand_score: {:?}", hand_score));
 
-    return (tridecimal_score_as_string.clone(), decimal_score);
+    return hand_score
 }
 
 fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, u32>) -> u32 {
@@ -168,7 +177,9 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // two pair
     let mut two_pair_first_pair= false;
     for (card, count) in card_count.iter() {
-        if *count == 2 {
+        //postMessageToWorker(true, &format!("card: {:?}, count: {:?}", card, count));
+        if *count == 2 && !two_pair_first_pair {
+            //postMessageToWorker(true, &format!("Found a pair: {:?}", hand));
             two_pair_first_pair = true; 
             continue;
         }
@@ -187,6 +198,8 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     }
 
     // this catch all case is the "high card" case
+
+    postMessageToWorker(true, &format!("High card: {:?}", hand));
     return 0
 }
 
