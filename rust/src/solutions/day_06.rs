@@ -12,8 +12,8 @@ extern "C" {
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
-    let content = include_str!("input/day_06_test_input.txt");
-    // let content = include_str!("input/day_06_input.txt");
+    //let content = include_str!("input/day_06_test_input.txt");
+    let content = include_str!("input/day_06_input.txt");
 
     let time_line = Regex::new(r"Time:(.*)").unwrap();
     let distance_line = Regex::new(r"Distance:(.*)").unwrap();
@@ -33,14 +33,25 @@ pub fn solution_part_1() -> () {
     //postMessageToWorker(true, &format!("Times: {:?}", times));
     //postMessageToWorker(true, &format!("Distances: {:?}", distances));
 
+    let mut margins: Vec<u32> = Vec::new();
     for race in 0..times.len() {
-        //postMessageToWorker()
-        //postMessageToWorker(true,)
-        //postMessageToWorker(true, &format!("race: {}", race));
         let duration = times[race];
         let distance = distances[race];
         postMessageToWorker(true, &format!("duration: {}, distance: {}", duration, distance));
+        let mut count_of_winners = 0;
+        for milisecond in 0..duration+1 {
+            let distance_traveled = milisecond * (duration - milisecond);
+            if distance_traveled > distance {
+                count_of_winners += 1;
+            }
+            //postMessageToWorker(true, &format!("milisecond: {}, distance_traveled: {}", milisecond, distance_traveled));
+        }
+        postMessageToWorker(true, &format!("count_of_winners: {}", count_of_winners));
+        margins.push(count_of_winners);
     }
+    let margins_product: u32 = margins.iter().product();
+
+    postMessageToWorker(true, &format!("Product of margins_product: {}", margins_product));
 }
 
 fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
