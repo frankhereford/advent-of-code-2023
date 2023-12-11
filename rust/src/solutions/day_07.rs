@@ -34,19 +34,6 @@ pub fn solution_part_1() -> () {
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
         iteration += 1;
-        //let mut show_message = false;
-        //if (iteration) % 100 == 0  {
-            //show_message = true;
-        //}
-
-        let characters: Vec<_> = line.chars().collect();
-        if characters[0] == '#' {
-            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
-            return;
-        }
-
-        //postMessageToWorker(show_message, " ");
-        //postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
 
         if let Some(captures) = hand_regex.captures(line) {
             let cards_as_string = captures.get(1).map_or("", |m| m.as_str().trim());
@@ -125,17 +112,11 @@ fn score_hand(show_message: bool, hand: Hand) -> ScoringValue {
         let count = card_count.entry(card_tridecimal).or_insert(0);
         *count += 1;
     }
-    //postMessageToWorker(show_message, &format!("Card count: {:?}", card_count));
 
     let category_score = catagorize_hand(show_message, hand, card_count);
-    
     let tridecimal_score_as_string: String = category_score.to_string() + "." + &card_number_in_tridecimal;
     let decimal_score = base13_float_to_base10(&tridecimal_score_as_string);
     let hand_score: ScoringValue = (tridecimal_score_as_string.clone(), decimal_score);
-
-    //postMessageToWorker(show_message, &format!("tridecimal_score_as_string: {:?}", tridecimal_score_as_string));
-    //postMessageToWorker(show_message, &format!("decimal_score: {:?}", decimal_score));
-    //postMessageToWorker(show_message, &format!("hand_score: {:?}", hand_score));
 
     return hand_score
 }
@@ -180,9 +161,7 @@ fn catagorize_hand(show_message: bool, hand: Hand, card_count: IndexMap<String, 
     // two pair
     let mut two_pair_first_pair= false;
     for (card, count) in card_count.iter() {
-        //postMessageToWorker(show_message, &format!("card: {:?}, count: {:?}", card, count));
         if *count == 2 && !two_pair_first_pair {
-            //postMessageToWorker(show_message, &format!("Found a pair: {:?}", hand));
             two_pair_first_pair = true; 
             continue;
         }
