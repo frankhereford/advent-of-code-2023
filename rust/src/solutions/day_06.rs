@@ -20,17 +20,20 @@ pub fn solution_part_1() -> () {
     let time_line = Regex::new(r"Time:(.*)").unwrap();
     let distance_line = Regex::new(r"Distance:(.*)").unwrap();
 
+    let mut times: Vec<u32> = Vec::new();
     if let Some(caps) = time_line.captures(content) {
-        let times_as_string = caps.get(1).map_or("", |m| m.as_str());
-        postMessageToWorker(true, &format!("Times as string: {}", times_as_string));
+        let times_as_string = caps.get(1).map_or("", |m| m.as_str().trim());
+        times = split_digits_over_whitespace(times_as_string);
     }
+
+    let mut distances: Vec<u32> = Vec::new();
     if let Some(caps) = distance_line.captures(content) {
-        let distances_as_string = caps.get(1).map_or("", |m| m.as_str());
-        postMessageToWorker(true, &format!("Distances as string: {}", distances_as_string));
+        let distances_as_string = caps.get(1).map_or("", |m| m.as_str().trim());
+        distances = split_digits_over_whitespace(distances_as_string);
     }
 
-
-
+    postMessageToWorker(true, &format!("Times: {:?}", times));
+    postMessageToWorker(true, &format!("Distances: {:?}", distances));
 }
 
 fn split_digits_over_whitespace(input: &str) -> Vec<u32> {
