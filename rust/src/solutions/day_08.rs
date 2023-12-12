@@ -11,7 +11,7 @@ extern "C" {
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
-    let content = include_str!("input/day_08_part_1_test_1_input.txt");
+    let content = include_str!("input/day_08_part_1_test_2_input.txt");
     // let content = include_str!("input/day_08_input.txt");
     let input = content.lines().collect::<Vec<&str>>();
     let instructions = input[0].chars().collect::<Vec<char>>();
@@ -29,7 +29,25 @@ pub fn solution_part_1() -> () {
         destionations.insert("right".to_string(), right.to_string());
         linkages.insert(location.to_string(), destionations);
     }
-    postMessageToWorker(true, &format!("Linkages: {:?}", linkages));
+    //postMessageToWorker(true, &format!("Linkages: {:?}", linkages));
+    let mut current_location = "AAA";
+    let end = "ZZZ";
+    let mut move_count = 0;
+    loop {
+        move_count += 1;
+        let next_instruction = instruction.next().unwrap();
+        let next_location = match next_instruction {
+            &'R' => linkages.get(current_location).unwrap().get("right").unwrap(),
+            _ => linkages.get(current_location).unwrap().get("left").unwrap(),
+        };
+        postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, next_instruction, next_location));
+        if next_location == end {
+            postMessageToWorker(true, &format!("Found the end: {}", next_location));
+            break;
+        } else {
+            current_location = next_location;
+        }
+    }
 }
 
 
