@@ -4,6 +4,7 @@
 use wasm_bindgen::prelude::*;
 //use regex::Regex;
 //use std::collections::{HashSet, HashMap};
+use polyfit_rs::polyfit_rs::polyfit;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {

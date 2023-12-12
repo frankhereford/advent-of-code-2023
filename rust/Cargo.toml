@@ -30,6 +30,7 @@ indexmap = "2.1.0"
 # all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
+polyfit-rs = "0.2.1"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
