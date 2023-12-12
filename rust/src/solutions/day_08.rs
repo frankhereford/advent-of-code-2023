@@ -36,13 +36,13 @@ pub fn solution_part_1() -> () {
     let mut move_count = 0;
     loop {
         move_count += 1;
-        let next_instruction = instruction.next().unwrap();
-        let next_location = match next_instruction {
+        let instruction = instruction.next().unwrap();
+        let next_location = match instruction {
             &'R' => linkages.get(current_location).unwrap().get("right").unwrap(),
             _ => linkages.get(current_location).unwrap().get("left").unwrap(),
         };
         if move_count % 1000 == 0 {
-            postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, next_instruction, next_location));
+            postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, instruction, next_location));
         }
         if next_location == end {
             postMessageToWorker(true, &format!("Found the end on move: {}", move_count));
@@ -56,14 +56,14 @@ pub fn solution_part_1() -> () {
 
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
-    let content = include_str!("input/day_08_part_2_test_input.txt");
-    //let content = include_str!("input/day_08_part_1_input.txt");
+    //let content = include_str!("input/day_08_part_2_test_input.txt");
+    let content = include_str!("input/day_08_part_1_input.txt");
     let input = content.lines().collect::<Vec<&str>>();
     let instructions = input[0].chars().collect::<Vec<char>>();
-    let mut instruction = instructions.iter().cycle(); // can just access this forever
+    let mut instruction = instructions.iter().cycle();
     let linkage_regex = Regex::new(r"(\w{3}) = \((\w{3}), (\w{3})\)").unwrap();
     let mut linkages: HashMap<String, HashMap<String, String>> = HashMap::new();
-    let mut starting_locations: Vec<String> = Vec::new();
+    let mut paths: Vec<String> = Vec::new();
     for i in 2..input.len() {
         let linkage = input[i];
         let captures = linkage_regex.captures(linkage).unwrap();
@@ -75,8 +75,37 @@ pub fn solution_part_2() -> () {
         destionations.insert("right".to_string(), right.to_string());
         linkages.insert(location.to_string(), destionations);
         if location.chars().nth(2).unwrap() == 'A' {
-            starting_locations.insert(0, location.to_string());
+            paths.insert(0, location.to_string());
         }
     }
-    postMessageToWorker(true, &format!("starting_locations: {:?}", starting_locations));
+    postMessageToWorker(true, &format!("paths: {:?}", paths));
+    let mut move_count = 0;
+    loop {
+        move_count += 1;
+        if move_count % 100000 == 0 {
+            postMessageToWorker(true, &format!("move: {}", move_count));
+        }
+        let instruction = instruction.next().unwrap();
+        for i in 0..paths.len() {
+            let current_location = &paths[i];
+            let next_location = match instruction {
+                &'R' => linkages.get(current_location).unwrap().get("right").unwrap(),
+                _ => linkages.get(current_location).unwrap().get("left").unwrap(),
+            };
+            if move_count % 10000 == 0 {
+                //postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, instruction, next_location));
+            }
+            paths[i] = next_location.to_string();
+        }
+        let mut end_location_count = 0;
+        for i in 0..paths.len() {
+            if paths[i].chars().nth(2).unwrap() == 'Z' {
+                end_location_count += 1;
+            }
+        }
+        if end_location_count == paths.len() {
+            postMessageToWorker(true, &format!("Found the end on move: {}", move_count));
+            break;
+        }
+    }
 }
