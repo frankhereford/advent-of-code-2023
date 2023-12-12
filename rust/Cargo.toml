@@ -31,6 +31,7 @@ indexmap = "2.1.0"
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
 polyfit-rs = "0.2.1"
+fast_polynomial = "0.1.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
