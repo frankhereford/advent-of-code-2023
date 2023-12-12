@@ -1,4 +1,5 @@
 #![allow(unused_variables)]
+#![allow(unreachable_code)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 use regex::Regex;
@@ -10,9 +11,10 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
+    return;
     postMessageToWorker(true, "Part 1: \n");
-    let content = include_str!("input/day_08_part_1_test_2_input.txt");
-    // let content = include_str!("input/day_08_input.txt");
+    //let content = include_str!("input/day_08_part_1_test_1_input.txt");
+    let content = include_str!("input/day_08_part_1_input.txt");
     let input = content.lines().collect::<Vec<&str>>();
     let instructions = input[0].chars().collect::<Vec<char>>();
     let mut instruction = instructions.iter().cycle(); // can just access this forever
@@ -29,7 +31,6 @@ pub fn solution_part_1() -> () {
         destionations.insert("right".to_string(), right.to_string());
         linkages.insert(location.to_string(), destionations);
     }
-    //postMessageToWorker(true, &format!("Linkages: {:?}", linkages));
     let mut current_location = "AAA";
     let end = "ZZZ";
     let mut move_count = 0;
@@ -40,9 +41,11 @@ pub fn solution_part_1() -> () {
             &'R' => linkages.get(current_location).unwrap().get("right").unwrap(),
             _ => linkages.get(current_location).unwrap().get("left").unwrap(),
         };
-        postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, next_instruction, next_location));
+        if move_count % 1000 == 0 {
+            postMessageToWorker(true, &format!("move {} - from: {}, via: {}, to: {}", move_count, current_location, next_instruction, next_location));
+        }
         if next_location == end {
-            postMessageToWorker(true, &format!("Found the end: {}", next_location));
+            postMessageToWorker(true, &format!("Found the end on move: {}", move_count));
             break;
         } else {
             current_location = next_location;
