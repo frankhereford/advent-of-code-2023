@@ -10,7 +10,6 @@ extern "C" {
 }
 
 pub fn solution_part_1() -> () {
-    return;
     postMessageToWorker(true, "Part 1: \n");
     //let content = include_str!("input/day_09_part_1_test_input.txt");
     let content = include_str!("input/day_09_part_1_input.txt");
@@ -19,7 +18,7 @@ pub fn solution_part_1() -> () {
     let mut added_values: Vec<i32> = Vec::new();
     content.lines().for_each(|line| {
         iteration += 1;
-        postMessageToWorker(true, &format!(""));
+        //postMessageToWorker(true, &format!(""));
         let mut digits: Vec<i32> = line.split_whitespace()
                         .map(|s| s.parse::<i32>().unwrap())
                         .collect();
@@ -61,7 +60,7 @@ pub fn solution_part_1() -> () {
     });
 
     let sum: i32 = added_values.iter().sum();
-    postMessageToWorker(true, &format!("{}/ {:?}", iteration, added_values));
+    //postMessageToWorker(true, &format!("{}/ {:?}", iteration, added_values));
     postMessageToWorker(true, &format!("{}/ {:?}", iteration, sum));
 }
 
@@ -94,7 +93,7 @@ pub fn solution_part_2() -> () {
     let mut added_values: Vec<i32> = Vec::new();
     content.lines().for_each(|line| {
         iteration += 1;
-        postMessageToWorker(true, &format!(""));
+        //postMessageToWorker(true, &format!(""));
         let mut digits: Vec<i32> = line.split_whitespace()
                         .map(|s| s.parse::<i32>().unwrap())
                         .collect();
@@ -131,11 +130,11 @@ pub fn solution_part_2() -> () {
                     added_values.push(new_value);
                 }
             }
-            postMessageToWorker(true, &format!("{}: {:?}", iteration, pyramid[n]));
+            //postMessageToWorker(true, &format!("{}: {:?}", iteration, pyramid[n]));
         }
     });
 
     let sum: i32 = added_values.iter().sum();
-    postMessageToWorker(true, &format!("{}/ {:?}", iteration, added_values));
+    //postMessageToWorker(true, &format!("{}/ {:?}", iteration, added_values));
     postMessageToWorker(true, &format!("{}/ {:?}", iteration, sum));
 }
