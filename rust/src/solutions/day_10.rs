@@ -9,8 +9,8 @@ extern "C" {
 }
 
 struct Connection {
-    cxn_one: Option<(usize, usize)>,
-    cxn_two: Option<(usize, usize)>,
+    cxn_one: Option<(isize, isize)>,
+    cxn_two: Option<(isize, isize)>,
     character: char,
 }
 type Cell = Vec<Connection>;
@@ -40,16 +40,36 @@ pub fn solution_part_1() -> () {
         for (index, character) in characters.iter().enumerate() {
             postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
 
-            let mut cxn_one: Option<(usize, usize)> = None;
-            let mut cxn_two: Option<(usize, usize)> = None;
-            if *character == 'J' {
-                // plus zero, plus 1
-                // minus one, plus 0
-                cxn_one = Some((index, iteration + 1));
-                cxn_two = Some((index - 1, iteration));
-            } else if *character == 'L' {
-                cxn_one = Some((index, iteration + 1));
-                cxn_two = Some((index + 1, iteration));
+            let index = index as isize; 
+
+            let mut cxn_one: Option<(isize, isize)> = None;
+            let mut cxn_two: Option<(isize, isize)> = None;
+            match *character {
+                'J' => {
+                    cxn_one = Some((index, iteration + 1));
+                    cxn_two = Some((index - 1, iteration));
+                },
+                'L' => {
+                    cxn_one = Some((index, iteration + 1));
+                    cxn_two = Some((index + 1, iteration));
+                },
+                'F' => {
+                    cxn_one = Some((index + 1, iteration));
+                    cxn_two = Some((index, iteration - 1));
+                },
+                '7' => {
+                    cxn_one = Some((index - 1, iteration));
+                    cxn_two = Some((index, iteration - 1));
+                },
+                '|' => {
+                    cxn_one = Some((index, iteration - 1));
+                    cxn_two = Some((index, iteration + 1));
+                },
+                '-' => {
+                    cxn_one = Some((index - 1, iteration));
+                    cxn_two = Some((index + 1, iteration));
+                },
+                _ => {}
             }
             postMessageToWorker(show_message, &format!("letter: {}, cxn_one: {:?}, cxn_two: {:?}", character, cxn_one, cxn_two));
             let mut connection = Connection {
