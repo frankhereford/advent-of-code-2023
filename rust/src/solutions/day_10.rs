@@ -8,28 +8,58 @@ extern "C" {
     fn postMessageToWorker(do_print: bool, message: &str);
 }
 
+struct Connection {
+    cxn_one: Option<(usize, usize)>,
+    cxn_two: Option<(usize, usize)>,
+    character: char,
+}
+type Cell = Vec<Connection>;
+type Grid = Vec<Cell>;
+
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
-    let mut iteration = -1;
-    let content = include_str!("input/day_10_test_input.txt");
-    // let content = include_str!("input/day_10_input.txt");
+    let mut iteration = 0;
+    let content = include_str!("input/day_10_part_1_test_input.txt");
+    // let content = include_str!("input/day_10_part_1_input.txt");
+
+
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
-        iteration += 1;
         let mut show_message = false;
-        if (iteration) % 300 == 0  {
+        if (iteration) % 1 == 0  {
             show_message = true;
         }
 
         let characters: Vec<_> = line.chars().collect();
-        if characters[0] == '#' {
-            // postMessageToWorker(show_message, "Skipping line because it is a comment.");
-            return;
-        }
 
         postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {}", iteration, line));
+        postMessageToWorker(show_message, &format!("Iteration: {}, input: {:?}", iteration, characters));
+
+        //for character in characters {
+        for (index, character) in characters.iter().enumerate() {
+            postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
+
+            let mut cxn_one: Option<(usize, usize)> = None;
+            let mut cxn_two: Option<(usize, usize)> = None;
+            if *character == 'J' {
+                // plus zero, plus 1
+                // minus one, plus 0
+                cxn_one = Some((index, iteration + 1));
+                cxn_two = Some((index - 1, iteration));
+            } else if *character == 'L' {
+                cxn_one = Some((index, iteration + 1));
+                cxn_two = Some((index + 1, iteration));
+            }
+            postMessageToWorker(show_message, &format!("letter: {}, cxn_one: {:?}, cxn_two: {:?}", character, cxn_one, cxn_two));
+            let mut connection = Connection {
+                cxn_one: cxn_one,
+                cxn_two: cxn_two,
+                character: *character,
+            };
+
+        }
+    iteration += 1;
     });
 }
 
@@ -38,8 +68,8 @@ pub fn solution_part_2() -> () {
     return;
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_10_test_input.txt");
-    // let content = include_str!("input/day_10_input.txt");
+    let content = include_str!("input/day_10_part_1_test_input.txt");
+    // let content = include_str!("input/day_10_part_1_input.txt");
 
     content.lines().for_each(|line| {
         // Provide a mechanism to limit the volume of output on the console.
