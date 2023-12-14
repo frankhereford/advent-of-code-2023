@@ -20,7 +20,7 @@ type Grid = Vec<Row>; // ! Remember, Gird[Y][X] is the correct way to access the
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_1_test_input_2.txt");
+    let content = include_str!("input/day_10_part_1_test_input_1.txt");
     // let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
@@ -55,7 +55,7 @@ pub fn solution_part_1() -> () {
                     cxn_two = Some((index + 1, iteration)); // east
                 },
                 '7' => {
-                    cxn_one = Some((index, iteration - 1)); // north
+                    cxn_one = Some((index, iteration + 1)); // south
                     cxn_two = Some((index - 1, iteration)); // west
                 },
                 '|' => {
@@ -93,52 +93,95 @@ pub fn solution_part_1() -> () {
     let start_y = start.1;
 
     let mut found_connection: bool = false;
+    let mut initial_connection: Option<(isize, isize)> = None;
     // check north
-    if start_y > 0 && !found_connection {
+    if start_y > 0 && !initial_connection.is_some() { // no underflow
         let north_x: usize = start_x as usize;
         let north_y: usize = start_y as usize - 1;
-        postMessageToWorker(true, &format!("cell to the north: {:?}", grid[north_y][north_x]));
+        //postMessageToWorker(true, &format!("cell to the north: {:?}", grid[north_y][north_x]));
         if grid[north_y][north_x].cxn_one == Some((start_x, start_y)) || grid[north_y][north_x].cxn_two == Some((start_x, start_y)) {
             postMessageToWorker(true, &format!("Found connection to the north: {:?}", grid[north_y][north_x]));
-            found_connection = true;
+            initial_connection = Some((north_x as isize, north_y as isize));
         }
     }
 
     // check east
-    if start_x < grid[0].len() as isize - 1 && !found_connection {
+    if start_x < grid[0].len() as isize - 1 && !initial_connection.is_some() { // no overflow
         let east_x: usize = start_x as usize + 1;
         let east_y: usize = start_y as usize;
-        postMessageToWorker(true, &format!("cell to the east: {:?}", grid[east_y][east_x]));
+        //postMessageToWorker(true, &format!("cell to the east: {:?}", grid[east_y][east_x]));
         if grid[east_y][east_x].cxn_one == Some((start_x, start_y)) || grid[east_y][east_x].cxn_two == Some((start_x, start_y)) {
             postMessageToWorker(true, &format!("Found connection to the east: {:?}", grid[east_y][east_x]));
-            found_connection = true;
+            initial_connection = Some((east_x as isize, east_y as isize));
         }
     }
 
     // check south
-    if start_y < grid.len() as isize - 1 && !found_connection {
+    if start_y < grid.len() as isize - 1 && !initial_connection.is_some() { // no overflow
         let south_x: usize = start_x as usize;
         let south_y: usize = start_y as usize + 1;
-        postMessageToWorker(true, &format!("cell to the south: {:?}", grid[south_y][south_x]));
+        //postMessageToWorker(true, &format!("cell to the south: {:?}", grid[south_y][south_x]));
         if grid[south_y][south_x].cxn_one == Some((start_x, start_y)) || grid[south_y][south_x].cxn_two == Some((start_x, start_y)) {
             postMessageToWorker(true, &format!("Found connection to the south: {:?}", grid[south_y][south_x]));
-            found_connection = true;
+            initial_connection = Some((south_x as isize, south_y as isize));
         }
     }
 
     // check west
-    if start_x > 0 && !found_connection {
+    if start_x > 0 && !initial_connection.is_some() { // no underflow
         let west_x: usize = start_x as usize - 1;
         let west_y: usize = start_y as usize;
-        postMessageToWorker(true, &format!("cell to the west: {:?}", grid[west_y][west_x]));
+        //postMessageToWorker(true, &format!("cell to the west: {:?}", grid[west_y][west_x]));
         if grid[west_y][west_x].cxn_one == Some((start_x, start_y)) || grid[west_y][west_x].cxn_two == Some((start_x, start_y)) {
             postMessageToWorker(true, &format!("Found connection to the west: {:?}", grid[west_y][west_x]));
-            found_connection = true;
+            initial_connection = Some((west_x as isize, west_y as isize));
         }
     }
 
+    let mut current_location = start;
+    let mut next_location = initial_connection.unwrap();
+    let mut next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
+    postMessageToWorker(true, &format!("Current location: {:?}, {:?}", current_location, grid[current_location.1 as usize][current_location.0 as usize]));
+    postMessageToWorker(true, &format!("Next location: {:?}, {:?}", next_location, grid[next_location.1 as usize][next_location.0 as usize]));
+    postMessageToWorker(true, &format!("Next next location: {:?}, {:?}", next_next_location, grid[next_next_location.unwrap().1 as usize][next_next_location.unwrap().0 as usize]));
+
+    loop {
+        current_location = next_location;
+        next_location = next_next_location.unwrap();
+        next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
+        postMessageToWorker(true, &format!("Current location: {:?}, {:?}", current_location, grid[current_location.1 as usize][current_location.0 as usize]));
+        postMessageToWorker(true, &format!("Next location: {:?}, {:?}", next_location, grid[next_location.1 as usize][next_location.0 as usize]));
+        postMessageToWorker(true, &format!("Next next location: {:?}, {:?}", next_next_location, grid[next_next_location.unwrap().1 as usize][next_next_location.unwrap().0 as usize]));
+        if next_next_location.unwrap() == start {
+            postMessageToWorker(true, &format!("Found the start again!"));
+            break;
+        }
+    }
+    
+    
+    //let mut current_location = initial_connection.unwrap();
+    //postMessageToWorker(true, &format!("Current location: {:?}", current_location));
+
+    //let mut next_location = pick_outgoing_connection(current_location, &grid[initial_connection.unwrap().1 as usize][initial_connection.unwrap().0 as usize]);
+    //postMessageToWorker(true, &format!("Next location: {:?}", next_location));
+
+    //current_location = pick_outgoing_connection(current_location, &grid[initial_connection.unwrap().1 as usize][initial_connection.unwrap().0 as usize]).unwrap();
+    //postMessageToWorker(true, &format!("New location: {:?}", current_location));
+
+    //current_location = pick_outgoing_connection(current_location, &grid[initial_connection.unwrap().1 as usize][initial_connection.unwrap().0 as usize]).unwrap();
+    //postMessageToWorker(true, &format!("New location: {:?}", current_location));
+
 }
 
+fn pick_outgoing_connection(current_location: (isize, isize), cell: &Connection) -> Option<(isize, isize)> {
+    if cell.cxn_one == Some(current_location) {
+        cell.cxn_two
+    } else if cell.cxn_two == Some(current_location) {
+        cell.cxn_one
+    } else {
+        None
+    }
+}
 
 pub fn solution_part_2() -> () {
     return;
