@@ -8,13 +8,14 @@ extern "C" {
     fn postMessageToWorker(do_print: bool, message: &str);
 }
 
+#[derive(Debug)]
 struct Connection {
     cxn_one: Option<(isize, isize)>,
     cxn_two: Option<(isize, isize)>,
     character: char,
 }
-type Cell = Vec<Connection>;
-type Grid = Vec<Cell>;
+type Row = Vec<Connection>;
+type Grid = Vec<Row>;
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
@@ -22,6 +23,8 @@ pub fn solution_part_1() -> () {
     let content = include_str!("input/day_10_part_1_test_input.txt");
     // let content = include_str!("input/day_10_part_1_input.txt");
 
+    let mut grid: Grid = Vec::new();
+    let mut start: Vec<(isize, isize)> = Vec::new();
 
 
     content.lines().for_each(|line| {
@@ -31,10 +34,12 @@ pub fn solution_part_1() -> () {
             show_message = true;
         }
 
+        let mut row: Row = Vec::new();
+
         let characters: Vec<_> = line.chars().collect();
 
-        postMessageToWorker(show_message, " ");
-        postMessageToWorker(show_message, &format!("Iteration: {}, input: {:?}", iteration, characters));
+        //postMessageToWorker(show_message, " ");
+        //postMessageToWorker(show_message, &format!("Iteration: {}, input: {:?}", iteration, characters));
 
         //for character in characters {
         for (index, character) in characters.iter().enumerate() {
@@ -45,42 +50,53 @@ pub fn solution_part_1() -> () {
             let mut cxn_one: Option<(isize, isize)> = None;
             let mut cxn_two: Option<(isize, isize)> = None;
             match *character {
+                'S' => {
+                    start = vec![(index, iteration)];
+                },
                 'J' => {
-                    cxn_one = Some((index, iteration + 1));
-                    cxn_two = Some((index - 1, iteration));
+                    cxn_one = Some((index, iteration - 1)); //north
+                    cxn_two = Some((index - 1, iteration)); //west
                 },
                 'L' => {
-                    cxn_one = Some((index, iteration + 1));
-                    cxn_two = Some((index + 1, iteration));
+                    cxn_one = Some((index, iteration - 1)); // north
+                    cxn_two = Some((index + 1, iteration)); // east
                 },
                 'F' => {
-                    cxn_one = Some((index + 1, iteration));
-                    cxn_two = Some((index, iteration - 1));
+                    cxn_one = Some((index, iteration + 1)); // south
+                    cxn_two = Some((index + 1, iteration)); // east
                 },
                 '7' => {
-                    cxn_one = Some((index - 1, iteration));
-                    cxn_two = Some((index, iteration - 1));
+                    cxn_one = Some((index, iteration - 1)); // north
+                    cxn_two = Some((index - 1, iteration)); // west
                 },
                 '|' => {
-                    cxn_one = Some((index, iteration - 1));
-                    cxn_two = Some((index, iteration + 1));
+                    cxn_one = Some((index, iteration - 1)); // north
+                    cxn_two = Some((index, iteration + 1)); // south
                 },
                 '-' => {
-                    cxn_one = Some((index - 1, iteration));
-                    cxn_two = Some((index + 1, iteration));
+                    cxn_one = Some((index - 1, iteration)); // east
+                    cxn_two = Some((index + 1, iteration)); // west
                 },
                 _ => {}
             }
-            postMessageToWorker(show_message, &format!("letter: {}, cxn_one: {:?}, cxn_two: {:?}", character, cxn_one, cxn_two));
-            let mut connection = Connection {
+            //postMessageToWorker(show_message, &format!("letter: {}, cxn_one: {:?}, cxn_two: {:?}", character, cxn_one, cxn_two));
+            let connection = Connection {
                 cxn_one: cxn_one,
                 cxn_two: cxn_two,
                 character: *character,
             };
 
+            row.push(connection);
+
         }
+    grid.push(row);
     iteration += 1;
     });
+
+    //postMessageToWorker(true, &format!("Grid: {:?}", grid));
+    //postMessageToWorker(true, &format!("Cell 0,0: {:?}", grid[0][0]));
+    //postMessageToWorker(true, &format!("Cell 4,4: {:?}", grid[4][4]));
+    postMessageToWorker(true, &format!("Start: {:?}", start));
 }
 
 
