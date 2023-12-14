@@ -2,6 +2,7 @@
 #![allow(unused_variables)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
+use indexmap::IndexMap;
 
 #[wasm_bindgen(module = "/src/solutions/workerHelpers.js")]
 extern "C" {
@@ -21,7 +22,7 @@ pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = 0;
     let content = include_str!("input/day_10_part_1_test_input_1.txt");
-    // let content = include_str!("input/day_10_part_1_input.txt");
+    //let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
     let mut start: (isize, isize) = (0, 0);
@@ -138,26 +139,43 @@ pub fn solution_part_1() -> () {
         }
     }
 
+    let mut path: IndexMap<(isize, isize), isize> = IndexMap::new();
+    let mut distance_travelled: isize = 0;
+    path.insert(start, distance_travelled);
+
     let mut current_location = start;
     let mut next_location = initial_connection.unwrap();
     let mut next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
+    distance_travelled += 1;
+    path.insert(next_location, distance_travelled);
     postMessageToWorker(true, &format!("Current location: {:?}, {:?}", current_location, grid[current_location.1 as usize][current_location.0 as usize]));
     postMessageToWorker(true, &format!("Next location: {:?}, {:?}", next_location, grid[next_location.1 as usize][next_location.0 as usize]));
     postMessageToWorker(true, &format!("Next next location: {:?}, {:?}", next_next_location, grid[next_next_location.unwrap().1 as usize][next_next_location.unwrap().0 as usize]));
+    postMessageToWorker(true, &format!("Path: {:?}", path));
 
     loop {
         current_location = next_location;
         next_location = next_next_location.unwrap();
         next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
-        postMessageToWorker(true, &format!("Current location: {:?}, {:?}", current_location, grid[current_location.1 as usize][current_location.0 as usize]));
-        postMessageToWorker(true, &format!("Next location: {:?}, {:?}", next_location, grid[next_location.1 as usize][next_location.0 as usize]));
-        postMessageToWorker(true, &format!("Next next location: {:?}, {:?}", next_next_location, grid[next_next_location.unwrap().1 as usize][next_next_location.unwrap().0 as usize]));
+        distance_travelled += 1;
+        path.insert(next_location, distance_travelled);
+        //postMessageToWorker(true, &format!("Current location: {:?}, {:?}", current_location, grid[current_location.1 as usize][current_location.0 as usize]));
+        //postMessageToWorker(true, &format!("Next location: {:?}, {:?}", next_location, grid[next_location.1 as usize][next_location.0 as usize]));
+        //postMessageToWorker(true, &format!("Next next location: {:?}, {:?}", next_next_location, grid[next_next_location.unwrap().1 as usize][next_next_location.unwrap().0 as usize]));
+        //postMessageToWorker(true, &format!("Path: {:?}", path));
         if next_next_location.unwrap() == start {
             postMessageToWorker(true, &format!("Found the start again!"));
             break;
         }
     }
     
+    let mut midpoint: isize = 0;
+    if let Some((_, last_value)) = path.get_index(path.len() - 1) {
+        postMessageToWorker(true, &format!("Last value: {}", last_value));
+        midpoint = (last_value + 1) / 2;
+    }
+    postMessageToWorker(true, &format!("Midpoint: {}", midpoint));
+
     
     //let mut current_location = initial_connection.unwrap();
     //postMessageToWorker(true, &format!("Current location: {:?}", current_location));
