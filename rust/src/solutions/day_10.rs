@@ -15,12 +15,12 @@ struct Connection {
     character: char,
 }
 type Row = Vec<Connection>;
-type Grid = Vec<Row>;
+type Grid = Vec<Row>; // ! Remember, Gird[Y][X] is the correct way to access the grid, not [X][Y]
 
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_1_test_input_1.txt");
+    let content = include_str!("input/day_10_part_1_test_input_2.txt");
     // let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
@@ -28,20 +28,9 @@ pub fn solution_part_1() -> () {
 
 
     content.lines().for_each(|line| {
-        // Provide a mechanism to limit the volume of output on the console.
-        let mut show_message = false;
-        if (iteration) % 1 == 0  {
-            show_message = true;
-        }
-
         let mut row: Row = Vec::new();
-
         let characters: Vec<_> = line.chars().collect();
 
-        //postMessageToWorker(show_message, " ");
-        //postMessageToWorker(show_message, &format!("Iteration: {}, input: {:?}", iteration, characters));
-
-        //for character in characters {
         for (index, character) in characters.iter().enumerate() {
             //postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
 
@@ -96,11 +85,58 @@ pub fn solution_part_1() -> () {
     //postMessageToWorker(true, &format!("Grid: {:?}", grid));
     //postMessageToWorker(true, &format!("Cell 0,0: {:?}", grid[0][0]));
     //postMessageToWorker(true, &format!("Cell 4,4: {:?}", grid[4][4]));
+    //postMessageToWorker(true, &format!("Cell 1,2: {:?}", grid[1][2]));
     //postMessageToWorker(true, &format!("Start: {:?}", start));
 
-    let x = start.0;
-    let y = start.1;
-    postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", x, y));
+    postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
+    let start_x = start.0;
+    let start_y = start.1;
+
+    let mut found_connection: bool = false;
+    // check north
+    if start_y > 0 && !found_connection {
+        let north_x: usize = start_x as usize;
+        let north_y: usize = start_y as usize - 1;
+        postMessageToWorker(true, &format!("cell to the north: {:?}", grid[north_y][north_x]));
+        if grid[north_y][north_x].cxn_one == Some((start_x, start_y)) || grid[north_y][north_x].cxn_two == Some((start_x, start_y)) {
+            postMessageToWorker(true, &format!("Found connection to the north: {:?}", grid[north_y][north_x]));
+            found_connection = true;
+        }
+    }
+
+    // check east
+    if start_x < grid[0].len() as isize - 1 && !found_connection {
+        let east_x: usize = start_x as usize + 1;
+        let east_y: usize = start_y as usize;
+        postMessageToWorker(true, &format!("cell to the east: {:?}", grid[east_y][east_x]));
+        if grid[east_y][east_x].cxn_one == Some((start_x, start_y)) || grid[east_y][east_x].cxn_two == Some((start_x, start_y)) {
+            postMessageToWorker(true, &format!("Found connection to the east: {:?}", grid[east_y][east_x]));
+            found_connection = true;
+        }
+    }
+
+    // check south
+    if start_y < grid.len() as isize - 1 && !found_connection {
+        let south_x: usize = start_x as usize;
+        let south_y: usize = start_y as usize + 1;
+        postMessageToWorker(true, &format!("cell to the south: {:?}", grid[south_y][south_x]));
+        if grid[south_y][south_x].cxn_one == Some((start_x, start_y)) || grid[south_y][south_x].cxn_two == Some((start_x, start_y)) {
+            postMessageToWorker(true, &format!("Found connection to the south: {:?}", grid[south_y][south_x]));
+            found_connection = true;
+        }
+    }
+
+    // check west
+    if start_x > 0 && !found_connection {
+        let west_x: usize = start_x as usize - 1;
+        let west_y: usize = start_y as usize;
+        postMessageToWorker(true, &format!("cell to the west: {:?}", grid[west_y][west_x]));
+        if grid[west_y][west_x].cxn_one == Some((start_x, start_y)) || grid[west_y][west_x].cxn_two == Some((start_x, start_y)) {
+            postMessageToWorker(true, &format!("Found connection to the west: {:?}", grid[west_y][west_x]));
+            found_connection = true;
+        }
+    }
+
 }
 
 
