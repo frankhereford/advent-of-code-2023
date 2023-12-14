@@ -20,11 +20,11 @@ type Grid = Vec<Row>;
 pub fn solution_part_1() -> () {
     postMessageToWorker(true, "Part 1: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_1_test_input.txt");
+    let content = include_str!("input/day_10_part_1_test_input_1.txt");
     // let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
-    let mut start: Vec<(isize, isize)> = Vec::new();
+    let mut start: (isize, isize) = (0, 0);
 
 
     content.lines().for_each(|line| {
@@ -43,7 +43,7 @@ pub fn solution_part_1() -> () {
 
         //for character in characters {
         for (index, character) in characters.iter().enumerate() {
-            postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
+            //postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
 
             let index = index as isize; 
 
@@ -51,7 +51,7 @@ pub fn solution_part_1() -> () {
             let mut cxn_two: Option<(isize, isize)> = None;
             match *character {
                 'S' => {
-                    start = vec![(index, iteration)];
+                    start = (index, iteration);
                 },
                 'J' => {
                     cxn_one = Some((index, iteration - 1)); //north
@@ -96,7 +96,11 @@ pub fn solution_part_1() -> () {
     //postMessageToWorker(true, &format!("Grid: {:?}", grid));
     //postMessageToWorker(true, &format!("Cell 0,0: {:?}", grid[0][0]));
     //postMessageToWorker(true, &format!("Cell 4,4: {:?}", grid[4][4]));
-    postMessageToWorker(true, &format!("Start: {:?}", start));
+    //postMessageToWorker(true, &format!("Start: {:?}", start));
+
+    let x = start.0;
+    let y = start.1;
+    postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", x, y));
 }
 
 
@@ -104,7 +108,7 @@ pub fn solution_part_2() -> () {
     return;
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = -1;
-    let content = include_str!("input/day_10_part_1_test_input.txt");
+    let content = include_str!("input/day_10_part_1_test_input_1.txt");
     // let content = include_str!("input/day_10_part_1_input.txt");
 
     content.lines().for_each(|line| {
