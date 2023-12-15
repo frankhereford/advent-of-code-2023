@@ -209,7 +209,7 @@ fn pick_outgoing_connection(current_location: (isize, isize), cell: &Connection)
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_2_test_input_1.txt");
+    let content = include_str!("input/day_10_part_1_test_input_1.txt");
     //let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
@@ -326,27 +326,42 @@ pub fn solution_part_2() -> () {
         }
     }
 
-    let mut path: IndexMap<(isize, isize), isize> = IndexMap::new();
-    let mut distance_travelled: isize = 0;
-    path.insert(start, distance_travelled);
 
     let mut current_location = start;
     let mut next_location = initial_connection.unwrap();
     let mut next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
-    distance_travelled += 1;
-    path.insert(next_location, distance_travelled);
+
+    let mut sigma: Vec<isize> = Vec::new();
+
+    postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", current_location, next_location));
+    
+
+    postMessageToWorker(true, &format!("term 1, term 2: {:?} {:?}", (current_location.0 * next_location.1), (current_location.1 * next_location.0) ));
+    sigma.push(((current_location.0 * next_location.1) - (current_location.1 * next_location.0)) );
+    postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
 
     loop {
         current_location = next_location;
         next_location = next_next_location.unwrap();
         next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
-        distance_travelled += 1;
-        path.insert(next_location, distance_travelled);
+        postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", current_location, next_location));
+        postMessageToWorker(true, &format!("term 1, term 2: {:?} {:?}", (current_location.0 * next_location.1), (current_location.1 * next_location.0) ));
+        sigma.push(((current_location.0 * next_location.1) - (current_location.1 * next_location.0)) );
+        postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
         if next_next_location.unwrap() == start {
+            postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", next_location, next_next_location.unwrap()));
             postMessageToWorker(true, &format!("Found the start again!"));
+            sigma.push(((next_location.0 * next_next_location.unwrap().1) - (next_location.1 * next_next_location.unwrap().0)) );
             break;
         }
     }
-    
-    postMessageToWorker(true, &format!("Path: {:?}", path));
+
+    postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
+
+    let sum: isize = sigma.iter().sum();
+    let abs = sum.abs();
+    let answer = abs / 2;
+
+    postMessageToWorker(true, &format!("sum, abs, answer: {:?}, {:?}, {:?}", sum, abs, answer));
+
 }
