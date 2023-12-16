@@ -1,7 +1,7 @@
 #![allow(unreachable_code)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
-//use web_sys::console;
+use web_sys::console;
 use wasm_bindgen::prelude::*;
 use indexmap::IndexMap;
 
@@ -214,8 +214,8 @@ fn pick_outgoing_connection(current_location: (isize, isize), cell: &Connection)
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_2_test_input_1.txt");
-    //let content = include_str!("input/day_10_part_1_input.txt");
+    //let content = include_str!("input/day_10_part_2_test_input_3.txt");
+    let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
     let mut start: (isize, isize) = (0, 0);
@@ -230,7 +230,11 @@ pub fn solution_part_2() -> () {
         let characters: Vec<_> = line.chars().collect();
 
         for (index, character) in characters.iter().enumerate() {
-            input_row.push(character.clone());
+            if *character == 'S' { // ! Remember to set this to the right character for the input! hacky but easy
+                input_row.push('7');
+            } else {
+                input_row.push(character.clone());
+            }
             //postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
 
             let index = index as isize; 
@@ -282,10 +286,9 @@ pub fn solution_part_2() -> () {
     iteration += 1;
     }
 
-    postMessageToWorker(true, &format!("Input: {:?}", input));
+    //postMessageToWorker(true, &format!("Input: {:?}", input));
 
-
-    postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
+    //postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
     let start_x = start.0;
     let start_y = start.1;
 
@@ -356,24 +359,79 @@ pub fn solution_part_2() -> () {
         }
     }
 
-    postMessageToWorker(true, &format!("Path: {:?}", path));
+    //postMessageToWorker(true, &format!("Path: {:?}", path));
 
     let mut y = 0;
+    let mut inside_count = 0;
+    let north_connections = vec!['L', 'J'];
+    let south_connections = vec!['F', '7'];
+    //vertical_node_designators.contains(&input[y][x])
     while y < input.len() {
+        console::log_1(&format!("\nLine {:?}", y).into());
         let mut x = 0;
         let mut is_inside = false;
         let mut line = String::new();
+        let mut seen_north_connection = false;
+        let mut seen_south_connection = false;
         while x < input[y].len() {
-            line.push(if is_inside { 'X' } else { '.' }); 
+
+            let character = input[y][x];
+
+            if check_if_node(x, y, &path) && character == '|' {
+                // we have crossed a vertical path line
+                is_inside = !is_inside;
+                //console::log_1(&"Flipping for |".into());
+                line.push(character);
+            } else if check_if_node(x, y, &path) && north_connections.contains(&character) {
+                // we're entering or exiting a horizontal stretch from the north 
+                seen_north_connection = !seen_north_connection;
+                if seen_north_connection && seen_south_connection {
+                    is_inside = !is_inside;
+                    seen_north_connection = false;
+                    seen_south_connection = false;
+                    //console::log_1(&format!("Flipping to {} after {}", is_inside, character).into());
+                }
+                line.push('N');
+            } else if check_if_node(x, y, &path) && south_connections.contains(&character) {
+                // we're entering or exiting a horizontal stretch from the south
+                seen_south_connection = !seen_south_connection;
+                if seen_north_connection && seen_south_connection {
+                    is_inside = !is_inside;
+                    seen_north_connection = false;
+                    seen_south_connection = false;
+                    //console::log_1(&format!("Flipping to {} after {}", is_inside, character).into());
+                }
+                line.push('S');
+            } else if check_if_node(x, y, &path) {
+                line.push(character);
+            } else if is_inside {
+                line.push('I');
+                inside_count += 1;
+            } else {
+                line.push('0');
+            }
+            
+            //console::log_1(&format!("after character: {:?}, is_inside {:?}, seen_north_connection {:?}, seen_south_connection {:?}", character, is_inside, seen_north_connection, seen_south_connection).into());
+            
             x += 1;
         }
-        postMessageToWorker(true, &format!("Line: {}", line));
+        postMessageToWorker(true, &format!("Line {:?}: {}", y, line));
         y += 1;
     }
+    postMessageToWorker(true, &format!("Inside count: {}", inside_count));
 
 }
 
-
+fn check_if_node(x: usize, y: usize, path: &IndexMap<(isize, isize), isize>) -> bool {
+    for (index, node) in path.iter().enumerate() {
+        let node_x = node.0 .0 as usize;
+        let node_y = node.0 .1 as usize;
+        if node_x == x && node_y == y {
+            return true
+        }
+    }
+    return false
+}
 
 
 
