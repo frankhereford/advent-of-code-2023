@@ -220,12 +220,17 @@ pub fn solution_part_2() -> () {
     let mut grid: Grid = Vec::new();
     let mut start: (isize, isize) = (0, 0);
 
+    let mut input: Vec<Vec<char>> = Vec::new();
 
-    content.lines().for_each(|line| {
+    //content.lines().for_each(|line| {
+    for (index, line) in content.lines().enumerate() {
+        let mut input_row: Vec<char> = Vec::new();
+
         let mut row: Row = Vec::new();
         let characters: Vec<_> = line.chars().collect();
 
         for (index, character) in characters.iter().enumerate() {
+            input_row.push(character.clone());
             //postMessageToWorker(show_message, &format!("Character: {} / {} / {}", character, iteration, index));
 
             let index = index as isize; 
@@ -273,8 +278,11 @@ pub fn solution_part_2() -> () {
 
         }
     grid.push(row);
+    input.push(input_row.clone());
     iteration += 1;
-    });
+    }
+
+    postMessageToWorker(true, &format!("Input: {:?}", input));
 
 
     postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
@@ -350,36 +358,19 @@ pub fn solution_part_2() -> () {
 
     postMessageToWorker(true, &format!("Path: {:?}", path));
 
-    let mut inside_tally = 0;
-    for (x, line) in content.lines().enumerate() {
-        let characters: Vec<_> = line.chars().collect();
-
-        let mut is_inside: bool = false;
-        'character_loop: for (y, character) in characters.iter().enumerate() {
-            postMessageToWorker(true, &format!("\nCharacter: {:?}, {:?}: {}", x, y, character));
-
-            let mut on_node: bool = false;
-            for (index, node) in path.iter().enumerate() {
-                //postMessageToWorker(true, &format!("Node: {:?}", node.0));
-                let node_y = node.0.0;
-                let node_x = node.0.1;
-                if x == node_x as usize && y == node_y as usize {
-                    postMessageToWorker(true, &format!("Found a node! {:?}", character));
-                    on_node = true;
-                    if *character == '|' { // meaning we're crossing the path, not kissing it as we horizontally traverse it
-                        is_inside = !is_inside;
-                        postMessageToWorker(true, &format!("Crossing the path! {}", is_inside));
-                        continue 'character_loop;
-                    }
-                }
-            }
-            if is_inside && !on_node {
-                inside_tally += 1;
-                postMessageToWorker(true, &format!("Inside! {:?}", inside_tally));
-            }
+    let mut y = 0;
+    while y < input.len() {
+        let mut x = 0;
+        let mut is_inside = false;
+        let mut line = String::new();
+        while x < input[y].len() {
+            line.push(if is_inside { 'X' } else { '.' }); 
+            x += 1;
         }
+        postMessageToWorker(true, &format!("Line: {}", line));
+        y += 1;
     }
-    postMessageToWorker(true, &format!("Inside tally: {}", inside_tally));
+
 }
 
 
