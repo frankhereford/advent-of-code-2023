@@ -271,12 +271,6 @@ pub fn solution_part_2() -> () {
     iteration += 1;
     });
 
-    //postMessageToWorker(true, &format!("Grid: {:?}", grid));
-    //postMessageToWorker(true, &format!("Cell 0,0: {:?}", grid[0][0]));
-    //postMessageToWorker(true, &format!("Cell 4,4: {:?}", grid[4][4]));
-    //postMessageToWorker(true, &format!("Cell 1,2: {:?}", grid[1][2]));
-    //postMessageToWorker(true, &format!("Start: {:?}", start));
-
     postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
     let start_x = start.0;
     let start_y = start.1;
@@ -331,27 +325,49 @@ pub fn solution_part_2() -> () {
     let mut next_location = initial_connection.unwrap();
     let mut next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
 
-    let mut sigma: Vec<isize> = Vec::new();
+    let mut sigma: Vecisize> = Vec::new();
 
     postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", current_location, next_location));
     
 
-    postMessageToWorker(true, &format!("term 1, term 2: {:?} {:?}", (current_location.0 * next_location.1), (current_location.1 * next_location.0) ));
-    sigma.push(((current_location.0 * next_location.1) - (current_location.1 * next_location.0)) );
+    let left_term = current_location.0 * next_location.1;
+    let right_term = current_location.1 * next_location.0;
+    let sigma_term = left_term - right_term;
+    sigma.push(sigma_term);
+    postMessageToWorker(true, &format!("left term, right term: {:?} {:?}", left_term, right_term ));
+    postMessageToWorker(true, &format!("Sigma term: {:?}", sigma_term));
     postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
+
 
     loop {
         current_location = next_location;
         next_location = next_next_location.unwrap();
         next_next_location = pick_outgoing_connection(current_location, &grid[next_location.1 as usize][next_location.0 as usize]);
         postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", current_location, next_location));
-        postMessageToWorker(true, &format!("term 1, term 2: {:?} {:?}", (current_location.0 * next_location.1), (current_location.1 * next_location.0) ));
-        sigma.push(((current_location.0 * next_location.1) - (current_location.1 * next_location.0)) );
+
+        
+        let left_term = current_location.0 * next_location.1;
+        let right_term = current_location.1 * next_location.0;
+        let sigma_term = left_term - right_term;
+        sigma.push(sigma_term);
+        postMessageToWorker(true, &format!("left term, right term: {:?} {:?}", left_term, right_term ));
+        postMessageToWorker(true, &format!("Sigma term: {:?}", sigma_term));
         postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
+
+
         if next_next_location.unwrap() == start {
+            
+
             postMessageToWorker(true, &format!("Current / next location: {:?}, {:?}", next_location, next_next_location.unwrap()));
-            postMessageToWorker(true, &format!("Found the start again!"));
-            sigma.push(((next_location.0 * next_next_location.unwrap().1) - (next_location.1 * next_next_location.unwrap().0)) );
+            let left_term = next_location.0 * next_next_location.unwrap().1;
+            let right_term = next_location.1 * next_next_location.unwrap().0;
+            let sigma_term = left_term - right_term;
+            sigma.push(sigma_term);
+            postMessageToWorker(true, &format!("left term, right term: {:?} {:?}", left_term, right_term ));
+            postMessageToWorker(true, &format!("Sigma term: {:?}", sigma_term));
+            postMessageToWorker(true, &format!("Sigma: {:?}", sigma));
+            
+
             break;
         }
     }
