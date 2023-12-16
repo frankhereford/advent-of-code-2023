@@ -1,5 +1,6 @@
 #![allow(unreachable_code)]
 #![allow(unused_variables)]
+#![allow(dead_code)]
 //use web_sys::console;
 use wasm_bindgen::prelude::*;
 use indexmap::IndexMap;
@@ -213,7 +214,7 @@ fn pick_outgoing_connection(current_location: (isize, isize), cell: &Connection)
 pub fn solution_part_2() -> () {
     postMessageToWorker(true, "Part 2: \n");
     let mut iteration = 0;
-    let content = include_str!("input/day_10_part_1_test_input_1.txt");
+    let content = include_str!("input/day_10_part_2_test_input_1.txt");
     //let content = include_str!("input/day_10_part_1_input.txt");
 
     let mut grid: Grid = Vec::new();
@@ -275,11 +276,6 @@ pub fn solution_part_2() -> () {
     iteration += 1;
     });
 
-    //postMessageToWorker(true, &format!("Grid: {:?}", grid));
-    //postMessageToWorker(true, &format!("Cell 0,0: {:?}", grid[0][0]));
-    //postMessageToWorker(true, &format!("Cell 4,4: {:?}", grid[4][4]));
-    //postMessageToWorker(true, &format!("Cell 1,2: {:?}", grid[1][2]));
-    //postMessageToWorker(true, &format!("Start: {:?}", start));
 
     postMessageToWorker(true, &format!("Start x, y: {:?}, {:?}", start.0, start.1));
     let start_x = start.0;
@@ -354,8 +350,36 @@ pub fn solution_part_2() -> () {
 
     postMessageToWorker(true, &format!("Path: {:?}", path));
 
+    let mut inside_tally = 0;
+    for (x, line) in content.lines().enumerate() {
+        let characters: Vec<_> = line.chars().collect();
 
-    
+        let mut is_inside: bool = false;
+        'character_loop: for (y, character) in characters.iter().enumerate() {
+            postMessageToWorker(true, &format!("\nCharacter: {:?}, {:?}: {}", x, y, character));
+
+            let mut on_node: bool = false;
+            for (index, node) in path.iter().enumerate() {
+                //postMessageToWorker(true, &format!("Node: {:?}", node.0));
+                let node_y = node.0.0;
+                let node_x = node.0.1;
+                if x == node_x as usize && y == node_y as usize {
+                    postMessageToWorker(true, &format!("Found a node! {:?}", character));
+                    on_node = true;
+                    if *character == '|' { // meaning we're crossing the path, not kissing it as we horizontally traverse it
+                        is_inside = !is_inside;
+                        postMessageToWorker(true, &format!("Crossing the path! {}", is_inside));
+                        continue 'character_loop;
+                    }
+                }
+            }
+            if is_inside && !on_node {
+                inside_tally += 1;
+                postMessageToWorker(true, &format!("Inside! {:?}", inside_tally));
+            }
+        }
+    }
+    postMessageToWorker(true, &format!("Inside tally: {}", inside_tally));
 }
 
 
